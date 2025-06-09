@@ -16,6 +16,8 @@
     <select name="sort_by">
         <option value="asc" {{ request('sort_by') == 'asc' ? 'selected' : '' }}>Giá tăng dần</option>
         <option value="desc" {{ request('sort_by') == 'desc' ? 'selected' : '' }}>Giá giảm dần</option>
+        <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
+        <option value="oldest" {{ request('sort_by') == 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
     </select>
 
     <button type="submit">Tìm kiếm</button>
@@ -33,5 +35,10 @@
                 <p>{{ number_format($product->price, 0, ',', '.') }} VND</p>
             </div>
         @endforeach
+    </div>
+
+    <!-- Phân trang -->
+    <div>
+        {{ $products->links() }}
     </div>
 @endif

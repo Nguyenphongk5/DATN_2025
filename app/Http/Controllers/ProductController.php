@@ -32,14 +32,21 @@ class ProductController extends Controller
             $query->where('price', '<=', $request->max_price);
         }
 
-        // Sắp xếp theo giá (tăng dần hoặc giảm dần)
+        // Sắp xếp theo giá (tăng dần hoặc giảm dần) hoặc theo ngày
         if ($request->has('sort_by')) {
-            $sortBy = $request->sort_by == 'asc' ? 'asc' : 'desc';
-            $query->orderBy('price', $sortBy);
+            if ($request->sort_by == 'asc') {
+                $query->orderBy('price', 'asc');
+            } elseif ($request->sort_by == 'desc') {
+                $query->orderBy('price', 'desc');
+            } elseif ($request->sort_by == 'newest') {
+                $query->orderBy('created_at', 'desc');
+            } elseif ($request->sort_by == 'oldest') {
+                $query->orderBy('created_at', 'asc');
+            }
         }
 
-        // Lấy sản phẩm
-        $products = $query->get();
+        // Phân trang
+        $products = $query->paginate(10);  // Hiển thị 10 sản phẩm mỗi trang
 
         // Lấy tất cả các danh mục
         $categories = Category::all();
