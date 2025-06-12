@@ -8,7 +8,15 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
-
+    safelist: [
+        'bg-blue-600',
+        'hover:bg-blue-700',
+        'text-white',
+        'py-2',
+        'px-4',
+        'rounded',
+        'shadow'
+    ],
     theme: {
         extend: {
             fontFamily: {
