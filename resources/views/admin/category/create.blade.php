@@ -68,12 +68,53 @@
         <!-- Main content -->
         <main class="flex-1 p-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
-                <p>{{ __("You're logged in!") }}</p>
+                <h1>Thêm mới danh mục</h1>
+                <form action="{{ route('admin.category.storeCategory') }}" method="POST">
+                    @csrf
 
-                <a href="{{ route('admin.index') }}"
-                    class="inline-block mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Go to User Management
-                </a>
+                    <div class="mb-3 mt-2">
+                        <label for="name" class="form-label">Tên danh mục</label>
+                        <input type="text" class="form-control" id="name" name="name"
+                            value="{{ old('name') }}">
+                        @error('name')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="parent_id" class="form-label">Danh mục cha</label>
+                        <select class="form-select" id="parent_id" name="parent_id">
+                            <option value="">Không có</option>
+                            @foreach ($category as $cat)
+                                <option value="{{ $cat->id }}"
+                                    {{ old('parent_id') == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Trạng thái</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_active" id="active1"
+                                value="1" {{ old('is_active', 1) == 1 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="active1">Kích hoạt</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_active" id="active0"
+                                value="0" {{ old('is_active') == 0 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="active0">Không kích hoạt</label>
+                        </div>
+                        @error('is_active')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Thêm mới</button>
+                    <a href="{{ route('admin.category.listCategory') }}" class="btn btn-outline-primary">Cancel</a>
+                </form>
+
             </div>
         </main>
     </div>

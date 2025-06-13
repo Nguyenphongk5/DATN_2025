@@ -68,12 +68,56 @@
         <!-- Main content -->
         <main class="flex-1 p-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
-                <p>{{ __("You're logged in!") }}</p>
+                @if (session('warning'))
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ session('warning') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                    </div>
+                @endif
 
-                <a href="{{ route('admin.index') }}"
-                    class="inline-block mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Go to User Management
-                </a>
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                <div class="d-flex justify-content-between align-content-center">
+                    <h1>Danh sách danh mục</h1>
+                    <a href="{{ route('admin.category.createCategory') }}" class="btn btn-outline-success">Thêm mới</a>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Name</th>
+                            <th>Thuộc Loại</th>
+                            <th>Trạng thái</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($category as $key => $value)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $value->name }}</td>
+                                <td>{{ $value->parent ? $value->parent->name : 'Không có' }}</td>
+                                <td>
+                                    {!! $value->is_active ? '<p class="text-success">Kích hoạt</p>' : '<p class="text-danger">Ngưng hoạt động</p>' !!}
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.category.editCategory', $value->id) }}"
+                                        class="btn btn-outline-warning">Sửa</a>
+
+                                    <a href="{{ route('admin.category.deleteCategory', $value->id) }}"
+                                        onclick="return confirm('Bạn có chắc muốn xóa ?')"
+                                        class="btn btn-outline-danger">Xóa</a>
+                                </td>
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+                {{ $category->links() }}
             </div>
         </main>
     </div>
