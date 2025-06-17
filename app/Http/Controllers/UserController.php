@@ -10,12 +10,17 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $users = DB::table('users')
-        ->paginate(10);
-        return view('users.index', compact('users'));
+        $query = DB::table('users');
+
+        // Filter by role
+        if ($request->filled('role')) {
+            $query->where('role', '=', $request->role);
+        }
+
+        $users = $query->paginate(10);
+        return view('admin.users.index', compact('users'));
     }
 
     /**
@@ -42,9 +47,9 @@ class UserController extends Controller
         //
         $user = DB::table('users')->where('id', $id)->first();
         if (!$user) {
-            return redirect()->route('users.index')->with('error', 'User not found.');
+            return redirect()->route('admin.users.index')->with('error', 'User not found.');
         }
-        return view('users.detail', compact('user'));
+        return view('admin.users.detail', compact('user'));
     }
 
     /**
@@ -55,9 +60,9 @@ class UserController extends Controller
         //
         $user = DB::table('users')->where('id', $id)->first();
         if (!$user) {
-            return redirect()->route('users.index')->with('error', 'User not found.');
+            return redirect()->route('admin.users.index')->with('error', 'User not found.');
         }
-        return  view('users.update', compact('user'));
+        return  view('admin.users.update', compact('user'));
     }
 
     /**
@@ -71,12 +76,12 @@ class UserController extends Controller
         ]);
         $user = DB::table('users')->where('id', $id)->first();
         if (!$user) {
-            return redirect()->route('users.index')->with('error', 'User not found.');
+            return redirect()->route('admin.users.index')->with('error', 'User not found.');
         }
         DB::table('users')->where('id', $id)->update([
             'role' => $data['role'],
         ]);
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -86,6 +91,6 @@ class UserController extends Controller
     {
         //
         DB::table('users')->where('id', $id)->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }

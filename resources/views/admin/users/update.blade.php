@@ -10,7 +10,7 @@
             style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
             {{ __('Update User') }}
         </h1>
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-md rounded-lg p-6">
                 <form method="POST" action="{{ route('users.update', $user->id) }}">
                     @csrf
@@ -52,9 +52,9 @@
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-1">Role</label>
                         <select name="role" class="w-full border border-gray-300 rounded px-4 py-2">
-                            <option value="0" {{ $user->role == 0 ? 'selected' : '' }}>Người Dùng</option>
-                            <option value="1" {{ $user->role == 1 ? 'selected' : '' }}>Nhân Viên</option>
-                            <option value="2" {{ $user->role == 2 ? 'selected' : '' }}>Quản Trị Viên</option>
+                            <option value="0" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
+                            <option value="1" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff</option>
+                            <option value="2" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                         </select>
                     </div>
                     <div class="flex">
@@ -68,7 +68,7 @@
                         <div class="flex justify-center">
                             <button type="submit"
                                 class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded btn"
-                                style="background: rgb(26, 227, 73)">
+                                style="background: rgb(26, 227, 73); margin-left: -10rem;">
                                 Cập nhật
                             </button>
                         </div>

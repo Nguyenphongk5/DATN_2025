@@ -12,22 +12,30 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div class="overflow-x-auto">
-                        <table class="w-full table-auto border-collapse text-center">
+                    <div class="overflow-x-auto" >
+                        <form action="{{ route('users.index') }}" method="GET">
+                            <select name="role" id="roleFilter" style="margin-bottom: 1rem" onchange="this.form.submit()">
+                                <option value="">All Roles</option>
+                                <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>User</option>
+                                <option value="staff" {{ request('role') == 'staff' ? 'selected' : '' }}>Staff</option>
+                                <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                            </select>
+                        </form>
+                        <table class="w-full table-auto border-collapse">
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-sm font-medium uppercase">ID</th>
-                                    <th class="px-6 py-3 text-left text-sm font-medium uppercase">Name</th>
-                                    <th class="px-6 py-3 text-left text-sm font-medium uppercase">Email</th>
-                                    <th class="px-6 py-3 text-left text-sm font-medium uppercase">Role</th>
-                                    <th class="px-6 py-3 text-left text-sm font-medium uppercase">Avatar</th>
-                                    <th class="px-6 py-3 text-left text-sm font-medium uppercase">Actions</th>
+                                    <th class="px-6 py-3 text-center text-sm font-medium uppercase">STT</th>
+                                    <th class="px-6 py-3 text-center text-sm font-medium uppercase">Name</th>
+                                    <th class="px-6 py-3 text-center text-sm font-medium uppercase">Email</th>
+                                    <th class="px-6 py-3 text-center text-sm font-medium uppercase">Role</th>
+                                    <th class="px-6 py-3 text-center text-sm font-medium uppercase">Avatar</th>
+                                    <th class="px-6 py-3 text-center text-sm font-medium uppercase">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @foreach ($users as $user)
+                            <tbody class="divide-y divide-gray-200 text-center">
+                                @foreach ($users as $key => $user)
                                     <tr>
-                                        <td class="px-6 py-4">{{ $user->id }}</td>
+                                        <td class="px-6 py-4">{{ $key + 1 }}</td>
                                         <td class="px-6 py-4">{{ $user->name }}</td>
                                         <td class="px-6 py-4">{{ $user->email }}</td>
                                         <td class="px-6 py-4 capitalize">
@@ -50,15 +58,15 @@
                                         <td class="px-6 py-4">
                                             <div class="flex gap-4 justify-center">
                                                 <a href="{{ route('users.edit', $user->id) }}"
-                                                    class="text-blue-600 hover:underline btn btn-primary">Update</a>
+                                                    class=" hover:underline btn btn-primary">Update</a>
                                                 <a href="{{ route('users.show', $user->id) }}"
-                                                    class="text-blue-600 hover:underline btn btn-success">Detail</a>
+                                                    class=" hover:underline btn btn-success">Detail</a>
                                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                        class="text-blue-600 hover:underline btn btn-danger">Delete</button>
+                                                        class=" hover:underline btn btn-danger">Delete</button>
                                                 </form>
                                             </div>
                                         </td>
