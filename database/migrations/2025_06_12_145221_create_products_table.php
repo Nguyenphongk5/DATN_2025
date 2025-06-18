@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('slug');
             $table->string('img_thumb');
             $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->decimal('price_sale', 10, 2)->nullable();
             $table->foreignId('category_id')->constrained();
             $table->foreignId('brand_id')->constrained();
             $table->integer('view')->default(0);

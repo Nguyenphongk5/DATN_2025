@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained();
-            $table->string('sku');
             $table->string('size');
             $table->string('color_name');
             $table->string('hex_code', 7);

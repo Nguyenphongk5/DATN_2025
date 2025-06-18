@@ -26,6 +26,16 @@
                              {{ __('Users') }}
                          </x-nav-link>
                      </div>
+                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                         <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+                             {{ __('Products') }}
+                         </x-nav-link>
+                     </div>
+                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                         <x-nav-link :href="route('product_variants.index')" :active="request()->routeIs('product_variants.index')">
+                             {{ __('Product Variants') }}
+                         </x-nav-link>
+                     </div>
                  </div>
 
                  <!-- Settings Dropdown -->
@@ -95,7 +105,16 @@
                      {{ __('Users') }}
                  </x-responsive-nav-link>
              </div>
-
+             <div class="pt-2 pb-3 space-y-1">
+                 <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.index')">
+                     {{ __('Products') }}
+                 </x-responsive-nav-link>
+             </div>
+             <div class="pt-2 pb-3 space-y-1">
+                 <x-responsive-nav-link :href="route('product_variants.index')" :active="request()->routeIs('product_variants.index')">
+                     {{ __('Product Variants') }}
+                 </x-responsive-nav-link>
+             </div>
              <!-- Responsive Settings Options -->
              <div class="pt-4 pb-1 border-t border-gray-200">
                  <div class="px-4">
@@ -123,7 +142,7 @@
          </div>
      </nav>
  @else
-    @include('layouts.user')
-    @section('content')
-    @endsection
+     @include('layouts.user')
+     @section('content')
+     @endsection
  @endif
