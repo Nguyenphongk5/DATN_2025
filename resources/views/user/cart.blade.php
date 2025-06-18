@@ -1,6 +1,6 @@
 @extends('layouts.user')
 @section('content')
-<section class="py-5 mb-5 bg-light">
+    <section class="py-5 mb-5 bg-light">
         <div class="container-fluid">
             <div class="d-flex justify-content-between">
                 <h1 class="page-title pb-2">Cart</h1>
@@ -23,125 +23,92 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="card-title text-uppercase text-muted">Product</th>
+                                    <th scope="col" class="card-title text-uppercase text-muted">Color</th>
+                                    <th scope="col" class="card-title text-uppercase text-muted">Size</th>
                                     <th scope="col" class="card-title text-uppercase text-muted">Quantity</th>
                                     <th scope="col" class="card-title text-uppercase text-muted">Subtotal</th>
                                     <th scope="col" class="card-title text-uppercase text-muted"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td scope="row" class="py-4">
-                                        <div class="cart-info d-flex flex-wrap align-items-center mb-4">
-                                            <div class="col-lg-3">
-                                                <div class="card-image">
-                                                    <img src="images/product-thumb-1.png" alt="cloth" class="img-fluid">
+                                @foreach ($cart->items as $item)
+                                    <tr>
+                                        <td scope="row" class="py-4">
+                                            <a class="text-decoration-none "
+                                                href="{{ route('detail', ['slug' => $item->productVariant->product->slug]) }}">
+                                                <div class="cart-info d-flex flex-wrap align-items-center mb-4">
+                                                    <div class="col-lg-3">
+                                                        <div class="card-image">
+                                                            <img src="{{ asset('storage/' . $item->productVariant->product->img_thumb) }}"
+                                                                alt="cloth" class="img-fluid">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-9">
+                                                        <div class="card-detail ps-3">
+                                                            <h5 class="card-title">
+                                                                <p class="text-ellipsis-2">
+                                                                    {{ $item->productVariant->product->name }}</p>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-9">
-                                                <div class="card-detail ps-3">
-                                                    <h5 class="card-title">
-                                                        <a href="#" class="text-decoration-none">Product One</a>
-                                                    </h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="input-group product-qty w-50">
-                                            <span class="input-group-btn">
-                                                <button type="button"
-                                                    class="quantity-left-minus btn btn-light btn-number"
-                                                    data-type="minus">
-                                                    <svg width="16" height="16">
-                                                        <use xlink:href="#minus"></use>
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                            <input type="text" id="quantity" name="quantity"
-                                                class="form-control input-number text-center" value="1">
-                                            <span class="input-group-btn">
-                                                <button type="button"
-                                                    class="quantity-right-plus btn btn-light btn-number"
-                                                    data-type="plus" data-field="">
-                                                    <svg width="16" height="16">
-                                                        <use xlink:href="#plus"></use>
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="total-price">
-                                            <span class="money text-dark">$150.00</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="cart-remove">
-                                            <a href="#">
-                                                <svg width="24" height="24">
-                                                    <use xlink:href="#trash"></use>
-                                                </svg>
                                             </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td scope="row" class="py-4">
-                                        <div class="cart-info d-flex flex-wrap align-items-center">
-                                            <div class="col-lg-3">
-                                                <div class="card-image">
-                                                    <img src="images/product-thumb-2.png" alt="product"
-                                                        class="img-fluid">
-                                                </div>
+                                        </td>
+                                        <td class="py-4">
+                                            <label class="btn border border-2" for="option9">{{ $item->productVariant->color_name }}</label>
+                                        </td>
+                                        <td class="py-4">
+                                            <label class="btn border border-2" for="option9">{{ $item->productVariant->size }}</label>
+                                        </td>
+                                        <td class="py-4">
+                                            <div class="input-group product-qty w-50">
+                                                <span class="input-group-btn">
+                                                    <button type="button"
+                                                        class="quantity-left-minus btn btn-light btn-number"
+                                                        data-type="minus">
+                                                        <svg width="16" height="16">
+                                                            <use xlink:href="#minus"></use>
+                                                        </svg>
+                                                    </button>
+                                                </span>
+                                                <input type="text" id="quantity" name="quantity"
+                                                    class="form-control input-number text-center"
+                                                    value="{{ $item->quantity }}">
+                                                <span class="input-group-btn">
+                                                    <button type="button"
+                                                        class="quantity-right-plus btn btn-light btn-number"
+                                                        data-type="plus" data-field="">
+                                                        <svg width="16" height="16">
+                                                            <use xlink:href="#plus"></use>
+                                                        </svg>
+                                                    </button>
+                                                </span>
                                             </div>
-                                            <div class="col-lg-9">
-                                                <div class="card-detail ps-3">
-                                                    <h5 class="card-title">
-                                                        <a href="#" class="text-decoration-none">Product Two</a>
-                                                    </h5>
-                                                </div>
+                                        </td>
+                                        <td class="py-4">
+                                            <div class="total-price">
+                                                <span class="money text-dark">
+                                                    @php
+                                                        $price =
+                                                            $item->productVariant->price_sale ??
+                                                            $item->productVariant->price;
+                                                        $subtotal = $item->quantity * $price;
+                                                    @endphp
+                                                    {{ number_format($subtotal, 0, ',', '.') }}₫
+                                                </span>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="input-group product-qty w-50">
-                                            <span class="input-group-btn">
-                                                <button type="button"
-                                                    class="quantity-left-minus btn btn-light btn-number"
-                                                    data-type="minus">
-                                                    <svg width="16" height="16">
-                                                        <use xlink:href="#minus"></use>
+                                        </td>
+                                        <td class="py-4">
+                                            <div class="cart-remove">
+                                                <a href="#">
+                                                    <svg width="24" height="24">
+                                                        <use xlink:href="#trash"></use>
                                                     </svg>
-                                                </button>
-                                            </span>
-                                            <input type="text" id="quantity" name="quantity"
-                                                class="form-control input-number text-center" value="1">
-                                            <span class="input-group-btn">
-                                                <button type="button"
-                                                    class="quantity-right-plus btn btn-light btn-number"
-                                                    data-type="plus" data-field="">
-                                                    <svg width="16" height="16">
-                                                        <use xlink:href="#plus"></use>
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="total-price">
-                                            <span class="money text-dark">$870.00</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <div class="cart-remove">
-                                            <a href="#">
-                                                <svg width="24" height="24">
-                                                    <use xlink:href="#trash"></use>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -158,7 +125,16 @@
                                         <td data-title="Subtotal">
                                             <span class="price-amount amount text-dark ps-5">
                                                 <bdi>
-                                                    <span class="price-currency-symbol">$</span>2,370.00
+                                                    <span class="price-currency-symbol">
+                                                        {{ number_format(
+                                                            $cart->items->sum(function ($item) {
+                                                                return $item->quantity * ($item->productVariant->price_sale ?? $item->productVariant->price);
+                                                            }),
+                                                            0,
+                                                            ',',
+                                                            '.',
+                                                        ) }}₫
+                                                    </span>
                                                 </bdi>
                                             </span>
                                         </td>
@@ -168,7 +144,17 @@
                                         <td data-title="Total">
                                             <span class="price-amount amount text-dark ps-5">
                                                 <bdi>
-                                                    <span class="price-currency-symbol">$</span>2,370.00</bdi>
+                                                    <span class="price-currency-symbol">
+                                                        {{ number_format(
+                                                            $cart->items->sum(function ($item) {
+                                                                return $item->quantity * ($item->productVariant->price_sale ?? $item->productVariant->price);
+                                                            }),
+                                                            0,
+                                                            ',',
+                                                            '.',
+                                                        ) }}₫
+                                                    </span>
+                                                </bdi>
                                             </span>
                                         </td>
                                     </tr>

@@ -9,26 +9,12 @@
                             <!-- product-thumbnail-slider -->
                             <div class="swiper product-thumbnail-slider">
                                 <div class="swiper-wrapper ">
-                                    <div class="swiper-slide">
-                                        <img src="images/product-thumbnail-1.jpg" alt=""
-                                            class="thumb-image img-fluid">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="images/product-thumbnail-2.jpg" alt=""
-                                            class="thumb-image img-fluid">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="images/product-thumbnail-3.jpg" alt=""
-                                            class="thumb-image img-fluid">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="images/product-thumbnail-4.jpg" alt=""
-                                            class="thumb-image img-fluid">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img src="images/product-thumbnail-5.jpg" alt=""
-                                            class="thumb-image img-fluid">
-                                    </div>
+                                    @foreach ($product->galleries as $gallery)
+                                        <div class="swiper-slide">
+                                            <img src="{{ asset('storage/' . $gallery->image) }}" alt=""
+                                                class="thumb-image img-fluid">
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                             <!-- / product-thumbnail-slider -->
@@ -37,31 +23,15 @@
                             <!-- product-large-slider -->
                             <div class="swiper product-large-slider">
                                 <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-1.jpg">
-                                            <img src="images/product-large-1.jpg" alt="product-large" class="img-fluid">
+                                    @foreach ($product->galleries as $gallery)
+                                        <div class="swiper-slide">
+                                            <div class="image-zoom" data-scale="2.5"
+                                                data-image="{{ asset('storage/' . $gallery->image) }}">
+                                                <img src="{{ asset('storage/' . $gallery->image) }}" alt="product-large"
+                                                    class="img-fluid">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-2.jpg">
-                                            <img src="images/product-large-2.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-3.jpg">
-                                            <img src="images/product-large-3.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-4.jpg">
-                                            <img src="images/product-large-4.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-5.jpg">
-                                            <img src="images/product-large-5.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
+                                    @endforeach
                                 </div>
                                 <div class="swiper-pagination"></div>
                             </div>
@@ -72,7 +42,7 @@
                 <div class="col-lg-5">
                     <div class="product-info">
                         <div class="element-header">
-                            <h2 itemprop="name" class="display-6">Men's Casual Shoes</h2>
+                            <h2 itemprop="name" class="display-6">{{ $product['name'] }}</h2>
                             <div class="rating-container d-flex gap-0 align-items-center">
                                 <div class="rating" data-rating="1">
                                     <svg width="32" height="32" class="text-warning">
@@ -101,124 +71,122 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="product-price pt-3 pb-3">
-                            <strong class="text-primary display-6 fw-bold">$870.00</strong><del
-                                class="ms-2">$940.00</del>
-                        </div>
-                        <p>Justo, cum feugiat imperdiet nulla molestie ac vulputate scelerisque amet. Bibendum adipiscing
-                            platea blandit sit sed quam semper rhoncus. Diam ultrices maecenas consequat eu tortor orci,
-                            cras lectus mauris, cras egestas quam venenatis neque.</p>
-                        <div class="cart-wrap py-5">
-                            <div class="color-options pb-3">
-                                <div class="color-toggle" data-option-index="0">
-                                    <h6 class="item-title text-uppercase text-dark">Color:</h6>
-
-                                    <input type="radio" class="btn-check" name="options-color" id="option5"
-                                        autocomplete="off" checked>
-                                    <label class="btn" for="option5">Green</label>
-
-                                    <input type="radio" class="btn-check" name="options-color" id="option6"
-                                        autocomplete="off">
-                                    <label class="btn" for="option6">Orange</label>
-
-                                    <input type="radio" class="btn-check" name="options-color" id="option7"
-                                        autocomplete="off" disabled>
-                                    <label class="btn" for="option7">Red</label>
-
-                                    <input type="radio" class="btn-check" name="options-color" id="option8"
-                                        autocomplete="off">
-                                    <label class="btn" for="option8">Black</label>
-                                </div>
+                        @foreach ($product->variants as $variant)
+                            <div class="product-price pt-3 pb-3">
+                                <strong class="text-primary display-6 fw-bold">
+                                    {{ number_format($variant->price, 0, ',', '.') }}₫
+                                </strong>
+                                <del class="ms-2">
+                                    {{ number_format($variant->price_sale, 0, ',', '.') }}₫
+                                </del>
                             </div>
-                            <div class="swatch" data-option-index="1">
-                                <h6 class="item-title text-uppercase text-dark">Size:</h6>
-                                <input type="radio" class="btn-check" name="options-size" id="option9"
-                                    autocomplete="off" checked>
-                                <label class="btn" for="option9">XL</label>
+                            <div class="cart-wrap">
+                                <div class="color-options pb-3">
+                                    <div class="color-toggle" data-option-index="0">
+                                        <h6 class="item-title text-uppercase text-dark">Color:</h6>
 
-                                <input type="radio" class="btn-check" name="options-size" id="option10"
-                                    autocomplete="off">
-                                <label class="btn" for="option10">L</label>
+                                        <input type="radio" class="btn-check" name="options-color" id="option5"
+                                            autocomplete="off" name="color_id" value="green" checked>
+                                        <label class="btn" for="option5">Green</label>
 
-                                <input type="radio" class="btn-check" name="options-size" id="option11"
-                                    autocomplete="off" disabled>
-                                <label class="btn" for="option11">M</label>
+                                        <input type="radio" class="btn-check" name="options-color" id="option6"
+                                            autocomplete="off" name="color_id">
+                                        <label class="btn" for="option6">Orange</label>
 
-                                <input type="radio" class="btn-check" name="options-size" id="option12"
-                                    autocomplete="off">
-                                <label class="btn" for="option12">S</label>
-                            </div>
-                            <div class="product-quantity pt-3">
-                                <div class="stock-number text-dark"><em>2 in stock</em></div>
-                                <div class="stock-button-wrap">
+                                        <input type="radio" class="btn-check" name="options-color" id="option7"
+                                            autocomplete="off" name="color_id">
+                                        <label class="btn" for="option7">Red</label>
 
-                                    <div class="input-group product-qty" style="max-width: 150px;">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="quantity-left-minus btn btn-light btn-number"
-                                                data-type="minus" data-field="">
-                                                <svg width="16" height="16">
-                                                    <use xlink:href="#minus"></use>
-                                                </svg>
-                                            </button>
-                                        </span>
-                                        <input type="text" id="quantity" name="quantity"
-                                            class="form-control input-number text-center" value="1" min="1"
-                                            max="100">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="quantity-right-plus btn btn-light btn-number"
-                                                data-type="plus" data-field="">
-                                                <svg width="16" height="16">
-                                                    <use xlink:href="#plus"></use>
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </div>
-                                    <div class="qty-button d-flex flex-wrap pt-3">
-                                        <button type="submit"
-                                            class="btn btn-primary py-3 px-4 text-uppercase me-3 mt-3">Buy now</button>
-                                        <button type="submit" name="add-to-cart" value="1269"
-                                            class="btn btn-dark py-3 px-4 text-uppercase mt-3">Add to cart</button>
+                                        <input type="radio" class="btn-check" name="options-color" id="option8"
+                                            autocomplete="off" name="color_id">
+                                        <label class="btn" for="option8">Black</label>
                                     </div>
                                 </div>
+                                <div class="swatch" data-option-index="1">
+                                    <h6 class="item-title text-uppercase text-dark">Size:</h6>
+                                    <input type="radio" class="btn-check" name="options-size" id="option9" autocomplete="off"
+                                        checked>
+                                    <label class="btn" for="option9">XL</label>
+
+                                    <input type="radio" class="btn-check" name="options-size" id="option10" autocomplete="off">
+                                    <label class="btn" for="option10">L</label>
+
+                                    <input type="radio" class="btn-check" name="options-size" id="option11" autocomplete="off">
+                                    <label class="btn" for="option11">M</label>
+
+                                    <input type="radio" class="btn-check" name="options-size" id="option12" autocomplete="off">
+                                    <label class="btn" for="option12">S</label>
+                                </div>
+                                <div class="product-quantity pt-3">
+                                    <h6 class="item-title text-uppercase text-dark">Số lượng:</h6>
+                                    <div class="stock-button-wrap">
+
+                                        <div class="input-group product-qty" style="max-width: 150px;">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="quantity-left-minus btn btn-light btn-number"
+                                                    data-type="minus" data-field="">
+                                                    <svg width="16" height="16">
+                                                        <use xlink:href="#minus"></use>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                            <input type="text" id="quantity" name="quantity"
+                                                class="form-control input-number text-center" value="1" min="1" max="100">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="quantity-right-plus btn btn-light btn-number"
+                                                    data-type="plus" data-field="">
+                                                    <svg width="16" height="16">
+                                                        <use xlink:href="#plus"></use>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <div class="qty-button d-flex flex-wrap pt-3">
+                                            <button type="submit" class="btn btn-primary py-3 px-4 text-uppercase me-3 mt-3">Buy
+                                                now</button>
+                                            <button type="submit" name="add-to-cart" value="1269"
+                                                class="btn btn-dark py-3 px-4 text-uppercase mt-3">Add to cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
-                        </div>
-                        <div class="meta-product py-2">
-                            <div class="meta-item d-flex align-items-baseline">
-                                <h6 class="item-title no-margin pe-2">SKU:</h6>
-                                <ul class="select-list list-unstyled d-flex">
-                                    <li data-value="S" class="select-item">1223</li>
-                                </ul>
+                            <div class="meta-product py-2">
+                                <div class="meta-item d-flex align-items-baseline">
+                                    <h6 class="item-title no-margin pe-2">SKU:</h6>
+                                    <ul class="select-list list-unstyled d-flex">
+                                        <li data-value="S" class="select-item">{{ $variant->sku }}</li>
+                                    </ul>
+                                </div>
+                                <div class="meta-item d-flex align-items-baseline">
+                                    <h6 class="item-title no-margin pe-2">Category:</h6>
+                                    <ul class="select-list list-unstyled d-flex">
+                                        <li data-value="S" class="select-item">
+                                            <a href="#">{{ $product->category->name ?? '-' }}</a>
+                                        </li>
+                                    </ul>
+                                    {{--
+                                </div>
+                                <div class="meta-item d-flex align-items-baseline">
+                                    <h6 class="item-title no-margin pe-2">Tags:</h6>
+                                    <ul class="select-list list-unstyled d-flex">
+                                        <li data-value="S" class="select-item">
+                                            <a href="#">Classic</a>,
+                                        </li>
+                                        <li data-value="S" class="select-item">
+                                            <a href="#"> Modern</a>
+                                        </li>
+                                    </ul>
+                                </div> --}}
                             </div>
-                            <div class="meta-item d-flex align-items-baseline">
-                                <h6 class="item-title no-margin pe-2">Category:</h6>
-                                <ul class="select-list list-unstyled d-flex">
-                                    <li data-value="S" class="select-item">
-                                        <a href="#">Watch</a>,
-                                    </li>
-                                    <li data-value="S" class="select-item">
-                                        <a href="#"> Screen touch</a>,
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="meta-item d-flex align-items-baseline">
-                                <h6 class="item-title no-margin pe-2">Tags:</h6>
-                                <ul class="select-list list-unstyled d-flex">
-                                    <li data-value="S" class="select-item">
-                                        <a href="#">Classic</a>,
-                                    </li>
-                                    <li data-value="S" class="select-item">
-                                        <a href="#"> Modern</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="product-info-tabs py-5">
+    <section class="product-info-tabs">
         <div class="container-fluid">
             <div class="row">
                 <div class="d-flex flex-column flex-md-row align-items-start gap-5">
@@ -228,31 +196,28 @@
                             data-bs-target="#v-pills-description" type="button" role="tab"
                             aria-controls="v-pills-description" aria-selected="true">Description</button>
                         <button class="nav-link text-start" id="v-pills-additional-tab" data-bs-toggle="pill"
-                            data-bs-target="#v-pills-additional" type="button" role="tab"
-                            aria-controls="v-pills-additional" aria-selected="false">Additional Information</button>
+                            data-bs-target="#v-pills-additional" type="button" role="tab" aria-controls="v-pills-additional"
+                            aria-selected="false">Additional Information</button>
                         <button class="nav-link text-start" id="v-pills-reviews-tab" data-bs-toggle="pill"
-                            data-bs-target="#v-pills-reviews" type="button" role="tab"
-                            aria-controls="v-pills-reviews" aria-selected="false">Customer Reviews</button>
+                            data-bs-target="#v-pills-reviews" type="button" role="tab" aria-controls="v-pills-reviews"
+                            aria-selected="false">Customer Reviews</button>
                     </div>
                     <div class="tab-content" id="v-pills-tabContent">
                         <div class="tab-pane fade show active" id="v-pills-description" role="tabpanel"
                             aria-labelledby="v-pills-description-tab" tabindex="0">
                             <h5>Product Description</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis
-                                eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit,
-                                posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris
-                                sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh.
-                                Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus.</p>
-                            <ul style="list-style-type:disc;" class="list-unstyled ps-4">
+                            <p style="white-space: pre-line;">{{ $product['description'] }}</p>
+                            {{-- <ul style="list-style-type:disc;" class="list-unstyled ps-4">
                                 <li>Donec nec justo eget felis facilisis fermentum.</li>
                                 <li>Suspendisse urna viverra non, semper suscipit pede.</li>
                                 <li>Aliquam porttitor mauris sit amet orci.</li>
-                            </ul>
-                            <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis
+                            </ul> --}}
+                            {{-- <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat
+                                mattis
                                 eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit,
                                 posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris
                                 sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh.
-                                Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                                Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p> --}}
                         </div>
                         <div class="tab-pane fade" id="v-pills-additional" role="tabpanel"
                             aria-labelledby="v-pills-additional-tab" tabindex="0">
@@ -269,8 +234,7 @@
                                 <div class="col-lg-6 d-flex flex-wrap gap-3">
                                     <div class="col-md-2">
                                         <div class="image-holder">
-                                            <img src="images/reviewer-1.jpg" alt="review"
-                                                class="img-fluid rounded-circle">
+                                            <img src="images/reviewer-1.jpg" alt="review" class="img-fluid rounded-circle">
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -315,8 +279,7 @@
                                 <div class="col-lg-6 d-flex flex-wrap gap-3">
                                     <div class="col-md-2">
                                         <div class="image-holder">
-                                            <img src="images/reviewer-2.jpg" alt="review"
-                                                class="img-fluid rounded-circle">
+                                            <img src="images/reviewer-2.jpg" alt="review" class="img-fluid rounded-circle">
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -433,363 +396,86 @@
             </div>
         </div>
     </section>
+    @if ($relatedProducts->count())
+        <section id="related-products" class="product-store position-relative py-5">
+            <div class="container-fluid">
 
-    <section id="related-products" class="product-store position-relative py-5">
-        <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
 
-            <div class="row">
-                <div class="col-md-12">
+                        <div class="section-header d-flex justify-content-between my-5">
 
-                    <div class="section-header d-flex justify-content-between my-5">
+                            <h2 class="section-title">Related Products</h2>
 
-                        <h2 class="section-title">Related Products</h2>
-
-                        <div class="d-flex align-items-center">
-                            <div class="swiper-buttons">
-                                <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
-                                <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="row flex">
-                {{-- <div class="col-md-12 flex"> --}}
-
-                <div class="products-carousel swiper">
-                    <div class="swiper-wrapper">
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <span class="badge bg-success position-absolute m-3">-30%</span>
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-1.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Super Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <span class="badge bg-success position-absolute m-3">-30%</span>
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-2.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Leather Brown</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <span class="badge bg-success position-absolute m-3">-30%</span>
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-3.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Trending Shoes Party Wear For Men</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-outline"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-4.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Sports Shoes Training & Gym Shoes For Men</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-5.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Kids Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-6.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Super Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-7.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Super Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-5.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Super Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-6.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Super Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="swiper-slide">
-                            <div class="product-item">
-                                <figure>
-                                    <a href="single-product.html" title="Product Title">
-                                        <img src="images/product-thumb-7.png" alt="Product Thumbnail" class="img-fluid">
-                                    </a>
-                                </figure>
-                                <p>Super Shoes</p>
-                                <div class="d-flex justify-content-between">
-                                    <p><span class="text-dark">$18.00</span><del>$23</del><span
-                                            class="text-success">-30%</span></p>
-                                    <span class="d-flex">
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                    </span>
+                            <div class="d-flex align-items-center">
+                                <div class="swiper-buttons">
+                                    <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
+                                    <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
                                 </div>
                             </div>
                         </div>
 
                     </div>
-                    {{-- </div> --}}
-                    <!-- / products-carousel -->
-
                 </div>
-            </div>
+                <div class="row flex">
+                    {{-- <div class="col-md-12 flex"> --}}
 
-        </div>
-    </section>
+                        <div class="products-carousel swiper">
+                            <div class="swiper-wrapper">
+                                @foreach ($relatedProducts as $item)
+                                    <div class="swiper-slide">
+                                        <div class="product-item">
+                                            <span class="badge bg-success position-absolute m-3">-30%</span>
+                                            <a class="text-decoration-none" href=" {{ route('detail', ['slug' => $item->slug]) }}"
+                                                title="Product Title">
+                                                <figure>
+                                                    <img src="{{ asset('storage/' . $item->img_thumb) }}" alt="Product Thumbnail"
+                                                        class="img-fluid">
+                                                </figure>
+                                                <p class="text-ellipsis-2">{{$item->name}}</p>
+                                            </a>
+                                            <div class="justify-content-between">
+                                                <p>
+                                                    <span class="text-dark">
+                                                        {{ number_format($item->variants->first()->price, 0, ',', '.') }}₫
+                                                    </span>
+                                                    <del>
+                                                        {{ number_format($item->variants->first()->price_sale, 0, ',', '.') }}₫
+                                                    </del>
+                                                    <span class="text-success"> -30%</span>
+                                                </p>
+
+                                                <span class="d-flex">
+                                                    <svg width="18" height="18" class="text-warning">
+                                                        <use xlink:href="#star-solid"></use>
+                                                    </svg>
+                                                    <svg width="18" height="18" class="text-warning">
+                                                        <use xlink:href="#star-solid"></use>
+                                                    </svg>
+                                                    <svg width="18" height="18" class="text-warning">
+                                                        <use xlink:href="#star-solid"></use>
+                                                    </svg>
+                                                    <svg width="18" height="18" class="text-warning">
+                                                        <use xlink:href="#star-solid"></use>
+                                                    </svg>
+                                                    <svg width="18" height="18" class="text-warning">
+                                                        <use xlink:href="#star-solid"></use>
+                                                    </svg>
+
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            {{--
+                        </div> --}}
+                        <!-- / products-carousel -->
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    @endif
 @endsection

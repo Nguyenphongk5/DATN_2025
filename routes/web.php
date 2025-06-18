@@ -5,6 +5,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+// =======================================ADMIN================================================
+
+// =======================================CLIENT================================================
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CartController as ClientCartController;
+
+
+
 Route::get('/', function () {
     return view('user.index');
 });
@@ -21,6 +29,11 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('users', UserController::class);
     Route::resource('home', HomeController::class);
+
+    // =======================================CLIENT================================================
+    Route::get('/detail/{slug}', [ClientProductController::class, 'detail'])->name('detail');
+    Route::resource('/cart', ClientCartController::class);
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

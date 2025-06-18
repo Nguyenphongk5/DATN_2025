@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,8 +13,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //
-        return view('user.index');
+        $products = Product::with(['category', 'brand', 'firstVariant'])
+            ->where('is_active', 1)
+            ->paginate(10);
+
+        return view('user.index', compact('products'));
     }
 
     /**
@@ -23,7 +27,6 @@ class HomeController extends Controller
     {
         //
         return view('user.product-detail');
-
     }
 
     /**

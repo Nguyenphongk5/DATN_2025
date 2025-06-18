@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -27,8 +28,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="{{ asset('js/plugins.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
+
+    <style>
+        .text-ellipsis-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            /* Số dòng tối đa */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 
 <body>
@@ -186,7 +199,8 @@
                             </select>
                         </div>
                         <div class="col-11 col-md-7">
-                            <form id="search-form" class="text-center" action="{{ route('home.index') }}" method="post">
+                            <form id="search-form" class="text-center" action="{{ route('home.index') }}"
+                                method="post">
                                 <input type="text" class="form-control border-0 bg-transparent"
                                     placeholder="Search for more than 20,000 products">
                             </form>
@@ -207,14 +221,18 @@
                         <li>
                             @auth
                                 <div class="dropdown">
-                                    <a href="#" class="rounded-circle bg-light p-2 mx-1 dropdown-toggle" data-bs-toggle="dropdown">
+                                    <a href="#" class="rounded-circle bg-light p-2 mx-1 dropdown-toggle"
+                                        data-bs-toggle="dropdown">
                                         <svg width="24" height="24" viewBox="0 0 24 24">
                                             <use xlink:href="#user"></use>
                                         </svg>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Xem hồ sơ</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Xem hồ sơ</a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li>
                                             <form method="POST" action="{{ route('logout') }}">
                                                 @csrf
@@ -239,8 +257,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                            <a href="{{ route('cart.index') }}" class="rounded-circle bg-light p-2 mx-1">
                                 <svg width="24" height="24" viewBox="0 0 24 24">
                                     <use xlink:href="#cart"></use>
                                 </svg>
