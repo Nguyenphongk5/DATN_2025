@@ -1,71 +1,76 @@
 @extends('layouts.user')
 @section('content')
-  <section>
-    <div>
-      <div
-        class="slideshow slide-in arrow-absolute text-white" style="height: 70vh;">
+
+<!-- Thêm Swiper CSS -->
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<section>
+  <div>
+    <div class="slideshow slide-in arrow-absolute text-white" style="height: 70vh;">
+      <div class="swiper-container">
         <div class="swiper-wrapper">
-
-          <div class="swiper-slide jarallax swiper-slide-next">
-
-            <img src="images/slide-2.jpg" class="jarallax-img" alt="slideshow">
-            <div class="banner-content w-100">
-              <div class="container-fluid">
-                <div class="row justify-content-center text-center">
-                  <div class="col-md-10 pt-5">
-                    <h2 class="display-xl text-white ls-0 mt-5 pt-5 txt-fx slide-up">Sports Collection</h2>
+          @foreach($banners as $banner)
+            <div class="swiper-slide jarallax">
+              <img src="{{ asset($banner->image) }}" class="jarallax-img" alt="slideshow">
+              <div class="banner-content w-100">
+                <div class="container-fluid">
+                  <div class="row justify-content-center text-center">
+                    <div class="col-md-10 pt-5">
+                      <h2 class="display-xl text-white ls-0 mt-5 pt-5 txt-fx slide-up">{{ $banner->title }}</h2>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-          </div>
-          <div class="swiper-slide jarallax">
-
-            <img src="images/slide-3.jpg" class="jarallax-img" alt="slideshow">
-            <div class="banner-content w-100">
-              <div class="container-fluid">
-                <div class="row justify-content-center text-center">
-                  <div class="col-md-10 pt-5">
-                    <h2 class="display-xl text-white ls-0 mt-5 pt-5 txt-fx slide-up">Casual Shoes</h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="swiper-slide jarallax">
-
-            <img src="images/slide-4.jpg" class="jarallax-img" alt="slideshow">
-            <div class="banner-content w-100">
-              <div class="container-fluid">
-                <div class="row justify-content-center text-center">
-                  <div class="col-md-10 pt-5">
-                    <h2 class="display-xl text-white ls-0 mt-5 pt-5 txt-fx slide-up">Clearance Sale</h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
+          @endforeach
         </div>
-        <div class="pagination-wrapper position-absolute">
-          <div class="container">
-            <div class="slideshow-swiper-pagination text-center"></div>
-          </div>
-        </div>
-        <div class="icon-arrow icon-arrow-left text-white"><svg width="50" height="50" viewBox="0 0 24 24">
-            <use xlink:href="#arrow-left"></use>
-          </svg></div>
-        <div class="icon-arrow icon-arrow-right text-white"><svg width="50" height="50" viewBox="0 0 24 24">
-            <use xlink:href="#arrow-right"></use>
-          </svg></div>
-
+        <!-- Pagination và Navigation -->
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- Thêm Swiper JavaScript -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  // Khởi tạo Swiper
+  var swiper = new Swiper('.swiper-container', {
+    loop: true,  // Lặp lại các slide
+    autoplay: {
+      delay: 3000, // Tự động chuyển slide sau mỗi 3 giây
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',  // Nút next
+      prevEl: '.swiper-button-prev',  // Nút previous
+    },
+    pagination: {
+      el: '.swiper-pagination', // Các chấm pagination
+      clickable: true,  // Bấm vào các chấm để chuyển slide
+    },
+  });
+</script>
+          </section>
+          </div>
+          <div class="pagination-wrapper position-absolute">
+            <div class="container">
+              <div class="slideshow-swiper-pagination text-center"></div>
+            </div>
+          </div>
+          <div class="icon-arrow icon-arrow-left text-white">
+            <svg width="50" height="50" viewBox="0 0 24 24">
+              <use xlink:href="#arrow-left"></use>
+            </svg>
+          </div>
+          <div class="icon-arrow icon-arrow-right text-white">
+            <svg width="50" height="50" viewBox="0 0 24 24">
+              <use xlink:href="#arrow-right"></use>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
 
   <section class="features" style="position:relative; margin-top: -100px; z-index: 2;">
     <div class="container-lg">
