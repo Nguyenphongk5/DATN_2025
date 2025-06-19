@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Product_VariantController;
 use App\Http\Controllers\ProductController;
@@ -65,6 +67,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
 
     Route::resource('product_variants', Product_VariantController::class);
+
+    Route::resource('brands', BrandController::class);
+
+    Route::resource('blogs', BlogController::class);
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');

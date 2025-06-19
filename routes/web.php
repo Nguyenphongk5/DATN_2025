@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Product_VariantController;
 use App\Http\Controllers\ProductController;
@@ -25,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('products',ProductController::class);
     Route::resource('product_variants', Product_VariantController::class);
+    Route::resource('brands', BrandController::class);
+    Route::resource('blogs', BlogController::class);
 });
 
 require __DIR__.'/auth.php';
