@@ -120,40 +120,41 @@
     </div>
   </section>
 
-  <section class="py-4">
+ <section class="py-4">
     <div class="container-fluid">
-      <div class="row">
-
-        <div class="col-md-6">
-          <div class="banner-ad bg-secondary-subtle mb-3"
-            style="background: url('images/ad-image-1.png');background-repeat: no-repeat;background-position: right bottom;">
-            <div class="banner-content p-5">
-
-              <div class="fs-6 pt-5">Upto 25% Off</div>
-              <h3 class="banner-title">Sports Shoes</h3>
-              <a href="#" class="btn btn-dark text-uppercase">Show Now</a>
-
-            </div>
-
-          </div>
+        <div class="row">
+            @foreach ($latestProducts as $product)
+                <div class="col-md-6">
+                    <div class="banner-ad bg-secondary-subtle mb-3"
+                        style="background: url('{{ asset($product->image) }}'); background-repeat: no-repeat; background-position: right bottom;">
+                        <div class="banner-content p-5">
+                            <!-- Thêm badge New cho sản phẩm mới -->
+                            @if($product->created_at >= now()->subDays(7)) <!-- Kiểm tra nếu sản phẩm được tạo trong vòng 7 ngày -->
+                                <span class="new-arrival-badge">New Arrival</span> <!-- Áp dụng lớp CSS cho badge -->
+                            @endif
+                            <h3 class="banner-title">{{ $product->name }}</h3>
+                            <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark text-uppercase">Show Now</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
-        <div class="col-md-6">
-          <div class="banner-ad bg-secondary-subtle"
-            style="background: url('images/ad-image-2.png');background-repeat: no-repeat;background-position: right bottom;">
-            <div class="banner-content p-5">
-
-              <div class="fs-6 pt-5">Upto 25% Off</div>
-              <h3 class="banner-title">Kids Collection</h3>
-              <a href="#" class="btn btn-dark text-uppercase">Show Now</a>
-
-            </div>
-
-          </div>
-        </div>
-
-      </div>
     </div>
-  </section>
+</section>
+<style>
+  /* CSS cho badge New Arrival */
+.new-arrival-badge {
+    background-color: #FF5733;  /* Màu đỏ đậm */
+    color: white;
+    padding: 5px 10px;  /* Làm cho badge nhỏ gọn hơn */
+    font-size: 12px;  /* Giảm kích thước font chữ */
+    border-radius: 10px;  /* Bo góc badge để trông mềm mại hơn */
+    position: absolute;
+    top: 10px;  /* Đặt badge ở góc trên cùng */
+    left: 10px;  /* Đặt ở góc trái */
+    z-index: 10;  /* Đảm bảo badge ở trên các phần khác */
+}
+</style>
 
   <section class="py-5">
     <div class="container-fluid">

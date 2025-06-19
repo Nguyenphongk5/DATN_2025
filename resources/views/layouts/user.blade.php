@@ -185,12 +185,10 @@
                                 <option>Kids</option>
                             </select>
                         </div>
-                        <div class="col-11 col-md-7">
-                            <form id="search-form" class="text-center" action="{{ route('home.index') }}" method="post">
-                                <input type="text" class="form-control border-0 bg-transparent"
-                                    placeholder="Search for more than 20,000 products">
-                            </form>
-                        </div>
+                     <form id="search-form" class="text-center" action="{{ route('home.index') }}" method="GET">
+    <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" value="{{ request('search') }}">
+    <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
                         <div class="col-1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24">

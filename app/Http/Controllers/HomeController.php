@@ -10,11 +10,15 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-          $banners = DB::table('banners')->where('is_active', true)->get();
-          return view('user.index', compact('banners'));
-    }
+            public function index()
+            {
+                $latestProducts = DB::table('products')
+                            ->orderBy('created_at', 'desc')
+                            ->take(5)
+                            ->get();
+                $banners = DB::table('banners')->where('is_active', true)->get();
+                return view('user.index', compact('banners','latestProducts'));
+            }
 
     /**
      * Show the form for creating a new resource.
