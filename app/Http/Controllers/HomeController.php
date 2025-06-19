@@ -12,8 +12,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //
-        return view('user.index');
+          $banners = DB::table('banners')->where('is_active', true)->get();
+          return view('user.index', compact('banners'));
     }
 
     /**
