@@ -7,10 +7,11 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/', function () {
-    return view('welcome');
-});
+
+// Định nghĩa route cho tìm kiếm sản phẩm
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
+// Định nghĩa route cho chi tiết sản phẩm
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/dashboard', function () {
     return view('admin.index');

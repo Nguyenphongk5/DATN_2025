@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -10,15 +12,21 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-            public function index()
-            {
-                $latestProducts = DB::table('products')
-                            ->orderBy('created_at', 'desc')
-                            ->take(5)
-                            ->get();
-                $banners = DB::table('banners')->where('is_active', true)->get();
-                return view('user.index', compact('banners','latestProducts'));
-            }
+ public function index()
+    {
+        // Lấy các banner đang hoạt động
+        $banners = DB::table('banners')->where('is_active', true)->get();
+
+        // Lấy sản phẩm mới nhất (giả sử là 5 sản phẩm mới nhất)
+        $latestProducts = Product::orderBy('created_at', 'desc')->take(5)->get();
+
+        // Lấy tất cả các danh mục để lọc
+        $categories = Category::all();
+
+        // Trả về view với các thông tin cần thiết
+        return view('user.index', compact('banners', 'latestProducts', 'categories'));
+    }
+
 
     /**
      * Show the form for creating a new resource.

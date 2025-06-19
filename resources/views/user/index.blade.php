@@ -142,18 +142,7 @@
     </div>
 </section>
 <style>
-  /* CSS cho badge New Arrival */
-.new-arrival-badge {
-    background-color: #FF5733;  /* Màu đỏ đậm */
-    color: white;
-    padding: 5px 10px;  /* Làm cho badge nhỏ gọn hơn */
-    font-size: 12px;  /* Giảm kích thước font chữ */
-    border-radius: 10px;  /* Bo góc badge để trông mềm mại hơn */
-    position: absolute;
-    top: 10px;  /* Đặt badge ở góc trên cùng */
-    left: 10px;  /* Đặt ở góc trái */
-    z-index: 10;  /* Đảm bảo badge ở trên các phần khác */
-}
+  
 </style>
 
   <section class="py-5">
