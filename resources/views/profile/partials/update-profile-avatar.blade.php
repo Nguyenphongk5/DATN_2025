@@ -1,34 +1,49 @@
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Avater') }}
-        </h2>
+<section class="mb-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <h5 class="card-title fw-bold text-primary">🖼️ Update Avatar</h5>
+            <p class="card-text text-muted">Upload a new profile picture for your account.</p>
 
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Update your avatar profile information.') }}
-        </p>
-    </header>
+            <form method="POST" action="{{ route('profile.avatar') }}" enctype="multipart/form-data" class="mt-4">
+                @csrf
+                @method('put')
 
-    <form method="post" action="{{ route('profile.avatar') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
-        @csrf
-        @method('put')
+                <!-- Avatar preview -->
+                <div class="mb-4 text-center">
+                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="rounded-circle shadow" width="150" height="150" id="avatar-preview">
+                </div>
 
-        <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" width="200" height="200"
-            class="rounded-full mb-4">
+                <!-- File input -->
+                <div class="mb-4">
+                    <label for="avatar" class="form-label fw-semibold">Choose new avatar</label>
+                    <input class="form-control @error('avatar') is-invalid @enderror" type="file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(event)">
+                    @error('avatar')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
 
-        <div>
-            <x-input-label for="avatar" :value="__('Avatar')" />
-            <x-text-input id="avatar" name="avatar" type="file" class="mt-1 block w-full" :value="old('avatar', $user->avatar)"
-                required autofocus autocomplete="avatar" />
-            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+                <!-- Submit -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Save</button>
+
+                    @if (session('status') === 'avatar-updated')
+                        <span class="text-success small fw-semibold">&#x2714; Avatar updated!</span>
+                    @endif
+                </div>
+            </form>
         </div>
-        <div>
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-
-            @if (session('status') === 'avatar-updated')
-                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600">{{ __('Saved.') }}</p>
-            @endif
-        </div>
-    </form>
+    </div>
 </section>
+
+@push('scripts')
+<script>
+    function previewAvatar(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const output = document.getElementById('avatar-preview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+@endpush

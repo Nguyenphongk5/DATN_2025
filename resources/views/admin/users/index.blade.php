@@ -39,10 +39,10 @@
                                         <td class="px-6 py-4">{{ $user->name }}</td>
                                         <td class="px-6 py-4">{{ $user->email }}</td>
                                         <td class="px-6 py-4 capitalize">
-                                            @if ($user->role == 0)
+                                            @if ($user->role == 'user')
                                                 <span class="text-green-600">Người Dùng</span>
-                                            @elseif ($user->role == 1)
-                                                <span class="text-blue-600">Nhân ViênViên</span>
+                                            @elseif ($user->role == 'staff')
+                                                <span class="text-blue-600">Nhân Viên</span>
                                             @else
                                                 <span class="text-red-600">Quản Trị Viên</span>
                                             @endif

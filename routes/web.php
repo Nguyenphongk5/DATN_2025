@@ -1,11 +1,23 @@
 <?php
 
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Product_VariantController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// <<<<<<< UI-Improved-Profile
+// Route::get('/', function () {
+//     return view('user.index');
+// });
+//     Route::resource('home', HomeController::class);
+
+// =======
+// Route::get('/', [HomeController::class, 'index'])->name('home');
+// >>>>>>> main
 Route::get('/dashboard', function () {
     return view('admin.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -17,7 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('users', UserController::class);
-    Route::resource('home', HomeController::class);
+    Route::resource('products',ProductController::class);
+    Route::resource('product_variants', Product_VariantController::class);
+    Route::resource('brands', BrandController::class);
+    Route::resource('blogs', BlogController::class);
 });
 
 require __DIR__.'/auth.php';
