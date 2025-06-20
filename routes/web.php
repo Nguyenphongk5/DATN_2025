@@ -7,6 +7,8 @@ use App\Http\Controllers\Product_VariantController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
+
 use Illuminate\Support\Facades\Route;
 
 // <<<<<<< UI-Improved-Profile
@@ -33,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('product_variants', Product_VariantController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
+    Route::resource('carts', CartController::class);
+
 });
 
 require __DIR__.'/auth.php';
