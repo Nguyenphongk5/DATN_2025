@@ -11,10 +11,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // <<<<<<< UI-Improved-Profile
-// Route::get('/', function () {
-//     return view('user.index');
-// });
-//     Route::resource('home', HomeController::class);
+Route::get('/', function () {
+    return view('user.index');
+});
+    Route::resource('home', HomeController::class);
 
 // =======
 // Route::get('/', [HomeController::class, 'index'])->name('home');
