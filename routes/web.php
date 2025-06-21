@@ -16,7 +16,7 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 Route::get('/dashboard', function () {
     return view('admin.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::resource('home', HomeController::class);
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('users', UserController::class);
-    Route::resource('home', HomeController::class);
+
 });
 
 require __DIR__.'/auth.php';

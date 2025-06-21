@@ -34,7 +34,8 @@ class HomeController extends Controller
     public function create()
     {
         //
-        return view('user.product-detail');
+        $categories = Category::all();
+        return view('user.product-detail', compact('categories'));
 
     }
 
