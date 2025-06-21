@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -102,5 +103,11 @@ class Product_VariantController extends Controller
     public function destroy(string $id)
     {
         //
+        $productVariant = DB::table('product_variants')->where('id', $id)->first();
+        if (!$productVariant) {
+            return redirect()->route('product_variants.index')->with('error', 'Product variant not found.');
+        }
+        DB::table('product_variants')->where('id', $id)->delete();
+        return redirect()->route('product_variants.index')->with('success', 'Product variant deleted successfully.');
     }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('size');
             $table->string('color_name');
             $table->string('hex_code', 7);
-            $table->integer('quantity');
+            $table->integer('quantity'); // Quantity in stock
             $table->decimal('price', 10, 2);
             $table->decimal('price_sale', 10, 2)->nullable();
             $table->timestamps();
