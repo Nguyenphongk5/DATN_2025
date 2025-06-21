@@ -43,9 +43,9 @@
                     <!-- Kích thước -->
                     <div class="mb-4">
                         <label for="size" class="block text-gray-700 font-medium mb-1">Kích thước <span class="text-red-500">*</span></label>
-                        <input type="text" id="size" name="size" value="{{ old('size', $productVariant->size) }}" required
+                        <input type="number" id="size" name="size" value="{{ old('size', $productVariant->size) }}" required
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('size') border-red-500 @enderror"
-                            placeholder="Ví dụ: S, M, L, XL, 39, 40, 41...">
+                            placeholder="Ví dụ: 39">
                         @error('size')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror

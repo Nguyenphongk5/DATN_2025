@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\BrandController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Product_VariantController;
-use App\Http\Controllers\ProductController;
+
+use App\Http\Controllers\Admin\Product_VariantController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -39,7 +40,7 @@ class Product_VariantController extends Controller
         //
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'size' => 'required|string|max:50',
+            'size' => 'required|integer|min:0',
             'color_name' => 'required|string|max:50',
             'hex_code' => 'required|string|max:7',
             'quantity' => 'required|integer|min:0',
@@ -85,7 +86,7 @@ class Product_VariantController extends Controller
         //
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'size' => 'required|string|max:50',
+            'size' => 'required|integer|min:0',
             'color_name' => 'required|string|max:50',
             'hex_code' => 'required|string|max:7',
             'quantity' => 'required|integer|min:0',
@@ -102,5 +103,11 @@ class Product_VariantController extends Controller
     public function destroy(string $id)
     {
         //
+        $productVariant = DB::table('product_variants')->where('id', $id)->first();
+        if (!$productVariant) {
+            return redirect()->route('product_variants.index')->with('error', 'Product variant not found.');
+        }
+        DB::table('product_variants')->where('id', $id)->delete();
+        return redirect()->route('product_variants.index')->with('success', 'Product variant deleted successfully.');
     }
 }
