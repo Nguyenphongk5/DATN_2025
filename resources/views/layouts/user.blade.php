@@ -174,23 +174,32 @@
                         </a>
                     </div>
                 </div>
+<div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
+    <div class="search-bar row bg-light p-2 my-2 rounded-4">
+        <!-- Dropdown để chọn danh mục -->
+        <div class="col-md-4 d-none d-md-block">
+            <form id="search-form" class="d-flex" action="{{ route('products.index') }}" method="GET">
+                <select name="category" class="form-select border-0 bg-transparent">
+                    <option value="">All Categories</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+        </div>
 
-                <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
-                    <div class="search-bar row bg-light p-2 my-2 rounded-4">
-                        <div class="col-md-4 d-none d-md-block">
-                            <select class="form-select border-0 bg-transparent">
-                                <option>All Categories</option>
-                                <option>Men</option>
-                                <option>Women</option>
-                                <option>Kids</option>
-                            </select>
-                        </div>
-                        <div class="col-11 col-md-7">
-                            <form id="search-form" class="text-center" action="{{ route('home.index') }}" method="post">
-                                <input type="text" class="form-control border-0 bg-transparent"
-                                    placeholder="Search for more than 20,000 products">
-                            </form>
-                        </div>
+        <!-- Form tìm kiếm theo tên sản phẩm -->
+        <div class="col-md-8 d-flex">
+            <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" value="{{ request('search') }}">
+            <button type="submit" class="btn btn-primary ms-2">Search</button>
+        </div>
+        </form>
+    </div>
+</div>
+
+
+
                         <div class="col-1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24">

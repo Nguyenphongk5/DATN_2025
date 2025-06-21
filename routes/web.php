@@ -15,14 +15,11 @@ Route::get('/', function () {
     return view('user.index');
 });
     Route::resource('home', HomeController::class);
-
-// =======
-// Route::get('/', [HomeController::class, 'index'])->name('home');
-// >>>>>>> main
+Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
 Route::get('/dashboard', function () {
     return view('admin.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::resource('home', HomeController::class);
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

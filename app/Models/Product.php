@@ -22,5 +22,9 @@ class Product extends Model
         'view',
         'is_active'
     ];
-    
+    // Quan hệ với Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
