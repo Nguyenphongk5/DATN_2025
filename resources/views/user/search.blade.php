@@ -10,8 +10,8 @@
           <div class="col-md-4">
             <div class="product-item">
               <figure>
-                <a href="{{ route('product.show', $product->id) }}" title="{{ $product->name }}">
-                  <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="img-fluid">
+                <a href="{{ route('home.show', $product->id) }}" title="{{ $product->name }}">
+                  <img src="{{ asset('storage/'.$product->img_thumb) }}" alt="{{ $product->name }}" class="img-fluid">
                 </a>
               </figure>
               <span>{{ $product->name }}</span>

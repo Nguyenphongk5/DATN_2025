@@ -154,7 +154,7 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">Search</span>
                 </h4>
-                <form role="search" action="{{ route('home.index') }}" method="get" class="d-flex mt-3 gap-0">
+                <form role="search" action="{{ route('home.search') }}" method="get" class="d-flex mt-3 gap-0">
                     <input class="form-control rounded-start rounded-0 bg-light" type="email"
                         placeholder="What are you looking for?" aria-label="What are you looking for?">
                     <button class="btn btn-dark rounded-end rounded-0" type="submit">Search</button>
@@ -174,33 +174,36 @@
                         </a>
                     </div>
                 </div>
-<div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
-    <div class="search-bar row bg-light p-2 my-2 rounded-4">
-        <!-- Dropdown để chọn danh mục -->
-        <div class="col-md-4 d-none d-md-block">
-            <form id="search-form" class="d-flex" action="{{ route('products.index') }}" method="GET">
-                <select name="category" class="form-select border-0 bg-transparent">
-                    <option value="">All Categories</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-        </div>
+                <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
+                    <div class="search-bar row bg-light p-2 my-2 rounded-4">
+                        <!-- Dropdown để chọn danh mục -->
+                        <div class="col-md-4 d-none d-md-block">
+                            <form id="search-form" class="d-flex" action="{{ route('home.search') }}"
+                                method="GET">
+                                <select name="category" class="form-select border-0 bg-transparent">
+                                    <option value="">All Categories</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}"
+                                            {{ request('category') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                                <!-- Form tìm kiếm theo tên sản phẩm -->
+                                <div class="col-md-8 d-flex">
+                                    <input type="text" name="search" class="form-control border-0 bg-transparent"
+                                        placeholder="Search for more than 20,000 products"
+                                        value="{{ request('search') }}">
+                                    <button type="submit" class="btn btn-primary ms-2">Search</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
-        <!-- Form tìm kiếm theo tên sản phẩm -->
-        <div class="col-md-8 d-flex">
-            <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" value="{{ request('search') }}">
-            <button type="submit" class="btn btn-primary ms-2">Search</button>
-        </div>
-        </form>
-    </div>
-</div>
 
 
-
-                        <div class="col-1">
+                    {{-- <div class="col-1">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -208,157 +211,171 @@
                             </svg>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
-                <div
-                    class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
-                    <ul class="d-flex justify-content-end list-unstyled m-0">
-                        <li>
-                            @auth
-                                <div class="dropdown">
-                                    <a href="#" class="rounded-circle bg-light p-2 mx-1 dropdown-toggle" data-bs-toggle="dropdown">
+                    <div
+                        class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
+                        <ul class="d-flex justify-content-end list-unstyled m-0">
+                            <li>
+                                @auth
+                                    <div class="dropdown">
+                                        <a href="#" class="rounded-circle bg-light p-2 mx-1 dropdown-toggle"
+                                            data-bs-toggle="dropdown">
+                                            <svg width="24" height="24" viewBox="0 0 24 24">
+                                                <use xlink:href="#user"></use>
+                                            </svg>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Xem hồ sơ</a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <form method="POST" action="{{ route('logout') }}">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item">Đăng xuất</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                @else
+                                    <a href="{{ route('login') }}" class="rounded-circle bg-light p-2 mx-1">
                                         <svg width="24" height="24" viewBox="0 0 24 24">
                                             <use xlink:href="#user"></use>
                                         </svg>
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Xem hồ sơ</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <button type="submit" class="dropdown-item">Đăng xuất</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            @else
-                                <a href="{{ route('login') }}" class="rounded-circle bg-light p-2 mx-1">
+                                @endauth
+                            </li>
+                            <li>
+                                <a href="#" class="rounded-circle bg-light p-2 mx-1">
                                     <svg width="24" height="24" viewBox="0 0 24 24">
-                                        <use xlink:href="#user"></use>
+                                        <use xlink:href="#heart"></use>
                                     </svg>
                                 </a>
-                            @endauth
-                        </li>
-                        <li>
-                            <a href="#" class="rounded-circle bg-light p-2 mx-1">
-                                <svg width="24" height="24" viewBox="0 0 24 24">
-                                    <use xlink:href="#heart"></use>
-                                </svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                                <svg width="24" height="24" viewBox="0 0 24 24">
-                                    <use xlink:href="#cart"></use>
-                                </svg>
-                            </a>
-                        </li>
-                        <li class="d-lg-none">
-                            <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch">
-                                <svg width="24" height="24" viewBox="0 0 24 24">
-                                    <use xlink:href="#search"></use>
-                                </svg>
-                            </a>
-                        </li>
-                    </ul>
+                            </li>
+                            <li>
+                                <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                                        <use xlink:href="#cart"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="d-lg-none">
+                                <a href="#" class="rounded-circle bg-light p-2 mx-1" data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch">
+                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                                        <use xlink:href="#search"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                        </ul>
 
-                </div>
-
-            </div>
-        </div>
-        <div class="container-fluid">
-            <div class="row py-3">
-                <div class="d-flex  justify-content-center justify-content-sm-between align-items-center">
-                    <nav class="main-menu d-flex navbar navbar-expand-lg">
-
-                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-
-                        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
-
-                            <div class="offcanvas-header justify-content-center">
-                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                                    aria-label="Close"></button>
-                            </div>
-
-                            <div class="offcanvas-body">
-
-                                <ul
-                                    class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-5 mb-0 text-black text-uppercase fw-bold">
-                                    <li class="nav-item active">
-                                        <a href="#women" class="nav-link">Women</a>
-                                    </li>
-                                    <li class="nav-item dropdown">
-                                        <a href="#men" class="nav-link">Men</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#kids" class="nav-link">Kids</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#accessories" class="nav-link">Accessories</a>
-                                    </li>
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" role="button" id="pages"
-                                            data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
-                                        <ul class="dropdown-menu bg-black text-white" aria-labelledby="pages">
-                                            <li><a href="about.html" class="dropdown-item text-white">About Us <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="shop.html" class="dropdown-item text-white">Shop <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="single-product.html" class="dropdown-item text-white">Single
-                                                    Product <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a>
-                                            </li>
-                                            <li><a href="cart.html" class="dropdown-item text-white">Cart <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="checkout.html" class="dropdown-item text-white">Checkout
-                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="blog.html" class="dropdown-item text-white">Blog <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="single-post.html" class="dropdown-item text-white">Single
-                                                    Post
-                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="styles.html" class="dropdown-item text-white">Styles <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="contact.html" class="dropdown-item text-white">Contact <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="thank-you.html" class="dropdown-item text-white">Thank You
-                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="account.html" class="dropdown-item text-white">My Account
-                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="404.html" class="dropdown-item text-white">404 Error <span
-                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#brand" class="nav-link">Brand</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#sale" class="nav-link">Sale</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#blog" class="nav-link">Blog</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="https://templatesjungle.gumroad.com/l/spark-shoe-store-template"
-                                            class="nav-link bg-black text-white rounded-pill px-3">Get PRO</a>
-                                    </li>
-                                </ul>
-
-                            </div>
-
-                        </div>
-
-                    </nav>
+                    </div>
 
                 </div>
             </div>
-        </div>
+            <div class="container-fluid">
+                <div class="row py-3">
+                    <div class="d-flex  justify-content-center justify-content-sm-between align-items-center">
+                        <nav class="main-menu d-flex navbar navbar-expand-lg">
+
+                            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
+
+                                <div class="offcanvas-header justify-content-center">
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="offcanvas-body">
+
+                                    <ul
+                                        class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-5 mb-0 text-black text-uppercase fw-bold">
+                                        <li class="nav-item active">
+                                            <a href="#women" class="nav-link">Women</a>
+                                        </li>
+                                        <li class="nav-item dropdown">
+                                            <a href="#men" class="nav-link">Men</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#kids" class="nav-link">Kids</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#accessories" class="nav-link">Accessories</a>
+                                        </li>
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle" role="button" id="pages"
+                                                data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
+                                            <ul class="dropdown-menu bg-black text-white" aria-labelledby="pages">
+                                                <li><a href="about.html" class="dropdown-item text-white">About Us
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="shop.html" class="dropdown-item text-white">Shop <span
+                                                            class="badge bg-warning text-dark ms-2">PRO</span></a></li>
+                                                <li><a href="single-product.html"
+                                                        class="dropdown-item text-white">Single
+                                                        Product <span
+                                                            class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="cart.html" class="dropdown-item text-white">Cart <span
+                                                            class="badge bg-warning text-dark ms-2">PRO</span></a></li>
+                                                <li><a href="checkout.html" class="dropdown-item text-white">Checkout
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="blog.html" class="dropdown-item text-white">Blog <span
+                                                            class="badge bg-warning text-dark ms-2">PRO</span></a></li>
+                                                <li><a href="single-post.html" class="dropdown-item text-white">Single
+                                                        Post
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="styles.html" class="dropdown-item text-white">Styles
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="contact.html" class="dropdown-item text-white">Contact
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="thank-you.html" class="dropdown-item text-white">Thank
+                                                        You
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="account.html" class="dropdown-item text-white">My Account
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                                <li><a href="404.html" class="dropdown-item text-white">404 Error
+                                                        <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#brand" class="nav-link">Brand</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#sale" class="nav-link">Sale</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#blog" class="nav-link">Blog</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="https://templatesjungle.gumroad.com/l/spark-shoe-store-template"
+                                                class="nav-link bg-black text-white rounded-pill px-3">Get PRO</a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </nav>
+
+                    </div>
+                </div>
+            </div>
     </header>
 
     @yield('content')

@@ -11,10 +11,13 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // <<<<<<< UI-Improved-Profile
-Route::get('/', function () {
-    return view('user.index');
+Route::get('', function () {
+    return view('user.index', [
+        'banners' => \App\Models\Banner::all(),
+        'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
+        'categories' => \App\Models\Category::all(),
+    ]);
 });
-    Route::resource('home', HomeController::class);
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
 Route::get('/dashboard', function () {
     return view('admin.index');

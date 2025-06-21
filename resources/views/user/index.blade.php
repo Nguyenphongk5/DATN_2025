@@ -1,5 +1,6 @@
+
 @extends('layouts.user')
-@section('content')
+@section('content')\
 
 <!-- Thêm Swiper CSS -->
 <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
@@ -126,14 +127,14 @@
             @foreach ($latestProducts as $product)
                 <div class="col-md-6">
                     <div class="banner-ad bg-secondary-subtle mb-3"
-                        style="background: url('{{ asset($product->image) }}'); background-repeat: no-repeat; background-position: right bottom;">
+                        style="background: url('{{ asset($product->img_thumb) }}'); background-repeat: no-repeat; background-position: right bottom;">
                         <div class="banner-content p-5">
                             <!-- Thêm badge New cho sản phẩm mới -->
                             @if($product->created_at >= now()->subDays(7)) <!-- Kiểm tra nếu sản phẩm được tạo trong vòng 7 ngày -->
                                 <span class="new-arrival-badge">New Arrival</span> <!-- Áp dụng lớp CSS cho badge -->
                             @endif
                             <h3 class="banner-title">{{ $product->name }}</h3>
-                            <a href="{{ route('product.show', $product->id) }}" class="btn btn-dark text-uppercase">Show Now</a>
+                            <a href="{{ route('home.show', $product->id) }}" class="btn btn-dark text-uppercase">Show Now</a>
                         </div>
                     </div>
                 </div>
@@ -142,7 +143,7 @@
     </div>
 </section>
 <style>
-  
+
 </style>
 
   <section class="py-5">
@@ -157,15 +158,16 @@
 
             <div class="col">
               <div class="product-item">
+                @foreach ($latestProducts as $product)
                 <span class="badge bg-success position-absolute m-3">-30%</span>
                 <figure>
-                  <a href="{{ route('home.create') }}" title="Product Title">
-                    <img src="images/product-thumb-1.png" alt="Product Thumbnail" class="img-fluid">
+                  <a href="{{ route('home.show', $product->id) }}" title="Product Title">
+                    <img src="{{ asset('storage/'.$product->img_thumb) }}" alt="{{ $product->name }}" class="img-fluid">
                   </a>
                 </figure>
-                <span>Super Shoes</span>
+                <span>{{ $product->name }}</span>
                 <div class="d-flex justify-content-between">
-                  <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
+                  <p><span class="text-dark">{{ $product->price }}</span><del>{{ $product->price_sale }}</del><span class="text-success">-30%</span></p>
                   <span class="d-flex">
                     <svg width="18" height="18" class="text-warning">
                       <use xlink:href="#star-solid"></use>
@@ -184,167 +186,12 @@
                     </svg>
                   </span>
                 </div>
+                @endforeach
               </div>
+
             </div>
 
-            <div class="col">
-              <div class="product-item">
-                <span class="badge bg-success position-absolute m-3">-30%</span>
-                <figure>
-                  <a href="{{ route('home.create') }}" title="Product Title">
-                    <img src="images/product-thumb-2.png" alt="Product Thumbnail" class="img-fluid">
-                  </a>
-                </figure>
-                <span>Leather Brown</span>
-                <div class="d-flex justify-content-between">
-                  <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                  <span class="d-flex">
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="product-item">
-                <span class="badge bg-success position-absolute m-3">-30%</span>
-                <figure>
-                  <a href="{{ route('home.create') }}" title="Product Title">
-                    <img src="images/product-thumb-3.png" alt="Product Thumbnail" class="img-fluid">
-                  </a>
-                </figure>
-                <span>Trending Shoes Party Wear For Men</span>
-                <div class="d-flex justify-content-between">
-                  <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                  <span class="d-flex">
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="product-item">
-                <figure>
-                  <a href="{{ route('home.create') }}" title="Product Title">
-                    <img src="images/product-thumb-4.png" alt="Product Thumbnail" class="img-fluid">
-                  </a>
-                </figure>
-                <span>Sports Shoes Training & Gym Shoes For Men</span>
-                <div class="d-flex justify-content-between">
-                  <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                  <span class="d-flex">
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="product-item">
-                <figure>
-                  <a href="{{ route('home.create') }}" title="Product Title">
-                    <img src="images/product-thumb-5.png" alt="Product Thumbnail" class="img-fluid">
-                  </a>
-                </figure>
-                <span>Kids Shoes</span>
-                <div class="d-flex justify-content-between">
-                  <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                  <span class="d-flex">
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="product-item">
-                <figure>
-                  <a href="{{ route('home.create') }}" title="Product Title">
-                    <img src="images/product-thumb-6.png" alt="Product Thumbnail" class="img-fluid">
-                  </a>
-                </figure>
-                <span>Super Shoes</span>
-                <div class="d-flex justify-content-between">
-                  <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                  <span class="d-flex">
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                    <svg width="18" height="18" class="text-warning">
-                      <use xlink:href="#star-solid"></use>
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {{-- <div class="col">
+             {{-- <div class="col">
               <div class="product-item">
                 <figure>
                   <a href="{{ route('home', $product->id) }}" title="{{ $product->name }}">
@@ -449,7 +296,7 @@
             </style>
             <div class="swiper-wrapper">
 
-              <div class="swiper-slide">
+              {{-- <div class="swiper-slide">
                 <div class="product-item">
                   <span class="badge bg-success position-absolute m-3">-30%</span>
                   <figure>
@@ -605,9 +452,9 @@
                     </span>
                   </div>
                 </div>
-              </div>
+              </div> --}}
 
-              <div class="swiper-slide">
+              {{-- <div class="swiper-slide">
                 <div class="product-item">
                   <figure>
                     <a href="{{ route('home.create') }}" title="Product Title">
@@ -762,7 +609,7 @@
                 </div>
               </div>
 
-            </div>
+            </div> --}}
           </div>
           <!-- / products-carousel -->
 
