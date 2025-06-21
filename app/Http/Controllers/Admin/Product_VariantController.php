@@ -40,7 +40,7 @@ class Product_VariantController extends Controller
         //
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'size' => 'required|string|max:50',
+            'size' => 'required|integer|min:0',
             'color_name' => 'required|string|max:50',
             'hex_code' => 'required|string|max:7',
             'quantity' => 'required|integer|min:0',
@@ -86,7 +86,7 @@ class Product_VariantController extends Controller
         //
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'size' => 'required|string|max:50',
+            'size' => 'required|integer|min:0',
             'color_name' => 'required|string|max:50',
             'hex_code' => 'required|string|max:7',
             'quantity' => 'required|integer|min:0',
