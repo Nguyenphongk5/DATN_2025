@@ -19,8 +19,9 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $categories = DB::table('categories')->get();
         $user = $request->user();
-        return view('profile.edit', compact('user'));
+        return view('profile.edit', compact('user', 'categories'));
     }
 
     /**
