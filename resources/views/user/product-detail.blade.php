@@ -112,20 +112,24 @@
                         </div>
                         <p>{{ $product->description }}</p>
                         <div class="cart-wrap py-5">
-                            <div class="color-options pb-3">
-                                <div class="color-toggle" data-option-index="0">
-                                    <h6 class="item-title text-uppercase text-dark">Color:</h6>
-                                    @foreach ($productVariants as $productVariant)
-                                        <input type="radio" class="btn-check" name="options-color"
-                                            id="option-color{{ $loop->index + 1 }}" autocomplete="off" autocomplete="off" checked>
-                                        <label class="btn" for="option-color{{ $loop->index + 1 }}">
-                                            <span class="rounded-circle d-inline-block"
-                                                style="width: 16px; height: 16px; background-color: {{ $productVariant->hex_code }}; border: 1px solid #ccc;"></span>
-                                            {{ $productVariant->color_name }}</label>
-                                    @endforeach
+                            <form action="{{ route('carts.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <div class="color-options pb-3">
+                                    <div class="color-toggle" data-option-index="0">
+                                        <h6 class="item-title text-uppercase text-dark">Color:</h6>
+                                        @foreach ($productVariants as $productVariant)
+                                            <input type="radio" class="btn-check" name="options-color"
+                                                id="option-color{{ $loop->index + 1 }}" autocomplete="off"
+                                                autocomplete="off" checked>
+                                            <label class="btn" for="option-color{{ $loop->index + 1 }}">
+                                                <span class="rounded-circle d-inline-block"
+                                                    style="width: 16px; height: 16px; background-color: {{ $productVariant->hex_code }}; border: 1px solid #ccc;"></span>
+                                                {{ $productVariant->color_name }}</label>
+                                        @endforeach
 
 
-                                    {{-- <input type="radio" class="btn-check" name="options-color" id="option6"
+                                        {{-- <input type="radio" class="btn-check" name="options-color" id="option6"
                                         autocomplete="off">
                                     <label class="btn" for="option6">Orange</label>
 
@@ -136,21 +140,21 @@
                                     <input type="radio" class="btn-check" name="options-color" id="option8"
                                         autocomplete="off">
                                     <label class="btn" for="option8">Black</label> --}}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="swatch" data-option-index="1">
-                                <h6 class="item-title text-uppercase text-dark">Size:</h6>
-                                @foreach ($productVariants as $productVariant)
-                                    <input type="radio" class="btn-check" name="options-size"
-                                        id="option-size{{ $loop->index + 1 }}" autocomplete="off" checked>
-                                    <label class="btn"
-                                        for="option-size{{ $loop->index + 1 }}">{{ $productVariant->size }}</label>
-                                @endforeach
-                                {{-- <input type="radio" class="btn-check" name="options-size" id="option9"
+                                <div class="swatch" data-option-index="1">
+                                    <h6 class="item-title text-uppercase text-dark">Size:</h6>
+                                    @foreach ($productVariants as $productVariant)
+                                        <input type="radio" class="btn-check" name="options-size"
+                                            id="option-size{{ $loop->index + 1 }}" autocomplete="off" checked>
+                                        <label class="btn"
+                                            for="option-size{{ $loop->index + 1 }}">{{ $productVariant->size }}</label>
+                                    @endforeach
+                                    {{-- <input type="radio" class="btn-check" name="options-size" id="option9"
                                     autocomplete="off" checked>
                                 <label class="btn" for="option9">XL</label> --}}
 
-                                {{-- <input type="radio" class="btn-check" name="options-size" id="option10"
+                                    {{-- <input type="radio" class="btn-check" name="options-size" id="option10"
                                     autocomplete="off">
                                 <label class="btn" for="option10">L</label>
 
@@ -161,40 +165,43 @@
                                 <input type="radio" class="btn-check" name="options-size" id="option12"
                                     autocomplete="off">
                                 <label class="btn" for="option12">S</label> --}}
-                            </div>
-                            <div class="product-quantity pt-3">
-                                <div class="stock-number text-dark"><em>2 in stock</em></div>
-                                <div class="stock-button-wrap">
+                                </div>
+                                <div class="product-quantity pt-3">
+                                    <div class="stock-number text-dark"><em>2 in stock</em></div>
+                                    <div class="stock-button-wrap">
 
-                                    <div class="input-group product-qty" style="max-width: 150px;">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="quantity-left-minus btn btn-light btn-number"
-                                                data-type="minus" data-field="">
-                                                <svg width="16" height="16">
-                                                    <use xlink:href="#minus"></use>
-                                                </svg>
-                                            </button>
-                                        </span>
-                                        <input type="text" id="quantity" name="quantity"
-                                            class="form-control input-number text-center" value="1" min="1"
-                                            max="100">
-                                        <span class="input-group-btn">
-                                            <button type="button" class="quantity-right-plus btn btn-light btn-number"
-                                                data-type="plus" data-field="">
-                                                <svg width="16" height="16">
-                                                    <use xlink:href="#plus"></use>
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </div>
-                                    <div class="qty-button d-flex flex-wrap pt-3">
-                                        <button type="submit"
-                                            class="btn btn-primary py-3 px-4 text-uppercase me-3 mt-3">Buy now</button>
-                                        <button type="submit" name="add-to-cart" value="1269"
-                                            class="btn btn-dark py-3 px-4 text-uppercase mt-3">Add to cart</button>
+                                        <div class="input-group product-qty" style="max-width: 150px;">
+                                            <span class="input-group-btn">
+                                                <button type="button"
+                                                    class="quantity-left-minus btn btn-light btn-number" data-type="minus"
+                                                    data-field="">
+                                                    <svg width="16" height="16">
+                                                        <use xlink:href="#minus"></use>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                            <input type="text" id="quantity" name="quantity"
+                                                class="form-control input-number text-center" value="1"
+                                                min="1" max="100">
+                                            <span class="input-group-btn">
+                                                <button type="button"
+                                                    class="quantity-right-plus btn btn-light btn-number" data-type="plus"
+                                                    data-field="">
+                                                    <svg width="16" height="16">
+                                                        <use xlink:href="#plus"></use>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <div class="qty-button d-flex flex-wrap pt-3">
+                                            {{-- <button type="submit" 
+                                                class="btn btn-primary py-3 px-4 text-uppercase me-3 mt-3">Buy now</button> --}}
+                                            <button type="submit" name="action" value="add_to_cart"
+                                                class="btn btn-dark py-3 px-4 text-uppercase mt-3">Add to cart</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                         <div class="meta-product py-2">
                             <div class="meta-item d-flex align-items-baseline">
@@ -475,21 +482,24 @@
                     <div class="swiper-wrapper d-flex">
                         @foreach ($products as $product)
                             <div style="width: 25%; margin-right: 30px;">
-                                <div class="product-item" >
+                                <div class="product-item">
                                     {{-- @if ($product->discount > 0) --}}
-                                        <span class="badge bg-success position-absolute m-3">-30%</span>
+                                    <span class="badge bg-success position-absolute m-3">-30%</span>
                                     {{-- @endif --}}
                                     <figure>
                                         <a href="{{ route('products.show', $product->id) }}">
-                                            <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="Product Thumbnail" class="img-fluid">
+                                            <img src="{{ asset('storage/' . $product->img_thumb) }}"
+                                                alt="Product Thumbnail" class="img-fluid">
                                         </a>
                                     </figure>
                                     <p>{{ $product->name }}</p>
                                     <div class="d-block justify-content-between">
-                                        <p><span class=" d-block" style=" font-weight:800; font-size: large; color: red;">{{ number_format($product->price, 0, '', '.') }} VNĐ</span>
+                                        <p><span class=" d-block"
+                                                style=" font-weight:800; font-size: large; color: red;">{{ number_format($product->price, 0, '', '.') }}
+                                                VNĐ</span>
                                             {{-- @if ($product->discount > 0) --}}
-                                                <del>{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
-                                                <span class="text-success">-30%</span>
+                                            <del>{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
+                                            <span class="text-success">-30%</span>
                                             {{-- @endif --}}
                                         </p>
                                         <span class="d-flex">
@@ -499,25 +509,24 @@
                                                 </svg>
                                             @endfor --}}
                                             <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
                                         </span>
                                     </div>
                                 </div>
                             </div>
-
                         @endforeach
                         <div class="swiper-slide">
                             <div class="product-item">
