@@ -8,7 +8,7 @@
     <div class="slideshow slide-in arrow-absolute text-white" style="height: 70vh;">
       <div class="swiper-container">
         <div class="swiper-wrapper">
-          @foreach($banners as $banner)
+          {{-- @foreach($banners as $banner)
             <div class="swiper-slide jarallax">
               <img src="{{ asset($banner->image) }}" class="jarallax-img" alt="slideshow">
               <div class="banner-content w-100">
@@ -21,7 +21,7 @@
                 </div>
               </div>
             </div>
-          @endforeach
+          @endforeach --}}
         </div>
         <!-- Pagination và Navigation -->
         <div class="swiper-pagination"></div>
