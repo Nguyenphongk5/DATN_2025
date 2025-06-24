@@ -35,5 +35,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
 });
+// routes/web.php
+
+
+use App\Models\Blog;
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+use App\Http\Controllers\SubscribeController;
+
+Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
+
 
 require __DIR__.'/auth.php';

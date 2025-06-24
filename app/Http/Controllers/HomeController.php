@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -10,11 +12,14 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-          $banners = DB::table('banners')->where('is_active', true)->get();
-          return view('user.index', compact('banners'));
-    }
+
+public function index()
+{
+    $banners = Banner::where('is_active', true)->get();
+    $blogs = Blog::where('is_active', true)->latest()->take(3)->get();
+
+    return view('user.index', compact('banners', 'blogs'));
+}
 
     /**
      * Show the form for creating a new resource.
