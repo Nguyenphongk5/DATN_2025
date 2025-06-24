@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
@@ -70,8 +71,15 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('brands', BrandController::class);
 
-    Route::resource('blogs', BlogController::class);
+    
+Route::resource('orders',OrderController::class);
 
+
+
+    Route::resource('blogs', BlogController::class);
+    
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
+
+

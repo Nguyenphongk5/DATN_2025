@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\OrderController;
 
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
@@ -18,6 +19,7 @@ Route::get('', function () {
         'categories' => \App\Models\Category::all(),
     ]);
 });
+ 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
 Route::get('/dashboard', function () {
     return view('admin.index');
@@ -28,12 +30,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile', [ProfileController::class, 'avatar'])->name('profile.avatar');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::resource('orders',OrderController::class);
+
+
 
     Route::resource('users', UserController::class);
     Route::resource('products',ProductController::class);
     Route::resource('product_variants', Product_VariantController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
+   
 });
 
 require __DIR__.'/auth.php';
