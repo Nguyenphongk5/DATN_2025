@@ -26,26 +26,22 @@ class Order extends Model
         'shipped_at',
         'order_code',
         'note',
-        'admin_note', // nếu có thêm trường này
+        'admin_note',
     ];
 
-   
- 
-
-    // Quan hệ với User (nếu cần)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Quan hệ với Voucher (nếu có)
     public function voucher()
     {
         return $this->belongsTo(Voucher::class);
     }
+
     public function orderDetails()
-{
-    return $this->hasMany(\App\Models\OrderDetail::class);
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
 
-}

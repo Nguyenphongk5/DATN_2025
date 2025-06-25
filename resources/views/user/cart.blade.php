@@ -30,7 +30,8 @@
                         </thead>
                         <tbody>
                             @php $total = 0; @endphp
-                            @forelse ($cart?->items as $item)
+                          @forelse ($cart?->items ?? [] as $item)
+
                             @php
                             $variant = $item->productVariant;
                             $product = $variant?->product ?? $item->product;
@@ -135,9 +136,14 @@
                     </div>
                     <div class="button-wrap row g-2">
 
-                        <div class="col-md-12"><button
-                                class="btn btn-primary py-3 px-4 text-uppercase btn-rounded-none w-100">Proceed to
-                                checkout</button>
+                        <div class="col-md-12">
+
+
+                            <a href="{{ route('checkout.index') }}"
+                                class="btn btn-primary py-3 px-4 text-uppercase btn-rounded-none w-100">
+                                Proceed to Checkout
+                            </a>
+
                         </div>
                     </div>
                 </div>

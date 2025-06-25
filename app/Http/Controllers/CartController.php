@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\ProductVariant;
@@ -91,6 +92,7 @@ public function update(Request $request, $id)
 
     return back()->with('success', 'Cập nhật số lượng thành công');
 }
+
 
 
 

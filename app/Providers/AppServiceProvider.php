@@ -18,26 +18,24 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        // Chia sẻ biến $cart và $categories cho tất cả các view
-        View::composer('*', function ($view) {
-            // Lấy danh sách danh mục
-            $categories = Category::all();
-            $view->with('categories', $categories);
 
-            // Nếu đã đăng nhập thì lấy giỏ hàng
-            if (Auth::check()) {
-                $cart = Cart::with(['items.productVariant.product', 'items.product'])
-                            ->where('user_id', Auth::id())
-                            ->first();
-                $view->with('cart', $cart);
-            } else {
-                $view->with('cart', null);
-            }
-        });
-    }
+public function boot(): void
+{
+    View::composer('*', function ($view) {
+        $categories = Category::all();
+        $view->with('categories', $categories);
+
+        if (Auth::check()) {
+            $cart = Cart::with(['items.productVariant.product', 'items.product'])
+                        ->where('user_id', Auth::id())
+                        ->first();
+            $view->with('cart', $cart);
+        } else {
+            $view->with('cart', null);
+        }
+    });
+}
+
+
+
 }
