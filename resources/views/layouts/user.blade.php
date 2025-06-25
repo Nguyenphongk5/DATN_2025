@@ -13,6 +13,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -104,32 +105,32 @@
 
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart">
         <div class="offcanvas-header justify-content-center">
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div class="order-md-last">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">Giỏ hàng của bạn</span>
+                    <span class="text-primary">Giỏ hàng</span>
                     <span class="badge bg-primary rounded-pill">3</span>
                 </h4>
                 <ul class="list-group mb-3">
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
-                            <h6 class="my-0">Sản phẩm Một</h6>
+                            <h6 class="my-0">Sản phẩm 1</h6>
                             <small class="text-body-secondary">Mô tả ngắn</small>
                         </div>
                         <span class="text-body-secondary">$120</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
-                            <h6 class="my-0">Sản phẩm Hai</h6>
+                            <h6 class="my-0">Sản phẩm 2</h6>
                             <small class="text-body-secondary">Mô tả ngắn</small>
                         </div>
                         <span class="text-body-secondary">$80</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
-                            <h6 class="my-0">Sản phẩm Ba</h6>
+                            <h6 class="my-0">Sản phẩm 3</h6>
                             <small class="text-body-secondary">Mô tả ngắn</small>
                         </div>
                         <span class="text-body-secondary">$50</span>
@@ -144,21 +145,19 @@
             </div>
         </div>
     </div>
-
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch">
         <div class="offcanvas-header justify-content-center">
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div class="order-md-last">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">Tìm kiếm</span>
+                    <span class="text-primary">Search</span>
                 </h4>
                 <form role="search" action="{{ route('home.search') }}" method="get" class="d-flex mt-3 gap-0">
-                    <input class="form-control rounded-start rounded-0 bg-light" type="text"
-                        placeholder="Tìm kiếm sản phẩm" aria-label="Tìm kiếm sản phẩm"
-                        value="{{ request('search') }}">
-                    <button class="btn btn-dark rounded-end rounded-0" type="submit">Tìm kiếm</button>
+                    <input class="form-control rounded-start rounded-0 bg-light" type="email"
+                        placeholder="What are you looking for?" aria-label="What are you looking for?">
+                    <button class="btn btn-dark rounded-end rounded-0" type="submit">Search</button>
                 </form>
             </div>
         </div>
@@ -190,7 +189,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </form>
                         </div>
                         <!-- Form tìm kiếm theo tên sản phẩm -->
                         <div class="col-md-8 d-flex">
@@ -198,9 +196,18 @@
                                 placeholder="Tìm kiếm sản phẩm" value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary ms-2">Search</button>
                         </div>
+                        </form>
                     </div>
                 </div>
-
+                {{-- <div class="col-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                    d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div> --}}
                 <div
                     class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
                     <ul class="d-flex justify-content-end list-unstyled m-0">
@@ -259,9 +266,7 @@
                             </a>
                         </li>
                     </ul>
-
                 </div>
-
             </div>
         </div>
         <div class="container-fluid">
@@ -273,12 +278,10 @@
                             data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-
                         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar">
-
                             <div class="offcanvas-header justify-content-center">
                                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                                    aria-label="Đóng"></button>
+                                    aria-label="Close"></button>
                             </div>
 
                             <div class="offcanvas-body">
@@ -301,35 +304,48 @@
                                         <a class="nav-link dropdown-toggle" role="button" id="pages"
                                             data-bs-toggle="dropdown" aria-expanded="false">Trang</a>
                                         <ul class="dropdown-menu bg-black text-white" aria-labelledby="pages">
-                                            <li><a href="about.html" class="dropdown-item text-white">Giới thiệu</a>
+                                            <li><a href="about.html" class="dropdown-item text-white">Giới thiệu
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="shop.html" class="dropdown-item text-white">Cửa hàng</a></li>
+                                            <li><a href="shop.html" class="dropdown-item text-white">Cửa hàng<span
+                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
                                             <li><a href="single-product.html" class="dropdown-item text-white">Sản
-                                                    phẩm đơn lẻ</a>
+                                                    phẩm đơn lẻ <span
+                                                        class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="cart.html" class="dropdown-item text-white">Giỏ hàng</a></li>
-                                            <li><a href="checkout.html" class="dropdown-item text-white">Thanh
-                                                    toán</a></li>
-                                            <li><a href="blog.html" class="dropdown-item text-white">Blog</a></li>
-                                            <li><a href="single-post.html" class="dropdown-item text-white">Bài viết
-                                                    đơn lẻ</a>
+                                            <li><a href="cart.html" class="dropdown-item text-white">Giỏ hàng<span
+                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
+                                            <li><a href="checkout.html" class="dropdown-item text-white">Thanh toán
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="styles.html" class="dropdown-item text-white">Phong cách</a>
+                                            <li><a href="blog.html" class="dropdown-item text-white">Bài viết <span
+                                                        class="badge bg-warning text-dark ms-2">PRO</span></a></li>
+                                            <li><a href="single-post.html" class="dropdown-item text-white">Bài viết đơn lẻ
+                                                    
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="contact.html" class="dropdown-item text-white">Liên hệ</a>
+                                            <li><a href="styles.html" class="dropdown-item text-white">Phong cách
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="thank-you.html" class="dropdown-item text-white">Cảm ơn</a>
+                                            <li><a href="contact.html" class="dropdown-item text-white">Liên hệ
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="account.html" class="dropdown-item text-white">Tài khoản</a>
+                                            <li><a href="thank-you.html" class="dropdown-item text-white">Cảm ơn
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
-                                            <li><a href="404.html" class="dropdown-item text-white">Lỗi 404</a></li>
+                                            <li><a href="account.html" class="dropdown-item text-white">Tài khoản
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                            </li>
+                                            <li><a href="404.html" class="dropdown-item text-white">Lỗi 404
+                                                    <span class="badge bg-warning text-dark ms-2">PRO</span></a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#brand" class="nav-link">Thương hiệu</a>
+                                        <a href="#brand" class="nav-link">Thương Hiệu</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#sale" class="nav-link">Khuyến mãi</a>
+                                        <a href="#sale" class="nav-link">Khuyến Mãi</a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="#blog" class="nav-link">Blog</a>
@@ -337,15 +353,15 @@
                                 </ul>
 
                             </div>
-
                         </div>
 
                     </nav>
-
                 </div>
             </div>
         </div>
+
     </header>
+
     @yield('content')
 
     <footer class="py-5">
@@ -415,7 +431,7 @@
                                 <a href="#" class="nav-link">Giới thiệu</a>
                             </li>
                             <li class="menu-item">
-                                <a href="#" class="nav-link">Điều khoản</a>
+                                <a href="#" class="nav-link">Điều khoản </a>
                             </li>
                             <li class="menu-item">
                                 <a href="#" class="nav-link">Tạp chí của chúng tôi</a>
@@ -427,12 +443,11 @@
                                 <a href="#" class="nav-link">Chương trình liên kết</a>
                             </li>
                             <li class="menu-item">
-                                <a href="#" class="nav-link">Báo chí Ultras</a>
+                                <a href="#" class="nav-link">Báo chí</a>
                             </li>
                         </ul>
                     </div>
                 </div>
-
                 <div class="col-md-2 col-sm-6">
                     <div class="footer-menu">
                         <h5 class="widget-title">Dịch vụ khách hàng</h5>
@@ -465,7 +480,7 @@
                         <p>Đăng ký nhận bản tin để nhận thông tin về các chương trình khuyến mãi của chúng tôi.</p>
                         <form class="d-flex mt-3 gap-0" action="{{ route('home.index') }}">
                             <input class="form-control rounded-start rounded-0 bg-light" type="email"
-                                placeholder="Địa chỉ email" aria-label="Địa chỉ email">
+                                placeholder="Email Address" aria-label="Email Address">
                             <button class="btn btn-dark rounded-end rounded-0" type="submit">Đăng ký</button>
                         </form>
                     </div>
@@ -478,10 +493,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6 copyright">
-                    <p>© 2025 Spark. Bảo lưu mọi quyền.</p>
+                    <p>© 2025 Spark. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>
