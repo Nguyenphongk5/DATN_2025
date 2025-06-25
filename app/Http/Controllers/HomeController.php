@@ -90,8 +90,19 @@ class HomeController extends Controller
     {
         //
         $categories = Category::all();
-        $product = DB::table('products')->where('id', $id)->first();
-        return view('user.product-detail', compact('product', 'categories'));
+        $productVariants = DB::table('product_variants')
+            ->where('product_id', $id)
+            ->get();
+
+        $product = DB::table('products')
+        ->join('categories', 'products.category_id', '=', 'categories.id')
+        ->select('products.*', 'categories.name as category_name')
+        ->where('products.id', $id)->first();
+        $products = DB::table('products')
+        ->where('category_id', "=",$product->category_id)
+        ->limit(8)
+        ->get();
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products'));
     }
 
     /**

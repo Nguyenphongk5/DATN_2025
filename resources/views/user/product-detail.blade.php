@@ -10,8 +10,7 @@
                             <div class="swiper product-thumbnail-slider">
                                 <div class="swiper-wrapper ">
                                     <div class="swiper-slide">
-                                        <img src="images/product-thumbnail-1.jpg" alt=""
-                                            class="thumb-image img-fluid">
+                                        <img src="" alt="" class="thumb-image img-fluid">
                                     </div>
                                     <div class="swiper-slide">
                                         <img src="images/product-thumbnail-2.jpg" alt=""
@@ -37,12 +36,17 @@
                             <!-- product-large-slider -->
                             <div class="swiper product-large-slider">
                                 <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-1.jpg">
-                                            <img src="images/product-large-1.jpg" alt="product-large" class="img-fluid">
+                                    <div>
+                                        <div class="image-zoom" style="margin: 40px" data-scale="2.5"
+                                            data-image="{{ asset('storage/' . $product->img_thumb) }}">
+                                            {{-- <img src="images/product-large-1.jpg" alt="product-large" class="img-fluid"> --}}
+                                            <img src="{{ asset('storage/' . $product->img_thumb) }}"
+                                                style="width:100%; height: 100%; object-fit: cover; display: block;"
+                                                alt="product-large" class="">
                                         </div>
                                     </div>
-                                    <div class="swiper-slide">
+                                </div>
+                                {{-- <div class="swiper-slide">
                                         <div class="image-zoom" data-scale="2.5" data-image="images/product-large-2.jpg">
                                             <img src="images/product-large-2.jpg" alt="product-large" class="img-fluid">
                                         </div>
@@ -63,7 +67,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="swiper-pagination"></div>
+                                <div class="swiper-pagination"></div> --}}
                             </div>
                             <!-- / product-large-slider -->
                         </div>
@@ -72,7 +76,7 @@
                 <div class="col-lg-5">
                     <div class="product-info">
                         <div class="element-header">
-                            <h2 itemprop="name" class="display-6">Men's Casual Shoes</h2>
+                            <h2 itemprop="name" class="display-6">{{ $product->name }}</h2>
                             <div class="rating-container d-flex gap-0 align-items-center">
                                 <div class="rating" data-rating="1">
                                     <svg width="32" height="32" class="text-warning">
@@ -102,22 +106,26 @@
                             </div>
                         </div>
                         <div class="product-price pt-3 pb-3">
-                            <strong class="text-primary display-6 fw-bold">$870.00</strong><del
-                                class="ms-2">$940.00</del>
+                            <strong class="text-primary display-6 fw-bold">{{ number_format($product->price, 0, '', '.') }}
+                                VNĐ</strong><del class="ms-2">{{ number_format($product->price_sale, 0, '', '.') }}
+                                VNĐ</del>
                         </div>
-                        <p>Justo, cum feugiat imperdiet nulla molestie ac vulputate scelerisque amet. Bibendum adipiscing
-                            platea blandit sit sed quam semper rhoncus. Diam ultrices maecenas consequat eu tortor orci,
-                            cras lectus mauris, cras egestas quam venenatis neque.</p>
+                        <p>{{ $product->description }}</p>
                         <div class="cart-wrap py-5">
                             <div class="color-options pb-3">
                                 <div class="color-toggle" data-option-index="0">
                                     <h6 class="item-title text-uppercase text-dark">Color:</h6>
+                                    @foreach ($productVariants as $productVariant)
+                                        <input type="radio" class="btn-check" name="options-color"
+                                            id="option-color{{ $loop->index + 1 }}" autocomplete="off" autocomplete="off" checked>
+                                        <label class="btn" for="option-color{{ $loop->index + 1 }}">
+                                            <span class="rounded-circle d-inline-block"
+                                                style="width: 16px; height: 16px; background-color: {{ $productVariant->hex_code }}; border: 1px solid #ccc;"></span>
+                                            {{ $productVariant->color_name }}</label>
+                                    @endforeach
 
-                                    <input type="radio" class="btn-check" name="options-color" id="option5"
-                                        autocomplete="off" checked>
-                                    <label class="btn" for="option5">Green</label>
 
-                                    <input type="radio" class="btn-check" name="options-color" id="option6"
+                                    {{-- <input type="radio" class="btn-check" name="options-color" id="option6"
                                         autocomplete="off">
                                     <label class="btn" for="option6">Orange</label>
 
@@ -127,16 +135,22 @@
 
                                     <input type="radio" class="btn-check" name="options-color" id="option8"
                                         autocomplete="off">
-                                    <label class="btn" for="option8">Black</label>
+                                    <label class="btn" for="option8">Black</label> --}}
                                 </div>
                             </div>
                             <div class="swatch" data-option-index="1">
                                 <h6 class="item-title text-uppercase text-dark">Size:</h6>
-                                <input type="radio" class="btn-check" name="options-size" id="option9"
+                                @foreach ($productVariants as $productVariant)
+                                    <input type="radio" class="btn-check" name="options-size"
+                                        id="option-size{{ $loop->index + 1 }}" autocomplete="off" checked>
+                                    <label class="btn"
+                                        for="option-size{{ $loop->index + 1 }}">{{ $productVariant->size }}</label>
+                                @endforeach
+                                {{-- <input type="radio" class="btn-check" name="options-size" id="option9"
                                     autocomplete="off" checked>
-                                <label class="btn" for="option9">XL</label>
+                                <label class="btn" for="option9">XL</label> --}}
 
-                                <input type="radio" class="btn-check" name="options-size" id="option10"
+                                {{-- <input type="radio" class="btn-check" name="options-size" id="option10"
                                     autocomplete="off">
                                 <label class="btn" for="option10">L</label>
 
@@ -146,7 +160,7 @@
 
                                 <input type="radio" class="btn-check" name="options-size" id="option12"
                                     autocomplete="off">
-                                <label class="btn" for="option12">S</label>
+                                <label class="btn" for="option12">S</label> --}}
                             </div>
                             <div class="product-quantity pt-3">
                                 <div class="stock-number text-dark"><em>2 in stock</em></div>
@@ -186,14 +200,14 @@
                             <div class="meta-item d-flex align-items-baseline">
                                 <h6 class="item-title no-margin pe-2">SKU:</h6>
                                 <ul class="select-list list-unstyled d-flex">
-                                    <li data-value="S" class="select-item">1223</li>
+                                    <li data-value="S" class="select-item">{{ $product->slug }}</li>
                                 </ul>
                             </div>
                             <div class="meta-item d-flex align-items-baseline">
                                 <h6 class="item-title no-margin pe-2">Category:</h6>
                                 <ul class="select-list list-unstyled d-flex">
                                     <li data-value="S" class="select-item">
-                                        <a href="#">Watch</a>,
+                                        <a href="#">{{ $product->category_name }}</a>,
                                     </li>
                                     <li data-value="S" class="select-item">
                                         <a href="#"> Screen touch</a>,
@@ -457,9 +471,54 @@
             <div class="row flex">
                 {{-- <div class="col-md-12 flex"> --}}
 
-                <div class="products-carousel swiper">
-                    <div class="swiper-wrapper">
+                <div class="products-carousel swiper ">
+                    <div class="swiper-wrapper d-flex">
+                        @foreach ($products as $product)
+                            <div style="width: 25%; margin-right: 30px;">
+                                <div class="product-item" >
+                                    {{-- @if ($product->discount > 0) --}}
+                                        <span class="badge bg-success position-absolute m-3">-30%</span>
+                                    {{-- @endif --}}
+                                    <figure>
+                                        <a href="{{ route('products.show', $product->id) }}">
+                                            <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="Product Thumbnail" class="img-fluid">
+                                        </a>
+                                    </figure>
+                                    <p>{{ $product->name }}</p>
+                                    <div class="d-block justify-content-between">
+                                        <p><span class=" d-block" style=" font-weight:800; font-size: large; color: red;">{{ number_format($product->price, 0, '', '.') }} VNĐ</span>
+                                            {{-- @if ($product->discount > 0) --}}
+                                                <del>{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
+                                                <span class="text-success">-30%</span>
+                                            {{-- @endif --}}
+                                        </p>
+                                        <span class="d-flex">
+                                            {{-- @for ($i = 1; $i <= 5; $i++)
+                                                <svg width="18" height="18" class="{{ $i <= $product->rating ? 'text-warning' : 'text-secondary' }}">
+                                                    <use xlink:href="#star-{{ $i <= $product->rating ? 'solid' : 'outline' }}"></use>
+                                                </svg>
+                                            @endfor --}}
+                                            <svg width="18" height="18" class="text-warning">
+                                            <use xlink:href="#star-solid"></use>
+                                        </svg>
+                                        <svg width="18" height="18" class="text-warning">
+                                            <use xlink:href="#star-solid"></use>
+                                        </svg>
+                                        <svg width="18" height="18" class="text-warning">
+                                            <use xlink:href="#star-solid"></use>
+                                        </svg>
+                                        <svg width="18" height="18" class="text-warning">
+                                            <use xlink:href="#star-solid"></use>
+                                        </svg>
+                                        <svg width="18" height="18" class="text-warning">
+                                            <use xlink:href="#star-solid"></use>
+                                        </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
+                        @endforeach
                         <div class="swiper-slide">
                             <div class="product-item">
                                 <span class="badge bg-success position-absolute m-3">-30%</span>
@@ -493,7 +552,7 @@
                             </div>
                         </div>
 
-                        <div class="swiper-slide">
+                        {{-- <div class="swiper-slide">
                             <div class="product-item">
                                 <span class="badge bg-success position-absolute m-3">-30%</span>
                                 <figure>
@@ -781,7 +840,7 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
                     {{-- </div> --}}
