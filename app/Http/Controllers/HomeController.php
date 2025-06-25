@@ -58,7 +58,7 @@ class HomeController extends Controller
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
-
+        $keywords = $request->input('search');
         // Lọc theo danh mục nếu có
         if ($request->has('category') && $request->category != '') {
             // Lọc theo category_id nếu có
@@ -81,7 +81,7 @@ class HomeController extends Controller
         $categories = Category::all();
 
         // Trả về kết quả tìm kiếm
-        return view('user.search', compact('products', 'categories'));  // Trả về kết quả tìm kiếm
+        return view('user.search', compact('products', 'categories', 'keywords'));  // Trả về kết quả tìm kiếm
     }
     /**
      * Display the specified resource.
