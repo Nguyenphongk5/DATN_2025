@@ -9,12 +9,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('cart_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('cart_id')->constrained();
-            $table->foreignId('product_variant_id')->constrained();
-            $table->integer('quantity');
-            $table->timestamps();
-        });
+    $table->id();
+    $table->foreignId('cart_id')->constrained();
+    $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+
+
+    $table->foreignId('product_variant_id')->nullable()->constrained(); // nullable
+    $table->integer('quantity');
+    $table->timestamps();
+});
+
     }
 
     public function down()

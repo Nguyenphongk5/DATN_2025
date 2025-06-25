@@ -13,21 +13,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        if (!User::where('email', 'test@example.com')->exists()) {
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+    }
        
 
     $this->call([
         BrandSeeder::class,
         CategorySeeder::class,
         ProductSeeder::class,
+        VoucherSeeder::class,
         OrderSeeder::class,
         OrderDetailSeeder::class,
-        VoucherSeeder::class
+        
+        ProductVariantSeeder::class
     ]);
 
     }

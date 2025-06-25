@@ -88,10 +88,17 @@ class HomeController extends Controller
      */
     public function show(string $id)
     {
-        //
-        $categories = Category::all();
-        $product = DB::table('products')->where('id', $id)->first();
-        return view('user.product-detail', compact('product', 'categories'));
+       // Lấy danh mục
+    $categories = Category::all();
+
+    // Lấy sản phẩm kèm theo biến thể
+    $product = Product::with('variants')->findOrFail($id);
+
+    // Lấy danh sách màu và size duy nhất từ biến thể
+    $colors = $product->variants->pluck('color_name')->unique();
+    $sizes = $product->variants->pluck('size')->unique();
+
+    return view('user.product-detail', compact('product', 'categories', 'colors', 'sizes'));
     }
 
     /**

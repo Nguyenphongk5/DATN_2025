@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product_variants extends Model
+class ProductVariant extends Model
 {
-    //
-    protected $table = 'product_variants';
+    protected $table = 'product_variants'; // đúng tên bảng, viết thường, không có khoảng trắng
+
     protected $fillable = [
         'product_id',
         'size',
