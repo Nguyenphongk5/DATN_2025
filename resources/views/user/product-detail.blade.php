@@ -1,6 +1,6 @@
 @extends('layouts.user')
 @section('content')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <section id="selling-product" class="single-product mt-0 mt-md-5">
         <div class="container-fluid">
             <div class="row g-5">
@@ -118,7 +118,8 @@
                                     <h6 class="item-title text-uppercase text-dark">Color:</h6>
                                     @foreach ($productVariants as $productVariant)
                                         <input type="radio" class="btn-check" name="options-color"
-                                            id="option-color{{ $loop->index + 1 }}" autocomplete="off" autocomplete="off" checked>
+                                            id="option-color{{ $loop->index + 1 }}" autocomplete="off" autocomplete="off"
+                                            checked>
                                         <label class="btn" for="option-color{{ $loop->index + 1 }}">
                                             <span class="rounded-circle d-inline-block"
                                                 style="width: 16px; height: 16px; background-color: {{ $productVariant->hex_code }}; border: 1px solid #ccc;"></span>
@@ -237,8 +238,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="d-flex flex-column flex-md-row align-items-start gap-5">
+                    <!-- Tab Navigation -->
                     <div class="nav flex-row flex-wrap flex-md-column nav-pills me-3 col-lg-3" id="v-pills-tab"
-                        role="tablist" aria-orientation="vertical">
+                        role="tablist">
                         <button class="nav-link text-start active" id="v-pills-description-tab" data-bs-toggle="pill"
                             data-bs-target="#v-pills-description" type="button" role="tab"
                             aria-controls="v-pills-description" aria-selected="true">Description</button>
@@ -249,7 +251,10 @@
                             data-bs-target="#v-pills-reviews" type="button" role="tab"
                             aria-controls="v-pills-reviews" aria-selected="false">Customer Reviews</button>
                     </div>
-                    <div class="tab-content" id="v-pills-tabContent">
+
+                    <!-- Tab Content -->
+                    <div class="tab-content flex-grow-1" id="v-pills-tabContent">
+                        <!-- Description Tab -->
                         <div class="tab-pane fade show active" id="v-pills-description" role="tabpanel"
                             aria-labelledby="v-pills-description-tab" tabindex="0">
                             <h5>Product Description</h5>
@@ -267,122 +272,118 @@
                                 eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit,
                                 posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris
                                 sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh.
-                                Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                                Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus.</p>
                         </div>
+
+                        <!-- Additional Info Tab -->
                         <div class="tab-pane fade" id="v-pills-additional" role="tabpanel"
                             aria-labelledby="v-pills-additional-tab" tabindex="0">
                             <p>It is Comfortable and Best</p>
                             <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
                                 pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                mollit anim id est laborum. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                                in culpa qui officia deserunt mollit anim id est laborum.</p>
-                                </div>
-
-
-<div class="tab-pane fade show active" id="v-pills-reviews" role="tabpanel" aria-labelledby="v-pills-reviews-tab" tabindex="0">
-    
-    {{-- DANH SÁCH BÌNH LUẬN --}}
-    @foreach ($comments as $comment)
-        <div class="card mb-3">
-            <div class="card-body d-flex">
-                <div class="me-3">
-                    <img src="{{ asset('images/default-avatar.png') }}" alt="user" class="rounded-circle" width="50" height="50" style="object-fit: cover;">
-                </div>
-                <div class="w-100">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <strong>{{ $comment->user->name }}</strong>
-                        <small>{{ $comment->created_at->format('d/m/Y') }}</small>
-                    </div>
-
-                    {{-- RATING HIỂN THỊ --}}
-                    <div class="mb-1">
-                        @php $rating = (int) $comment->rating; @endphp
-                        @for ($i = 1; $i <= 5; $i++)
-                            <i class="bi {{ $i <= $rating ? 'bi-star-fill text-warning' : 'bi-star text-muted' }}"></i>
-                        @endfor
-                    </div>
-
-                    {{-- NỘI DUNG --}}
-                    @if ($comment->content)
-                        <p class="mb-1">{{ $comment->content }}</p>
-                    @endif
-
-                    {{-- ẢNH --}}
-                    @if ($comment->image)
-                        <img src="{{ asset('storage/' . $comment->image) }}" alt="Ảnh bình luận" class="img-thumbnail mt-2" style="max-width: 150px;">
-                    @endif
-
-                    {{-- SỬA --}}
-                    @if (Auth::check() && Auth::id() === $comment->user_id)
-                        <button class="btn btn-sm btn-outline-primary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#editComment{{ $comment->id }}">Sửa bình luận</button>
-
-                        <div class="collapse mt-2" id="editComment{{ $comment->id }}">
-                            <form action="{{ route('comments.update', $comment->id) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
-
-                                <div class="mb-2">
-                                    <label class="form-label">Nội dung</label>
-                                    <textarea name="content" class="form-control" rows="3">{{ $comment->content }}</textarea>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label class="form-label">Ảnh mới (nếu thay)</label>
-                                    <input type="file" name="image" class="form-control">
-                                </div>
-
-                                <button type="submit" class="btn btn-sm btn-success">Cập nhật</button>
-                            </form>
+                                mollit anim id est laborum.</p>
                         </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    @endforeach
 
-    {{-- FORM GỬI BÌNH LUẬN --}}
-    <div class="add-review mt-5">
-        <h5 class="mb-3">Gửi bình luận của bạn</h5>
+                        <!-- Reviews Tab -->
+                        <div class="tab-pane fade" id="v-pills-reviews" role="tabpanel"
+                            aria-labelledby="v-pills-reviews-tab" tabindex="0">
+                            @if (session('success'))
+                                <div class="alert alert-success">{{ session('success') }}</div>
+                            @endif
 
-        @if ($canComment)
-            <form action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            @foreach ($comments as $comment)
+                                <div class="card mb-3">
+                                    <div class="card-body d-flex flex-column flex-md-row">
+                                        <div class="me-3 mb-2">
+                                            <img src="{{ asset('images/default-avatar.png') }}" alt="user"
+                                                class="rounded-circle" width="50" height="50">
+                                        </div>
+                                        <div class="w-100">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong>{{ $comment->user->name }}</strong>
+                                                <small>{{ $comment->created_at->format('d/m/Y') }}</small>
+                                            </div>
+                                            <div class="mb-2">
+                                                @php $rating = (int) $comment->rating; @endphp
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <i
+                                                        class="bi {{ $i <= $rating ? 'bi-star-fill text-warning' : 'bi-star text-muted' }}"></i>
+                                                @endfor
+                                            </div>
+                                            @if ($comment->content)
+                                                <p class="mb-2">{{ $comment->content }}</p>
+                                            @endif
+                                            @if ($comment->image)
+                                                <img src="{{ asset('storage/' . $comment->image) }}" alt="Ảnh bình luận"
+                                                    class="img-thumbnail mt-2" style="max-width: 150px;">
+                                            @endif
+                                            @if (Auth::check() && Auth::id() === $comment->user_id)
+                                                <button class="btn btn-sm btn-outline-primary mt-3" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#editComment{{ $comment->id }}">Sửa bình
+                                                    luận</button>
+                                                <div class="collapse mt-3" id="editComment{{ $comment->id }}">
+                                                    <form
+                                                        action="{{ route('comments.update', $comment->id) }}#v-pills-reviews"
+                                                        method="POST" enctype="multipart/form-data" class="w-100">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Nội dung</label>
+                                                            <textarea name="content" class="form-control" rows="3" style="min-width: 100%">{{ $comment->content }}</textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ảnh mới (nếu thay)</label>
+                                                            <input type="file" name="image" class="form-control">
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-success">Cập
+                                                            nhật</button>
+                                                    </form>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
 
-                {{-- ĐÁNH GIÁ --}}
-                <div class="mb-3">
-                    <label class="form-label">Đánh giá *</label>
-                    <div class="rating-stars">
-                        @for ($i = 5; $i >= 1; $i--)
-                            <input type="radio" id="rating{{ $i }}" name="rating" value="{{ $i }}">
-                            <label for="rating{{ $i }}"><i class="bi bi-star-fill"></i></label>
-                        @endfor
-                    </div>
-                </div>
+                            <div class="add-review mt-5 w-100">
+                                <h5 class="mb-3">Gửi bình luận của bạn</h5>
+                                @if ($canComment)
+                                    <form action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
+                                        enctype="multipart/form-data" style="width: 100%">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-                {{-- ẢNH --}}
-                <div class="mb-3">
-                    <label class="form-label">Ảnh (nếu có)</label>
-                    <input type="file" name="image" class="form-control">
-                </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Đánh giá *</label>
+                                            <div class="rating-stars">
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <input type="radio" id="rating{{ $i }}" name="rating"
+                                                        value="{{ $i }}">
+                                                    <label for="rating{{ $i }}"><i
+                                                            class="bi bi-star-fill"></i></label>
+                                                @endfor
+                                            </div>
+                                        </div>
 
-                {{-- NỘI DUNG --}}
-                <div class="mb-3">
-                    <label class="form-label">Nội dung bình luận</label>
-                    <textarea name="content" class="form-control" rows="4" placeholder="Nhập bình luận của bạn..."></textarea>
-                </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Ảnh (nếu có)</label>
+                                            <input type="file" name="image" class="form-control">
+                                        </div>
 
-                <button type="submit" class="btn btn-primary">Gửi bình luận</button>
-            </form>
-        @else
-            <div class="alert alert-warning">Chỉ người đã mua sản phẩm mới có thể bình luận.</div>
-        @endif
-    </div>
-</div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Nội dung bình luận</label>
+                                            <textarea name="content" class="form-control" rows="6" placeholder="Nhập bình luận của bạn..."></textarea>
+                                        </div>
 
+                                        <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+                                    </form>
+                                @else
+                                    <div class="alert alert-warning">Chỉ người đã mua sản phẩm mới có thể bình luận.</div>
+                                @endif
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -416,21 +417,24 @@
                     <div class="swiper-wrapper d-flex">
                         @foreach ($products as $product)
                             <div style="width: 25%; margin-right: 30px;">
-                                <div class="product-item" >
+                                <div class="product-item">
                                     {{-- @if ($product->discount > 0) --}}
-                                        <span class="badge bg-success position-absolute m-3">-30%</span>
+                                    <span class="badge bg-success position-absolute m-3">-30%</span>
                                     {{-- @endif --}}
                                     <figure>
                                         <a href="{{ route('products.show', $product->id) }}">
-                                            <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="Product Thumbnail" class="img-fluid">
+                                            <img src="{{ asset('storage/' . $product->img_thumb) }}"
+                                                alt="Product Thumbnail" class="img-fluid">
                                         </a>
                                     </figure>
                                     <p>{{ $product->name }}</p>
                                     <div class="d-block justify-content-between">
-                                        <p><span class=" d-block" style=" font-weight:800; font-size: large; color: red;">{{ number_format($product->price, 0, '', '.') }} VNĐ</span>
+                                        <p><span class=" d-block"
+                                                style=" font-weight:800; font-size: large; color: red;">{{ number_format($product->price, 0, '', '.') }}
+                                                VNĐ</span>
                                             {{-- @if ($product->discount > 0) --}}
-                                                <del>{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
-                                                <span class="text-success">-30%</span>
+                                            <del>{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
+                                            <span class="text-success">-30%</span>
                                             {{-- @endif --}}
                                         </p>
                                         <span class="d-flex">
@@ -440,25 +444,24 @@
                                                 </svg>
                                             @endfor --}}
                                             <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
-                                        <svg width="18" height="18" class="text-warning">
-                                            <use xlink:href="#star-solid"></use>
-                                        </svg>
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
+                                            <svg width="18" height="18" class="text-warning">
+                                                <use xlink:href="#star-solid"></use>
+                                            </svg>
                                         </span>
                                     </div>
                                 </div>
                             </div>
-
                         @endforeach
                         <div class="swiper-slide">
                             <div class="product-item">

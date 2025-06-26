@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\Admin\Product_VariantController;
@@ -36,6 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('product_variants', Product_VariantController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
+    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 require __DIR__.'/auth.php';

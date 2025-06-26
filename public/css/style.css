@@ -879,4 +879,9 @@ h1,h2,h3,h4,h5,h6 {
     .rating-stars label:hover ~ label {
         color: #ffc107;
     }
+    textarea.form-control {
+    width: 100% !important;
+    max-width: 100%;
+}
+
 

@@ -320,8 +320,9 @@
                                             </li>
                                             <li><a href="blog.html" class="dropdown-item text-white">Bài viết <span
                                                         class="badge bg-warning text-dark ms-2">PRO</span></a></li>
-                                            <li><a href="single-post.html" class="dropdown-item text-white">Bài viết đơn lẻ
-                                                    
+                                            <li><a href="single-post.html" class="dropdown-item text-white">Bài viết
+                                                    đơn lẻ
+
                                                     <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
                                             <li><a href="styles.html" class="dropdown-item text-white">Phong cách
@@ -359,6 +360,35 @@
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const hash = window.location.hash;
+
+                if (hash) {
+                    const tabTrigger = document.querySelector(`[data-bs-target="${hash}"]`);
+                    if (tabTrigger) {
+                        const tab = new bootstrap.Tab(tabTrigger);
+                        tab.show();
+
+                        // Nếu là reviews thì scroll tới phần review
+                        if (hash === "#v-pills-reviews") {
+                            setTimeout(() => {
+                                document.querySelector("#v-pills-reviews")?.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                            }, 300);
+                        }
+                    }
+                }
+                const tabTriggers = document.querySelectorAll('[data-bs-toggle="pill"]');
+                tabTriggers.forEach(trigger => {
+                    trigger.addEventListener('shown.bs.tab', function(e) {
+                        const newHash = e.target.getAttribute('data-bs-target');
+                        history.replaceState(null, null, newHash);
+                    });
+                });
+            });
+        </script>
 
     </header>
 
