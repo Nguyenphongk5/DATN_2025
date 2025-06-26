@@ -83,27 +83,24 @@ class HomeController extends Controller
         // Trả về kết quả tìm kiếm
         return view('user.search', compact('products', 'categories'));  // Trả về kết quả tìm kiếm
     }
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-       // Lấy danh mục
-    $categories = Category::all();
+        //
+        $categories = Category::all();
+        $productVariants = DB::table('product_variants')
+            ->where('product_id', $id)
+            ->get();
 
-    // Lấy sản phẩm kèm theo biến thể
-    $product = Product::with('variants')->findOrFail($id);
-
-    // Lấy danh sách màu và size duy nhất từ biến thể
-    $colors = $product->variants->pluck('color_name')->unique();
-    $sizes = $product->variants->pluck('size')->unique();
-
-    return view('user.product-detail', compact('product', 'categories', 'colors', 'sizes'));
+        $product = DB::table('products')
+        ->join('categories', 'products.category_id', '=', 'categories.id')
+        ->select('products.*', 'categories.name as category_name')
+        ->where('products.id', $id)->first();
+        $products = DB::table('products')
+        ->where('category_id', "=",$product->category_id)
+        ->limit(8)
+        ->get();
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //

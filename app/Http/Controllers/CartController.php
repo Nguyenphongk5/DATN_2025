@@ -11,6 +11,21 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+
+
+    public function handleAction(Request $request)
+{
+    $action = $request->input('action');
+
+    if ($action === 'add_to_cart') {
+        return $this->addToCart($request);
+    } elseif ($action === 'buy_now') {
+        return $this->buyNow($request);
+    } else {
+        return back()->with('error', 'Hành động không hợp lệ');
+    }
+}
+
   public function addToCart(Request $request)
 {
     $request->validate([

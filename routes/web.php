@@ -20,7 +20,8 @@ Route::get('', function () {
         'categories' => \App\Models\Category::all(),
     ]);
 })->name('home');
- Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+ Route::post('/cart/add', [CartController::class, 'handleAction'])->name('cart.add');
+
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
