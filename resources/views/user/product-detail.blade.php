@@ -303,6 +303,7 @@
                                                 <strong>{{ $comment->user->name }}</strong>
                                                 <small>{{ $comment->created_at->format('d/m/Y') }}</small>
                                             </div>
+
                                             <div class="mb-2">
                                                 @php $rating = (int) $comment->rating; @endphp
                                                 @for ($i = 1; $i <= 5; $i++)
@@ -310,18 +311,63 @@
                                                         class="bi {{ $i <= $rating ? 'bi-star-fill text-warning' : 'bi-star text-muted' }}"></i>
                                                 @endfor
                                             </div>
+
                                             @if ($comment->content)
                                                 <p class="mb-2">{{ $comment->content }}</p>
                                             @endif
+
                                             @if ($comment->image)
                                                 <img src="{{ asset('storage/' . $comment->image) }}" alt="Ảnh bình luận"
                                                     class="img-thumbnail mt-2" style="max-width: 150px;">
                                             @endif
+
+                                            {{-- Nếu có bình luận con --}}
+                                            @if ($comment->replies && $comment->replies->count())
+                                                <div class="mt-4 ms-4 ps-3 border-start border-2">
+                                                    @foreach ($comment->replies as $reply)
+                                                        <div class="mb-3">
+                                                            <div class="d-flex align-items-start gap-2">
+                                                                <img src="{{ asset('images/default-avatar.png') }}"
+                                                                    alt="user" class="rounded-circle" width="40"
+                                                                    height="40">
+                                                                <div>
+                                                                    <strong>{{ $reply->user->name }}</strong>
+                                                                    <small
+                                                                        class="text-muted ms-2">{{ $reply->created_at->format('d/m/Y H:i') }}</small>
+                                                                    @if ($reply->user->role === 'admin')
+                                                                        <span class="badge bg-danger ms-2">Admin</span>
+                                                                    @endif
+                                                                    <p class="mb-1">{{ $reply->content }}</p>
+                                                                    @if ($reply->image)
+                                                                        <img src="{{ asset('storage/' . $reply->image) }}"
+                                                                            alt="Ảnh phản hồi" class="img-thumbnail mt-1"
+                                                                            style="max-width: 120px;">
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
+                                            {{-- Nút sửa và form trả lời --}}
+                                            <div class="mt-3">
+                                                @if (Auth::check() && Auth::id() === $comment->user_id)
+                                                    <button class="btn btn-sm btn-outline-primary me-2" type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#editComment{{ $comment->id }}">Sửa bình
+                                                        luận</button>
+                                                @endif
+
+                                                @auth
+                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#replyComment{{ $comment->id }}">Trả lời</button>
+                                                @endauth
+                                            </div>
+
+                                            {{-- Form sửa --}}
                                             @if (Auth::check() && Auth::id() === $comment->user_id)
-                                                <button class="btn btn-sm btn-outline-primary mt-3" type="button"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#editComment{{ $comment->id }}">Sửa bình
-                                                    luận</button>
                                                 <div class="collapse mt-3" id="editComment{{ $comment->id }}">
                                                     <form
                                                         action="{{ route('comments.update', $comment->id) }}#v-pills-reviews"
@@ -330,7 +376,7 @@
                                                         @method('PUT')
                                                         <div class="mb-3">
                                                             <label class="form-label">Nội dung</label>
-                                                            <textarea name="content" class="form-control" rows="3" style="min-width: 100%">{{ $comment->content }}</textarea>
+                                                            <textarea name="content" class="form-control" rows="3">{{ $comment->content }}</textarea>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Ảnh mới (nếu thay)</label>
@@ -341,16 +387,35 @@
                                                     </form>
                                                 </div>
                                             @endif
+
+                                            {{-- Form trả lời --}}
+                                            @auth
+                                                <div class="collapse mt-3" id="replyComment{{ $comment->id }}">
+                                                    <form action="{{ route('comments.store') }}#v-pills-reviews"
+                                                        method="POST" class="w-100">
+                                                        @csrf
+                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Trả lời:</label>
+                                                            <textarea name="content" class="form-control" rows="2" placeholder="Trả lời bình luận..."></textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary">Gửi
+                                                            phản hồi</button>
+                                                    </form>
+                                                </div>
+                                            @endauth
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
 
+                            {{-- Form thêm mới bình luận chính --}}
                             <div class="add-review mt-5 w-100">
                                 <h5 class="mb-3">Gửi bình luận của bạn</h5>
                                 @if ($canComment)
                                     <form action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
-                                        enctype="multipart/form-data" style="width: 100%">
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
 
@@ -383,6 +448,7 @@
                                 @endif
                             </div>
                         </div>
+
 
                     </div>
                 </div>

@@ -16,6 +16,7 @@ class Comment extends Model
          'rating',
         'parent_id',
         'is_active',
+        'image'
     ];
 
     // Quan hệ: bình luận thuộc về người dùng
@@ -38,7 +39,7 @@ class Comment extends Model
 
     // Quan hệ: các bình luận con (reply)
     public function replies()
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
-    }
+{
+    return $this->hasMany(Comment::class, 'parent_id')->where('is_active', 1)->orderBy('created_at');
+}
 }

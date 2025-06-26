@@ -107,6 +107,7 @@ class HomeController extends Controller
 
     $comments = Comment::with(['user', 'replies.user'])
         ->where('product_id', $id)
+        ->where('is_active', 1)
         ->whereNull('parent_id')
         ->orderByDesc('created_at')
         ->get();
