@@ -35,7 +35,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('checkout.placeOrder') }}" method="POST">
+                <form action="{{ isset($variant) ? route('checkout.placeBuyNowOrder') : route('checkout.placeOrder') }}" method="POST">
                     @csrf
 
                     <div class="mb-3">
@@ -82,26 +82,48 @@
                 <h4 class="mb-4">Đơn hàng của bạn</h4>
                 <ul class="list-group mb-3">
                     @php $total = 0; @endphp
-                    @foreach ($cart?->items ?? [] as $item)
+
+                    {{-- Luồng mua ngay --}}
+                    @if (isset($variant))
                         @php
-                            $variant = $item->productVariant;
-                            $product = $variant?->product ?? $item->product;
-                            $name = $product?->name ?? 'Sản phẩm';
-                            $price = $variant?->price ?? $product?->price ?? 0;
-                            $subtotal = $price * $item->quantity;
+                            $product = $variant->product;
+                            $price = $variant->price;
+                            $subtotal = $price * $quantity;
                             $total += $subtotal;
                         @endphp
                         <li class="list-group-item d-flex justify-content-between lh-sm">
                             <div>
-                                <h6 class="my-0">{{ $name }}</h6>
-                                @if ($variant)
-                                    <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
-                                @endif
-                                <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
+                                <h6 class="my-0">{{ $product->name }}</h6>
+                                <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                <div><small class="text-muted">Số lượng: {{ $quantity }}</small></div>
                             </div>
                             <span class="text-muted">${{ number_format($subtotal, 0, ',', '.') }}</span>
                         </li>
-                    @endforeach
+
+                    {{-- Luồng giỏ hàng --}}
+                    @elseif (!empty($cart?->items))
+                        @foreach ($cart->items as $item)
+                            @php
+                                $variant = $item->productVariant;
+                                $product = $variant?->product ?? $item->product;
+                                $name = $product?->name ?? 'Sản phẩm';
+                                $price = $variant?->price ?? $product?->price ?? 0;
+                                $subtotal = $price * $item->quantity;
+                                $total += $subtotal;
+                            @endphp
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">{{ $name }}</h6>
+                                    @if ($variant)
+                                        <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                    @endif
+                                    <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
+                                </div>
+                                <span class="text-muted">${{ number_format($subtotal, 0, ',', '.') }}</span>
+                            </li>
+                        @endforeach
+                    @endif
+
                     <li class="list-group-item d-flex justify-content-between">
                         <span><strong>Tổng cộng</strong></span>
                         <strong>${{ number_format($total, 0, ',', '.') }}</strong>

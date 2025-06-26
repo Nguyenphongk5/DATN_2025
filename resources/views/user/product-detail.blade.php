@@ -126,6 +126,15 @@
 
                             <button type="submit">Add to cart</button>
                         </form>
+                        <form action="{{ route('cart.buyNow') }}" method="POST" class="mt-2">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <input type="hidden" name="color_name" value="{{ old('color_name', $colors[0] ?? '') }}">
+                            <input type="hidden" name="size" value="{{ old('size', $sizes[0] ?? '') }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-primary">Buy Now</button>
+                        </form>
+
                         @if (session('success'))
                         <div class="alert alert-success mt-3">{{ session('success') }}</div>
                         @endif

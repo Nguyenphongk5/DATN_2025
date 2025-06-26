@@ -93,7 +93,28 @@ public function update(Request $request, $id)
     return back()->with('success', 'Cập nhật số lượng thành công');
 }
 
+public function buyNow(Request $request)
+{
+    $request->validate([
+        'product_id' => 'required|integer|exists:products,id',
+        'color_name' => 'required|string',
+        'size' => 'required|string',
+        'quantity' => 'required|integer|min:1|max:100',
+    ]);
 
+    // Lưu thông tin sản phẩm mua ngay vào session
+    session([
+        'buy_now' => [
+            'product_id' => $request->product_id,
+            'color_name' => $request->color_name,
+            'size' => $request->size,
+            'quantity' => $request->quantity,
+        ]
+    ]);
+
+    // Chuyển hướng sang trang checkout mua ngay
+    return redirect()->route('checkout.buyNow');
+}
 
 
 }

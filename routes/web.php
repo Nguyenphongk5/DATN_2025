@@ -19,7 +19,7 @@ Route::get('', function () {
         'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
         'categories' => \App\Models\Category::all(),
     ]);
-});
+})->name('home');
  Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
@@ -27,6 +27,14 @@ Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.u
 // web.php
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+
+Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
+
+
+Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
+
+
+Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
