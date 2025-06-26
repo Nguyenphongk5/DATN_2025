@@ -1,5 +1,6 @@
 @extends('layouts.user')
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <section id="selling-product" class="single-product mt-0 mt-md-5">
         <div class="container-fluid">
             <div class="row g-5">
@@ -276,170 +277,110 @@
                                 mollit anim id est laborum. Duis aute irure dolor in reprehenderit in voluptate velit esse
                                 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
                                 in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+
+
+<div class="tab-pane fade show active" id="v-pills-reviews" role="tabpanel" aria-labelledby="v-pills-reviews-tab" tabindex="0">
+    
+    {{-- DANH SÁCH BÌNH LUẬN --}}
+    @foreach ($comments as $comment)
+        <div class="card mb-3">
+            <div class="card-body d-flex">
+                <div class="me-3">
+                    <img src="{{ asset('images/default-avatar.png') }}" alt="user" class="rounded-circle" width="50" height="50" style="object-fit: cover;">
+                </div>
+                <div class="w-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>{{ $comment->user->name }}</strong>
+                        <small>{{ $comment->created_at->format('d/m/Y') }}</small>
+                    </div>
+
+                    {{-- RATING HIỂN THỊ --}}
+                    <div class="mb-1">
+                        @php $rating = (int) $comment->rating; @endphp
+                        @for ($i = 1; $i <= 5; $i++)
+                            <i class="bi {{ $i <= $rating ? 'bi-star-fill text-warning' : 'bi-star text-muted' }}"></i>
+                        @endfor
+                    </div>
+
+                    {{-- NỘI DUNG --}}
+                    @if ($comment->content)
+                        <p class="mb-1">{{ $comment->content }}</p>
+                    @endif
+
+                    {{-- ẢNH --}}
+                    @if ($comment->image)
+                        <img src="{{ asset('storage/' . $comment->image) }}" alt="Ảnh bình luận" class="img-thumbnail mt-2" style="max-width: 150px;">
+                    @endif
+
+                    {{-- SỬA --}}
+                    @if (Auth::check() && Auth::id() === $comment->user_id)
+                        <button class="btn btn-sm btn-outline-primary mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#editComment{{ $comment->id }}">Sửa bình luận</button>
+
+                        <div class="collapse mt-2" id="editComment{{ $comment->id }}">
+                            <form action="{{ route('comments.update', $comment->id) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="mb-2">
+                                    <label class="form-label">Nội dung</label>
+                                    <textarea name="content" class="form-control" rows="3">{{ $comment->content }}</textarea>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label">Ảnh mới (nếu thay)</label>
+                                    <input type="file" name="image" class="form-control">
+                                </div>
+
+                                <button type="submit" class="btn btn-sm btn-success">Cập nhật</button>
+                            </form>
                         </div>
-                        <div class="tab-pane fade" id="v-pills-reviews" role="tabpanel"
-                            aria-labelledby="v-pills-reviews-tab" tabindex="0">
-                            <div class="review-box d-flex flex-wrap">
-                                <div class="col-lg-6 d-flex flex-wrap gap-3">
-                                    <div class="col-md-2">
-                                        <div class="image-holder">
-                                            <img src="images/reviewer-1.jpg" alt="review"
-                                                class="img-fluid rounded-circle">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="review-content">
-                                            <div class="rating-container d-flex align-items-center">
-                                                <div class="rating" data-rating="1">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="2">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="3">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="4">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-outline"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="5">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-outline"></use>
-                                                    </svg>
-                                                </div>
-                                                <span class="rating-count">(3.5)</span>
-                                            </div>
-                                            <div class="review-header">
-                                                <span class="author-name">Tina Johnson</span>
-                                                <span class="review-date">– 03/07/2023</span>
-                                            </div>
-                                            <p>Vitae tortor condimentum lacinia quis vel eros donec ac. Nam at lectus urna
-                                                duis convallis convallis</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 d-flex flex-wrap gap-3">
-                                    <div class="col-md-2">
-                                        <div class="image-holder">
-                                            <img src="images/reviewer-2.jpg" alt="review"
-                                                class="img-fluid rounded-circle">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="review-content">
-                                            <div class="rating-container d-flex align-items-center">
-                                                <div class="rating" data-rating="1">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="2">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="3">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="4">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-outline"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="5">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-outline"></use>
-                                                    </svg>
-                                                </div>
-                                                <span class="rating-count">(3.5)</span>
-                                            </div>
-                                            <div class="review-header">
-                                                <span class="author-name">Jenny Willis</span>
-                                                <span class="review-date">– 03/06/2022</span>
-                                            </div>
-                                            <p>Vitae tortor condimentum lacinia quis vel eros donec ac. Nam at lectus urna
-                                                duis convallis convallis</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endforeach
 
-                            <div class="add-review mt-5">
-                                <h3>Add a review</h3>
-                                <p>Your email address will not be published. Required fields are marked *</p>
-                                <form id="form" class="form-group">
+    {{-- FORM GỬI BÌNH LUẬN --}}
+    <div class="add-review mt-5">
+        <h5 class="mb-3">Gửi bình luận của bạn</h5>
 
-                                    <div class="pb-3">
-                                        <div class="review-rating">
-                                            <span>Your rating *</span>
-                                            <div class="rating-container d-flex align-items-center">
-                                                <div class="rating" data-rating="1">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="2">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="3">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="4">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-outline"></use>
-                                                    </svg>
-                                                </div>
-                                                <div class="rating" data-rating="5">
-                                                    <svg width="24" height="24" class="text-warning">
-                                                        <use xlink:href="#star-outline"></use>
-                                                    </svg>
-                                                </div>
-                                                <span class="rating-count">(3.5)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="pb-3">
-                                        <input type="file" class="form-control" data-text="Choose your file">
-                                    </div>
-                                    <div class="pb-3">
-                                        <label>Your Review *</label>
-                                        <textarea class="form-control" placeholder="Write your review here"></textarea>
-                                    </div>
-                                    <div class="pb-3">
-                                        <label>Your Name *</label>
-                                        <input type="text" name="name" placeholder="Write your name here"
-                                            class="form-control">
-                                    </div>
-                                    <div class="pb-3">
-                                        <label>Your Email *</label>
-                                        <input type="text" name="email" placeholder="Write your email here"
-                                            class="form-control">
-                                    </div>
-                                    <div class="pb-3">
-                                        <label>
-                                            <input type="checkbox" required="">
-                                            <span class="label-body">Save my name, email, and website in this browser for
-                                                the next
-                                                time.</span>
-                                        </label>
-                                    </div>
-                                    <button type="submit" name="submit"
-                                        class="btn btn-dark btn-large text-uppercase w-100">Submit</button>
-                                </form>
+        @if ($canComment)
+            <form action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+                {{-- ĐÁNH GIÁ --}}
+                <div class="mb-3">
+                    <label class="form-label">Đánh giá *</label>
+                    <div class="rating-stars">
+                        @for ($i = 5; $i >= 1; $i--)
+                            <input type="radio" id="rating{{ $i }}" name="rating" value="{{ $i }}">
+                            <label for="rating{{ $i }}"><i class="bi bi-star-fill"></i></label>
+                        @endfor
+                    </div>
+                </div>
+
+                {{-- ẢNH --}}
+                <div class="mb-3">
+                    <label class="form-label">Ảnh (nếu có)</label>
+                    <input type="file" name="image" class="form-control">
+                </div>
+
+                {{-- NỘI DUNG --}}
+                <div class="mb-3">
+                    <label class="form-label">Nội dung bình luận</label>
+                    <textarea name="content" class="form-control" rows="4" placeholder="Nhập bình luận của bạn..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+            </form>
+        @else
+            <div class="alert alert-warning">Chỉ người đã mua sản phẩm mới có thể bình luận.</div>
+        @endif
+    </div>
+</div>
+
                             </div>
                         </div>
                     </div>

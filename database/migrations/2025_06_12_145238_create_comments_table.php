@@ -9,14 +9,17 @@ return new class extends Migration
     public function up()
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('product_id')->constrained();
-            $table->text('content');
-            $table->foreignId('parent_id')->nullable()->constrained('comments');
-            $table->tinyInteger('is_active')->default(1);
-            $table->timestamps();
-        });
+        $table->id();
+        $table->foreignId('user_id')->constrained();
+        $table->foreignId('product_id')->constrained();
+        $table->text('content')->nullable();
+        $table->tinyInteger('rating')->nullable();
+        $table->string('image')->nullable();      
+        $table->foreignId('parent_id')->nullable()->constrained('comments');
+        $table->tinyInteger('is_active')->default(1);
+        $table->timestamps();
+});
+
     }
 
     public function down()
