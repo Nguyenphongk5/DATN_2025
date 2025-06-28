@@ -42,7 +42,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/delete/{id}', [CategoryController::class, 'destroy'])->name('deleteCategory');
     });
-
+    
+    // =============================LOGO============================ \\
+    Route::resource('logos', LogoController::class);
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
