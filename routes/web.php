@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\LogoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -41,6 +42,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/delete/{id}', [CategoryController::class, 'destroy'])->name('deleteCategory');
     });
+
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
