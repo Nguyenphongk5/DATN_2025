@@ -48,86 +48,71 @@
 </head>
 
 <body class="font-inter bg-gray-100 text-gray-800 antialiased">
-    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <div :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-            class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-xl transform transition-all duration-300 ease-in-out md:relative md:translate-x-0 rounded-r-xl">
-            <div class="flex items-center justify-between h-16 px-6 bg-primary text-white font-semibold text-lg">
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                    <x-application-logo class="h-8 w-auto text-white" />
-                    <span>{{ config('app.name', 'Laravel') }}</span>
-                </a>
-                <button @click="sidebarOpen = false" class="md:hidden text-white hover:text-gray-200">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+    <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 text-white flex flex-col">
+        <div class="h-16 flex items-center justify-center bg-gray-900 text-xl font-bold tracking-wide">
+            Admin Panel
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
+            <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('dashboard') ? 'bg-gray-700 font-semibold' : '' }}">
+                📊 Bảng điều khiển
+            </a>
+            <a href="{{ route('products.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('products.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                Products
+            </a>
+            {{-- <a href="{{ route('orders.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                🧾 Đơn hàng
+            </a> --}}
+            <a href="{{ route('users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('users.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                Users
+            </a>
+            <a href="{{ route('product_variants.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('product_variants.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                Product Variants
+            </a>
+            <a href="{{ route('brands.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('brands.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                Brands
+            </a>
+            <a href="{{ route('blogs.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('blogs.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                Blogs
+            </a>
+            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition">
+                ⚙️ Hồ sơ
+            </a>
+        </nav>
+        <form method="POST" action="{{ route('logout') }}" class="mb-4 px-4">
+            @csrf
+            <button type="submit" class="w-full text-left px-4 py-2 rounded hover:bg-red-600 bg-red-500 transition text-white">
+                🚪 Đăng xuất
+            </button>
+        </form>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+
+        <!-- Navbar -->
+        <header class="bg-white border-b shadow h-16 flex items-center justify-between px-6">
+            <div class="text-lg font-semibold">
+                @yield('title', 'Quản trị hệ thống')
             </div>
-            <nav class="mt-6 px-3 space-y-2">
-                @php
-                    $navClasses = 'flex items-center px-5 py-3 text-lg text-gray-600 hover:bg-indigo-100 hover:text-indigo-700 rounded-xl transition duration-200 hover:scale-[1.02]';
-                @endphp
+            <div class="flex items-center space-x-3">
+                <span>{{ Auth::user()->name }}</span>
+                <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
+                     alt="Avatar"
+                     class="w-8 h-8 rounded-full object-cover border border-gray-300">
+            </div>
+        </header>
 
-                @foreach ([
-                    ['route' => 'dashboard', 'icon' => 'fas fa-tachometer-alt', 'label' => 'Dashboard'],
-                    ['route' => 'users.index', 'icon' => 'fas fa-users', 'label' => 'Users'],
-                    ['route' => 'products.index', 'icon' => 'fas fa-box', 'label' => 'Products'],
-                    ['route' => 'product_variants.index', 'icon' => 'fas fa-cube', 'label' => 'Product Variants'],
-                    ['route' => 'brands.index', 'icon' => 'fas fa-tag', 'label' => 'Brands'],
-                    ['route' => 'blogs.index', 'icon' => 'fas fa-blog', 'label' => 'Blogs'],
-                ] as $nav)
-                    <x-nav-link :href="route($nav['route'])" :active="request()->routeIs($nav['route'])"
-                        class="{{ request()->routeIs($nav['route']) ? 'bg-indigo-200 text-indigo-800 font-semibold' : $navClasses }}">
-                        <i class="{{ $nav['icon'] }} w-6 mr-3"></i> {{ __($nav['label']) }}
-                    </x-nav-link>
-                @endforeach
-            </nav>
-        </div>
+        <!-- Page Content -->
+        <main class="flex-1 p-6">
+            {{-- @yield('content') --}}
+            {{ $slot }}
+        </main>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Bar -->
-            <header class="bg-white/80 backdrop-blur-md shadow-sm">
-                <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <button @click="sidebarOpen = !sidebarOpen"
-                            class="md:hidden text-gray-700 hover:text-indigo-600">
-                            <i class="fas fa-bars text-2xl"></i>
-                        </button>
-                        <h1 class="text-xl font-bold tracking-wide text-gray-800">{{ __('Admin Panel') }}</h1>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                         <x-dropdown align="right" width="48">
-                            <x-slot name="trigger">
-                                <button
-                                    class="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-700 text-base font-medium rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 shadow transition space-x-2">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=4f46e5&color=fff&rounded=true"
-                                        alt="Avatar" class="w-8 h-8 rounded-full">
-                                    <span>{{ Auth::user()->name }}</span>
-                                    <i class="fas fa-chevron-down text-sm ml-1"></i>
-                                </button>
-                            </x-slot>
-                            <x-slot name="content">
-                                {{-- <x-dropdown-link :href="route('profile.edit')">{{ __('Profile') }}</x-dropdown-link> --}}
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault(); this.closest('form').submit();">
-                                        {{ __('Log Out') }}
-                                    </x-dropdown-link>
-                                </form>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto p-6 bg-gray-50 animate-fadeIn transition-all duration-300">
-                <div class="max-w-7xl mx-auto">
-                    {{ $slot }}
-                </div>
-            </main>
-        </div>
     </div>
+</div>
 
     <!-- Scrollbar custom -->
     <style>
