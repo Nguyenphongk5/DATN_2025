@@ -46,7 +46,7 @@
                                     <div class="cart-info d-flex flex-wrap align-items-center mb-4">
                                         <div class="col-lg-3">
                                             <div class="card-image">
-                                                <img src="{{ asset($image) }}" alt="{{ $name }}" class="img-fluid">
+                                                <img src="{{ asset('storage/'.$image) }}" alt="{{ $name }}" class="img-fluid">
                                             </div>
                                         </div>
                                         <div class="col-lg-9">
@@ -79,7 +79,7 @@
                                 <td class="py-4">
                                     <div class="total-price">
                                         <span
-                                            class="money text-dark">${{ number_format($subtotal, 0, ',', '.') }}</span>
+                                            class="money text-dark">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
                                     </div>
                                 </td>
                                 <td class="py-4">
@@ -115,7 +115,7 @@
                                         <span class="price-amount amount text-dark ps-5">
                                             <bdi>
                                                 <span
-                                                    class="price-currency-symbol">$</span>{{ number_format($total, 0, ',', '.') }}
+                                                    class="price-currency-symbol"></span>{{ number_format($total, 0, ',', '.') }} VNĐ
                                             </bdi>
                                         </span>
                                     </td>
@@ -126,7 +126,7 @@
                                         <span class="price-amount amount text-dark ps-5">
                                             <bdi>
                                                 <span
-                                                    class="price-currency-symbol">$</span>{{ number_format($total, 0, ',', '.') }}</bdi>
+                                                    class="price-currency-symbol"></span>{{ number_format($total, 0, ',', '.') }} VNĐ</bdi>
                                         </span>
                                     </td>
                                 </tr>

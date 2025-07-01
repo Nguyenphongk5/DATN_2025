@@ -20,22 +20,6 @@ Route::get('', function () {
         'categories' => \App\Models\Category::all(),
     ]);
 })->name('home');
- Route::post('/cart/add', [CartController::class, 'handleAction'])->name('cart.add');
-
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-// web.php
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
-
-Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
-
-
-Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
-
-
-Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
@@ -48,16 +32,32 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile', [ProfileController::class, 'avatar'])->name('profile.avatar');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-Route::resource('orders',OrderController::class);
+    Route::resource('orders', OrderController::class);
+    Route::post('/cart/add', [CartController::class, 'handleAction'])->name('cart.add');
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    // web.php
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+
+    Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
+
+
+    Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
+
+
+    Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
+
 
 
 
     Route::resource('users', UserController::class);
-    Route::resource('products',ProductController::class);
+    Route::resource('products', ProductController::class);
     Route::resource('product_variants', Product_VariantController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
-   
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

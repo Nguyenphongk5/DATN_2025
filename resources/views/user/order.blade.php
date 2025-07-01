@@ -143,14 +143,14 @@
                             @endif
                             <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
                         </div>
-                        <span class="text-muted">${{ number_format($subtotal, 0, ',', '.') }}</span>
+                        <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
                     </li>
                     @endforeach
                     @endif
 
                     <li class="list-group-item d-flex justify-content-between">
                         <span><strong>Tổng cộng</strong></span>
-                        <strong>${{ number_format($total, 0, ',', '.') }}</strong>
+                        <strong>{{ number_format($total, 0, ',', '.') }} VNĐ</strong>
                     </li>
                 </ul>
             </div>
