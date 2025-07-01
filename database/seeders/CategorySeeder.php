@@ -21,7 +21,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'name' => 'Giày Nữ',
-                'parent_id' => null, 
+                'parent_id' => null,
                 'is_active' => 1,
                 'deleted_at' => null,
                 'created_at' => now(),
@@ -29,7 +29,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'name' => 'Giày Thể Thao',
-                'parent_id' => null, 
+                'parent_id' => null,
                 'is_active' => 1,
                 'deleted_at' => null,
                 'created_at' => now(),
@@ -37,7 +37,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'name' => 'Giày Casual',
-                'parent_id' => null, 
+                'parent_id' => null,
                 'is_active' => 1,
                 'deleted_at' => null,
                 'created_at' => now(),
