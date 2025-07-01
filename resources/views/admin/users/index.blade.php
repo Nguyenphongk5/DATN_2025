@@ -13,7 +13,7 @@
             <div class="bg-white shadow-xl sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="overflow-x-auto" >
-                        <form action="{{ route('users.index') }}" method="GET">
+                        <form action="{{ route('admin.users.index') }}" method="GET">
                             <select name="role" id="roleFilter" style="margin-bottom: 1rem" onchange="this.form.submit()">
                                 <option value="">All Roles</option>
                                 <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>User</option>
@@ -57,11 +57,11 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex gap-4 justify-center">
-                                                <a href="{{ route('users.edit', $user->id) }}"
+                                                <a href="{{ route('admin.users.edit', $user->id) }}"
                                                     class=" hover:underline btn btn-primary">Update</a>
-                                                <a href="{{ route('users.show', $user->id) }}"
+                                                <a href="{{ route('admin.users.show', $user->id) }}"
                                                     class=" hover:underline btn btn-success">Detail</a>
-                                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
                                                     onsubmit="return confirm('Are you sure?')">
                                                     @csrf
                                                     @method('DELETE')

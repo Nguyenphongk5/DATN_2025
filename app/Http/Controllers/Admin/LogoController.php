@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Logo; // Import model Logo
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage; // Import Storage Facade
 
 class LogoController extends Controller
@@ -12,9 +13,13 @@ class LogoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $logos = Logo::latest()->paginate(10);
+        $query = DB::table('logos');
+        if($request->has('is_active') && $request->is_active !== ''){
+            $query->where('logos.is_active', $request->is_active);
+        }
+        $logos = $query->latest()->paginate(10);
         return view('admin.logo.list', compact('logos')); // Giả sử bạn có view này
     }
 

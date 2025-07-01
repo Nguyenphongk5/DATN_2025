@@ -5,42 +5,53 @@
         </h2>
     </x-slot>
 
-    <div class="py-12" >
-        <h1 class="font-semibold text-gray-800 leading-tight" style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
+    <div class="py-12">
+        <h1 class="font-semibold text-gray-800 leading-tight"
+            style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
             {{ __('Danh sách sản phẩm') }}
         </h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div class="overflow-x-auto" >
+                    <div class="overflow-x-auto">
                         <!-- Bộ lọc -->
-                        <form action="{{ route('products.index') }}" method="GET" class="mb-6">
+                        <form action="{{ route('admin.products.index') }}" method="GET" class="mb-6">
                             <div class="flex flex-wrap gap-4 items-center">
-                                <select name="category" id="categoryFilter" class="border border-gray-300 rounded px-3 py-2">
+                                <select name="category" id="categoryFilter"
+                                    class="border border-gray-300 rounded px-3 py-2">
                                     <option value="">Tất cả danh mục</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}"
+                                            {{ request('category') == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <select name="brand" id="brandFilter" class="border border-gray-300 rounded px-3 py-2">
+                                <select name="brand" id="brandFilter"
+                                    class="border border-gray-300 rounded px-3 py-2">
                                     <option value="">Tất cả thương hiệu</option>
-                                    @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                                    @foreach ($brands as $brand)
+                                        <option value="{{ $brand->id }}"
+                                            {{ request('brand') == $brand->id ? 'selected' : '' }}>
                                             {{ $brand->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <select name="status" id="statusFilter" class="border border-gray-300 rounded px-3 py-2">
-                                    <option value="">Tất cả trạng thái</option>
-                                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Đang hoạt động</option>
-                                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Đã ẩn</option>
+                                <select name="is_active" id="statusFilter"
+                                    class="border border-gray-300 rounded px-3 py-2">
+                                    <option value="1&&0">Tất cả
+                                        trạng thái</option>
+                                    <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Đang
+                                        hoạt động</option>
+                                    <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Đã ẩn
+                                    </option>
                                 </select>
-                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                                <button type="submit"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
                                     Lọc
                                 </button>
-                                <a href="{{ route('products.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded btn btn-primary">
+                                <a href="{{ route('admin.products.create') }}"
+                                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded btn btn-primary">
                                     Thêm sản phẩm mới
                                 </a>
                             </div>
@@ -68,10 +79,11 @@
                                         <td class="px-6 py-4">
                                             @if ($product->img_thumb)
                                                 <img src="{{ asset('storage/' . $product->img_thumb) }}"
-                                                     alt="{{ $product->name }}"
-                                                     class="w-16 h-16 object-cover rounded mx-auto">
+                                                    alt="{{ $product->name }}"
+                                                    class="w-16 h-16 object-cover rounded mx-auto">
                                             @else
-                                                <div class="w-16 h-16 bg-gray-200 rounded mx-auto flex items-center justify-center">
+                                                <div
+                                                    class="w-16 h-16 bg-gray-200 rounded mx-auto flex items-center justify-center">
                                                     <span class="text-gray-400 text-xs">No Image</span>
                                                 </div>
                                             @endif
@@ -89,11 +101,15 @@
                                             <span class="text-green-600">{{ $product->brand_name ?? 'N/A' }}</span>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="font-semibold">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                            <span
+                                                class="font-semibold">{{ number_format($product->price, 0, ',', '.') }}
+                                                VNĐ</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             @if ($product->price_sale)
-                                                <span class="text-red-600 font-semibold">{{ number_format($product->price_sale, 0, ',', '.') }} VNĐ</span>
+                                                <span
+                                                    class="text-red-600 font-semibold">{{ number_format($product->price_sale, 0, ',', '.') }}
+                                                    VNĐ</span>
                                             @else
                                                 <span class="text-gray-400 italic">-</span>
                                             @endif
@@ -102,23 +118,33 @@
                                             <span class="text-gray-600">{{ number_format($product->view) }}</span>
                                         </td>
                                         <td class="px-6 py-4">
-                                            @if ($product->is_active)
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                    Đang hoạt động
-                                                </span>
+                                            @if ($product->brand_is_active == 1 && $product->cate_is_active == 1)
+                                                @if ($product->is_active == 1)
+                                                    <span
+                                                        class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                                        Đang hoạt động
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                                        Đã ẩn
+                                                    </span>
+                                                @endif
                                             @else
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                                <span
+                                                    class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
                                                     Đã ẩn
                                                 </span>
                                             @endif
+
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex gap-2 justify-center">
-                                                <a href="{{ route('products.show', $product->id) }}"
+                                                <a href="{{ route('admin.products.show', $product->id) }}"
                                                     class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
                                                     Chi tiết
                                                 </a>
-                                                <a href="{{ route('products.edit', $product->id) }}"
+                                                <a href="{{ route('admin.products.edit', $product->id) }}"
                                                     class="bg-yellow-500 btn btn-primary hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
                                                     Sửa
                                                 </a>
@@ -130,7 +156,7 @@
                         </table>
 
                         <!-- Phân trang -->
-                        @if(isset($products) && $products->hasPages())
+                        @if (isset($products) && $products->hasPages())
                             <div class="mt-6">
                                 {{ $products->links('pagination::tailwind') }}
                             </div>

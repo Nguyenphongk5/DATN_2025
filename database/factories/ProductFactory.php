@@ -25,7 +25,7 @@ class ProductFactory extends Factory
 
         return [
             'name' => $name,
-            'slug' => Str::slug($name) . '-' . $this->faker->unique()->numberBetween(1000, 9999),
+            'slug' => \Illuminate\Support\Str::slug($name) . '-' . $this->faker->unique()->numberBetween(1000, 9999),
             'img_thumb' => $this->faker->imageUrl(400, 400, 'products', true, 'Product'),
             'description' => $this->faker->optional()->paragraph,
             'category_id' => Category::factory(), // sinh kèm category nếu cần

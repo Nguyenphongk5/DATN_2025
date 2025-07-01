@@ -11,15 +11,19 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $query = DB::table('products');
+        if($request->has('is_active') && $request->is_active !== ''){
+            $query->where('products.is_active', $request->is_active);
+        }
         $categories = DB::table('categories')->get();
         $brands = DB::table('brands')->get();
-        $products = DB::table('products')
+        $products = $query
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->join('brands', 'products.brand_id', '=', 'brands.id')
-            ->select('products.*', 'categories.name as category_name', 'brands.name as brand_name')
+            ->select('products.*', 'categories.name as category_name', 'categories.is_active as cate_is_active', 'brands.name as brand_name', 'brands.is_active as brand_is_active')
             ->paginate(10);
         return view('admin.products.index', compact('products', 'categories', 'brands'));
     }
@@ -59,7 +63,7 @@ class ProductController extends Controller
             $data['img_thumb'] = null;
         }
         DB::table('products')->insert($data);
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
     /**
@@ -71,11 +75,11 @@ class ProductController extends Controller
         $product = DB::table('products')
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->join('brands', 'products.brand_id', '=', 'brands.id')
-            ->select('products.*', 'categories.name as category_name', 'brands.name as brand_name')
+            ->select('products.*', 'categories.name as category_name', 'categories.is_active as cate_is_active', 'brands.name as brand_name', 'brands.is_active as brand_is_active')
             ->where('products.id', $id)
             ->first();
         if (!$product) {
-            return redirect()->route('products.index')->with('error', 'Product not found.');
+            return redirect()->route('admin.products.index')->with('error', 'Product not found.');
         }
         return view('admin.products.show', compact('product'));
     }
@@ -90,7 +94,7 @@ class ProductController extends Controller
         $brands = DB::table('brands')->get();
         $product = DB::table('products')->where('id', $id)->first();
         if (!$product) {
-            return redirect()->route('products.index')->with('error', 'Product not found.');
+            return redirect()->route('admin.products.index')->with('error', 'Product not found.');
         }
         return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
@@ -119,7 +123,7 @@ class ProductController extends Controller
             $data['img_thumb'] = DB::table('products')->where('id', $id)->value('img_thumb');
         }
         DB::table('products')->where('id', $id)->update($data);
-        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }
 
     /**

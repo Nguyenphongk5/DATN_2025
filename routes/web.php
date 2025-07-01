@@ -7,9 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
 
@@ -31,42 +30,40 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile', [ProfileController::class, 'avatar'])->name('profile.avatar');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
+// Admin routes
+Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('categories', CategoryController::class);
     Route::resource('users', UserController::class);
-    Route::resource('products',ProductController::class);
+    Route::resource('products', ProductController::class);
     Route::resource('product_variants', Product_VariantController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
+    Route::resource('logos', LogoController::class);
 });
 
 require __DIR__ . '/auth.php';
 
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('index');
+// Route::prefix('admin')->name('admin.')->group(function () {
+    // Route::get('/', [AdminController::class, 'index'])->name('index');
 
-    Route::get('user/{id}/edit', [AdminController::class, 'editRole'])->name('user.edit');
-    Route::post('user/{id}', [AdminController::class, 'updateRole'])->name('user.update');
+    // Route::get('user/{id}/edit', [AdminController::class, 'editRole'])->name('user.edit');
+    // Route::post('user/{id}', [AdminController::class, 'updateRole'])->name('user.update');
 
 
     // =============================CATEGORY============================
-    Route::prefix('/category')->name('category.')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('listCategory');
+    // Route::prefix('/category')->name('category.')->group(function () {
+    //     Route::get('/', [CategoryController::class, 'index'])->name('listCategory');
 
-        Route::get('/create', [CategoryController::class, 'create'])->name('createCategory');
-        Route::post('/store', [CategoryController::class, 'store'])->name('storeCategory');
+    //     Route::get('/create', [CategoryController::class, 'create'])->name('createCategory');
+    //     Route::post('/store', [CategoryController::class, 'store'])->name('storeCategory');
 
-        Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('editCategory');
-        Route::put('/update/{id}', [CategoryController::class, 'update'])->name('updateCategory');
+    //     Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('editCategory');
+    //     Route::put('/update/{id}', [CategoryController::class, 'update'])->name('updateCategory');
 
-        Route::get('/delete/{id}', [CategoryController::class, 'destroy'])->name('deleteCategory');
-    });
-    
-    // =============================LOGO============================ \\
-    Route::resource('logos', LogoController::class);
-});
+    //     Route::get('/delete/{id}', [CategoryController::class, 'destroy'])->name('deleteCategory');
+    // });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/users', [AdminController::class, 'index'])->name('index');  // user list
-    Route::post('/users/{user}/update-role', [AdminController::class, 'updateRole'])->name('updateRole'); // update role
-});
+// });

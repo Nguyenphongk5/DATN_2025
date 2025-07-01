@@ -12,10 +12,14 @@ class BlogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $blogs = DB::table('blogs')
+        $query = DB::table('blogs');
+        if($request->has('is_active') && $request->is_active !== ''){
+            $query->where('blogs.is_active', $request->is_active);
+        }
+        $blogs = $query
             ->join('users', 'blogs.user_id', '=', 'users.id')
             ->select('blogs.*', 'users.name as author_name')
             ->paginate(10);
@@ -52,7 +56,7 @@ class BlogController extends Controller
         }
         $data['user_id'] = Auth::id(); // lấy ID người dùng hiện tại
         DB::table('blogs')->insert($data);
-        return redirect()->route('blogs.index')->with('success', 'Blog created successfully.');
+        return redirect()->route('admin.blogs.index')->with('success', 'Blog created successfully.');
     }
 
     /**
@@ -66,7 +70,7 @@ class BlogController extends Controller
         ->select('blogs.*', 'users.name as author_name')
         ->where('blogs.id', $id)->first();
         if(!$blog){
-            return redirect()->route('blogs.index')->with('error', 'Blog not found.');
+            return redirect()->route('admin.blogs.index')->with('error', 'Blog not found.');
         }
         return view('admin.blogs.detail', compact('blog'));
     }
@@ -79,7 +83,7 @@ class BlogController extends Controller
         //
         $blog = DB::table('blogs')->where('id', $id)->first();
         if (!$blog) {
-            return redirect()->route('blogs.index')->with('error', 'Blog not found.');
+            return redirect()->route('admin.blogs.index')->with('error', 'Blog not found.');
         }
         return view('admin.blogs.edit', compact('blog'));
     }
@@ -97,6 +101,7 @@ class BlogController extends Controller
             'short_description' => 'nullable|string|max:500',
             'content' => 'required|string',
             'user_id' => 'required|exists:users,id',
+            'is_active' => 'boolean'
         ]);
         if ($request->hasFile('img_avt')) {
             $data['img_avt'] = $request->file('img_avt')->store('blog_images', 'public');
@@ -104,7 +109,7 @@ class BlogController extends Controller
             $data['img_avt'] = DB::table('blogs')->where('id', $id)->value('img_avt');
         }
         DB::table('blogs')->where('id', $id)->update($data);
-        return redirect()->route('blogs.index')->with('success', 'Blog updated successfully.');
+        return redirect()->route('admin.blogs.index')->with('success', 'Blog updated successfully.');
     }
 
     /**

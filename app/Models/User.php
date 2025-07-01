@@ -15,13 +15,13 @@ class User extends Authenticatable
     // Các role có thể có
     public const ROLE_ADMIN = 'admin';
     public const ROLE_USER = 'user';
-    public const ROLE_STAFF = 'nhân viên';
+    public const ROLE_STAFF = 'staff';
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role', // 0: user, 1: admin
+        'role', 
         'avatar',
     ];
 

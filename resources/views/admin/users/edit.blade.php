@@ -12,7 +12,7 @@
         </h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-md rounded-lg p-6">
-                <form method="POST" action="{{ route('users.update', $user->id) }}">
+                <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
                     @csrf
                     @method('PUT')
 
@@ -52,14 +52,14 @@
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-1">Role</label>
                         <select name="role" class="w-full border border-gray-300 rounded px-4 py-2">
-                            <option value="0" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
-                            <option value="1" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff</option>
-                            <option value="2" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
+                            <option value="staff" {{ $user->role == 'staff' ? 'selected' : '' }}>Staff</option>
+                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                         </select>
                     </div>
                     <div class="flex">
                         <div class="flex justify-start" style="margin-right: 35rem">
-                            <a href="{{ route('users.index') }}"
+                            <a href="{{ route('admin.users.index') }}"
                                 class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded mr-2 btn btn-secondary">
                                Back
                             </a>

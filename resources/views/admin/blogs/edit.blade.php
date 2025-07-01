@@ -12,7 +12,7 @@
         </h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-md rounded-lg p-6">
-                <form method="POST" action="{{ route('blogs.update', $blog->id) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('admin.blogs.update', $blog->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -149,20 +149,26 @@
                     </div> --}}
 
                     <!-- Trạng thái hoạt động -->
-                    <div class="mb-6">
-                        <label class="flex items-center">
-                            <input type="checkbox" name="is_active" value="1" {{ old('is_active', $blog->is_active) ? 'checked' : '' }}
-                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                            <span class="ml-2 text-gray-700 font-medium">Kích hoạt bài viết</span>
-                        </label>
+                    <div class="mb-3">
+                        <label for="is_active" class="block text-gray-700 font-medium mb-1">Trạng Thái <span class="text-red-500">*</span></label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_active" id="active1"
+                                value="1" {{ old('is_active', $product->is_active) == 1 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="active1">Kích hoạt</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_active" id="active0"
+                                value="0" {{ old('is_active', $product->is_active) == 0 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="active0">Ngưng hoạt động</label>
+                        </div>
                         @error('is_active')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <!-- Nút điều hướng -->
                     <div class="flex justify-between">
-                        <a href="{{ route('blogs.index') }}"
+                        <a href="{{ route('admin.blogs.index') }}"
                             class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-2 rounded transition duration-200">
                             Quay lại
                         </a>

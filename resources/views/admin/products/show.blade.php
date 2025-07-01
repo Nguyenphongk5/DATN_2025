@@ -18,8 +18,8 @@
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Hình ảnh sản phẩm</h3>
                             @if ($product->img_thumb)
                                 <div class="border rounded-lg overflow-hidden">
-                                    <img src="{{ asset('storage/' . $product->img_thumb) }}" 
-                                         alt="{{ $product->name }}" 
+                                    <img src="{{ asset('storage/' . $product->img_thumb) }}"
+                                         alt="{{ $product->name }}"
                                          class="w-full h-64 object-cover">
                                 </div>
                             @else
@@ -32,7 +32,7 @@
                         <!-- Thông tin sản phẩm -->
                         <div class="space-y-6">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Thông tin sản phẩm</h3>
-                            
+
                             <div class="space-y-4">
                                 <!-- ID -->
                                 <div class="flex border-b pb-2">
@@ -99,13 +99,13 @@
                                 <!-- Ngày tạo -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Ngày tạo:</span>
-                                    <span class="text-gray-900">{{ $product->created_at ? $product->created_at->format('d/m/Y H:i') : 'N/A' }}</span>
+                                    <span class="text-gray-900">{{ $product->created_at ? $product->created_at->format('d/m/Y H:i:s', $product->created_at) : 'N/A' }}</span>
                                 </div>
 
                                 <!-- Ngày cập nhật -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Cập nhật lần cuối:</span>
-                                    <span class="text-gray-900">{{ $product->updated_at ? $product->updated_at->format('d/m/Y H:i') : 'N/A' }}</span>
+                                    <span class="text-gray-900">{{ $product->updated_at ? $product->updated_at->format('d/m/Y H:i:s') : 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -123,11 +123,11 @@
 
                     <!-- Nút điều hướng -->
                     <div class="mt-8 flex gap-4">
-                        <a href="{{ route('products.index') }}"
+                        <a href="{{ route('admin.products.index') }}"
                             class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-2 rounded transition duration-200">
                             Quay lại danh sách
                         </a>
-                        <a href="{{ route('products.edit', $product->id) }}"
+                        <a href="{{ route('admin.products.edit', $product->id) }}"
                             class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded transition duration-200">
                             Chỉnh sửa
                         </a>

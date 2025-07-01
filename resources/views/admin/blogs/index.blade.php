@@ -14,7 +14,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="overflow-x-auto" >
                         <!-- Bộ lọc -->
-                        <form action="{{ route('blogs.index') }}" method="GET" class="mb-6">
+                        <form action="{{ route('admin.blogs.index') }}" method="GET" class="mb-6">
                             <div class="flex flex-wrap gap-4 items-center">
                                  <select name="user_id" id="categoryFilter" class="border border-gray-300 rounded px-3 py-2">
                                     <option value="">Tất cả User</option>
@@ -32,15 +32,19 @@
                                         </option>
                                     @endforeach
                                 </select> --}}
-                                <select name="status" id="statusFilter" class="border border-gray-300 rounded px-3 py-2">
-                                    <option value="">Tất cả trạng thái</option>
-                                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Đang hoạt động</option>
-                                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Đã ẩn</option>
+                                 <select name="is_active" id="statusFilter"
+                                    class="border border-gray-300 rounded px-3 py-2">
+                                    <option value="1&&0">Tất cả
+                                        trạng thái</option>
+                                    <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Đang
+                                        hoạt động</option>
+                                    <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Đã ẩn
+                                    </option>
                                 </select>
                                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
                                     Lọc
                                 </button>
-                                <a href="{{ route('blogs.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded btn btn-primary">
+                                <a href="{{ route('admin.blogs.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded btn btn-primary">
                                     Thêm bài viết
                                 </a>
                             </div>
@@ -95,11 +99,11 @@
 
                                         <td class="px-6 py-4">
                                             <div class="flex gap-2 justify-center">
-                                                <a href="{{ route('blogs.show', $blog->id) }}"
+                                                <a href="{{ route('admin.blogs.show', $blog->id) }}"
                                                     class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
                                                     Chi tiết
                                                 </a>
-                                                <a href="{{ route('blogs.edit', $blog->id) }}"
+                                                <a href="{{ route('admin.blogs.edit', $blog->id) }}"
                                                     class="bg-yellow-500 btn btn-primary hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
                                                     Sửa
                                                 </a>

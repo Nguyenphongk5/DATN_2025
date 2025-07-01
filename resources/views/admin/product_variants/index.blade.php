@@ -14,7 +14,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="overflow-x-auto" >
                         <!-- Bộ lọc -->
-                        <form action="{{ route('product_variants.index') }}" method="GET" class="mb-6">
+                        <form action="{{ route('admin.product_variants.index') }}" method="GET" class="mb-6">
                             <div class="flex flex-wrap gap-4 items-center">
                                 <select name="product" id="productFilter" class="border border-gray-300 rounded px-3 py-2">
                                     <option value="">Tất cả sản phẩm</option>
@@ -43,7 +43,7 @@
                                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
                                     Lọc
                                 </button>
-                                <a href="{{ route('product_variants.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded btn btn-primary">
+                                <a href="{{ route('admin.product_variants.create') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded btn btn-primary">
                                     Thêm biến thể mới
                                 </a>
                             </div>
@@ -102,15 +102,15 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex gap-2 justify-center">
-                                                <a href="{{ route('product_variants.show', $variant->id) }}"
+                                                <a href="{{ route('admin.product_variants.show', $variant->id) }}"
                                                     class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
                                                     Chi tiết
                                                 </a>
-                                                <a href="{{ route('product_variants.edit', $variant->id) }}"
+                                                <a href="{{ route('admin.product_variants.edit', $variant->id) }}"
                                                     class="bg-yellow-500 btn btn-primary hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
                                                     Sửa
                                                 </a>
-                                                <form action="{{ route('product_variants.destroy', $variant->id) }}" method="POST"
+                                                <form action="{{ route('admin.product_variants.destroy', $variant->id) }}" method="POST"
                                                     onsubmit="return confirm('Bạn có chắc chắn muốn xóa biến thể này?')"
                                                     class="inline">
                                                     @csrf

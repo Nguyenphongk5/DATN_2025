@@ -14,7 +14,7 @@
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-gray-100 border-r border-gray-200 p-6">
+        {{-- <aside class="w-64 bg-gray-100 border-r border-gray-200 p-6">
             <nav class="space-y-2">
                 <a href="#" class="flex items-center gap-2 py-2 px-4 rounded hover:bg-gray-300">
                     <!-- Product Icon -->
@@ -63,14 +63,14 @@
                     </div>
                 </div>
             </nav>
-        </aside>
+        </aside> --}}
 
         <!-- Main content -->
         <main class="flex-1 p-6">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
                 <h1>Sửa danh mục</h1>
 
-                <form action="{{ route('admin.category.updateCategory', $category->id) }}" method="POST">
+                <form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -117,7 +117,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-warning">Cập nhật</button>
-                    <a href="{{route('admin.category.listCategory')}}" class="btn btn-outline-primary">Cancel</a>
+                    <a href="{{route('admin.categories.index')}}" class="btn btn-outline-primary">Cancel</a>
                 </form>
 
 

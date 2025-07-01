@@ -123,11 +123,11 @@
 
                     <!-- Nút điều hướng -->
                     <div class="mt-8 flex gap-4">
-                        <a href="{{ route('brands.index') }}"
+                        <a href="{{ route('admin.brands.index') }}"
                             class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-2 rounded transition duration-200">
                             Quay lại danh sách
                         </a>
-                        <a href="{{ route('brands.edit', $brand->id) }}"
+                        <a href="{{ route('admin.brands.edit', $brand->id) }}"
                             class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded transition duration-200">
                             Chỉnh sửa
                         </a>

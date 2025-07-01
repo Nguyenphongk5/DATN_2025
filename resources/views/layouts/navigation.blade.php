@@ -59,23 +59,29 @@
             <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('dashboard') ? 'bg-gray-700 font-semibold' : '' }}">
                 📊 Bảng điều khiển
             </a>
-            <a href="{{ route('products.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('products.*') ? 'bg-gray-700 font-semibold' : '' }}">
+            <a href="{{ route('admin.products.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.products.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 Products
             </a>
             {{-- <a href="{{ route('orders.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 🧾 Đơn hàng
             </a> --}}
-            <a href="{{ route('users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('users.*') ? 'bg-gray-700 font-semibold' : '' }}">
+            <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.users.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 Users
             </a>
-            <a href="{{ route('product_variants.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('product_variants.*') ? 'bg-gray-700 font-semibold' : '' }}">
+            <a href="{{ route('admin.product_variants.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.product_variants.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 Product Variants
             </a>
-            <a href="{{ route('brands.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('brands.*') ? 'bg-gray-700 font-semibold' : '' }}">
+            <a href="{{ route('admin.categories.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.categories.index') ? 'bg-gray-700 font-semibold' : '' }}">
+                Categories
+            </a>
+            <a href="{{ route('admin.brands.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.brands.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 Brands
             </a>
-            <a href="{{ route('blogs.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('blogs.*') ? 'bg-gray-700 font-semibold' : '' }}">
+            <a href="{{ route('admin.blogs.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.blogs.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 Blogs
+            </a>
+            <a href="{{ route('admin.logos.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.logos.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                Logos
             </a>
             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition">
                 ⚙️ Hồ sơ

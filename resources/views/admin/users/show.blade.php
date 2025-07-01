@@ -48,7 +48,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <a href="{{ route('users.index') }}"
+                        <a href="{{ route('admin.users.index') }}"
                             class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow btn btn-primary">
                             Back
                         </a>

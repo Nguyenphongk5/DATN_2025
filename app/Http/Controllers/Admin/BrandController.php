@@ -12,10 +12,14 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $brands = DB::table('brands')->paginate(10);
+        $query = DB::table('brands');
+        if($request->has('is_active') && $request->is_active !== ''){
+            $query->where('brands.is_active', $request->is_active);
+        }
+        $brands = $query->paginate(10);
         return view('admin.brands.index', compact('brands'));
 
     }
@@ -45,7 +49,7 @@ class BrandController extends Controller
             $data['logo'] = $request->file('logo')->store('brands', 'public');
         }
         DB::table('brands')->insert($data);
-        return redirect()->route('brands.index')->with('success', 'Brand created successfully.');
+        return redirect()->route('admin.brands.index')->with('success', 'Brand created successfully.');
     }
 
     /**
@@ -56,7 +60,7 @@ class BrandController extends Controller
         //'
         $brand = DB::table('brands')->where('id', $brand->id)->first();
         if (!$brand) {
-            return redirect()->route('brands.index')->with('error', 'Brand not found.');
+            return redirect()->route('admin.brands.index')->with('error', 'Brand not found.');
         }
         return view('admin.brands.detail', compact('brand'));
     }
@@ -69,7 +73,7 @@ class BrandController extends Controller
         //
         $brand = DB::table('brands')->where('id', $brand->id)->first();
         if (!$brand) {
-            return redirect()->route('brands.index')->with('error', 'Brand not found.');
+            return redirect()->route('admin.brands.index')->with('error', 'Brand not found.');
         }
         return view('admin.brands.edit', compact('brand'));
     }
@@ -94,7 +98,7 @@ class BrandController extends Controller
              $data['logo'] = DB::table('brands')->where('id', $brand->id)->value('logo');
         }
         DB::table('brands')->where('id', $brand->id)->update($data);
-        return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
+        return redirect()->route('admin.brands.index')->with('success', 'Brand updated successfully.');
     }
 
     /**

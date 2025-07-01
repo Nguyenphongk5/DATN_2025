@@ -14,7 +14,7 @@
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-gray-100 border-r border-gray-200 p-6">
+        {{-- <aside class="w-64 bg-gray-100 border-r border-gray-200 p-6">
             <nav class="space-y-2">
                 <a href="#" class="flex items-center gap-2 py-2 px-4 rounded hover:bg-gray-300">
                     <!-- Product Icon -->
@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </nav>
-        </aside>
+        </aside> --}}
 
         <!-- Main content -->
         <main class="flex-1 p-6">

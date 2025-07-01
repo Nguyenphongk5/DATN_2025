@@ -48,7 +48,7 @@ class Product_VariantController extends Controller
             'price_sale' => 'nullable|numeric|min:0',
         ]);
         DB::table('product_variants')->insert($data);
-        return redirect()->route('product_variants.index')->with('success', 'Product variant created successfully.');
+        return redirect()->route('admin.product_variants.index')->with('success', 'Product variant created successfully.');
     }
 
     /**
@@ -59,7 +59,7 @@ class Product_VariantController extends Controller
         //
         $productVariant = DB::table('product_variants')->where('id', $id)->first();
         if (!$productVariant) {
-            return redirect()->route('product_variants.index')->with('error', 'Product variant not found.');
+            return redirect()->route('admin.product_variants.index')->with('error', 'Product variant not found.');
         }
         return view('admin.product_variants.show', compact('productVariant'));
     }
@@ -73,7 +73,7 @@ class Product_VariantController extends Controller
         $products = DB::table('products')->select('id', 'name')->get();
         $productVariant = DB::table('product_variants')->where('id', $id)->first();
         if (!$productVariant) {
-            return redirect()->route('product_variants.index')->with('error', 'Product variant not found.');
+            return redirect()->route('admin.product_variants.index')->with('error', 'Product variant not found.');
         }
         return view('admin.product_variants.edit', compact('productVariant', 'products'));
     }
@@ -94,7 +94,7 @@ class Product_VariantController extends Controller
             'price_sale' => 'nullable|numeric|min:0',
         ]);
         DB::table('product_variants')->where('id', $id)->update($data);
-        return redirect()->route('product_variants.index')->with('success', 'Product variant updated successfully.');
+        return redirect()->route('admin.product_variants.index')->with('success', 'Product variant updated successfully.');
     }
 
     /**
@@ -105,9 +105,9 @@ class Product_VariantController extends Controller
         //
         $productVariant = DB::table('product_variants')->where('id', $id)->first();
         if (!$productVariant) {
-            return redirect()->route('product_variants.index')->with('error', 'Product variant not found.');
+            return redirect()->route('admin.product_variants.index')->with('error', 'Product variant not found.');
         }
         DB::table('product_variants')->where('id', $id)->delete();
-        return redirect()->route('product_variants.index')->with('success', 'Product variant deleted successfully.');
+        return redirect()->route('admin.product_variants.index')->with('success', 'Product variant deleted successfully.');
     }
 }

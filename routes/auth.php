@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -60,17 +61,15 @@ Route::middleware('auth')->group(function () {
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::resource('users', UserController::class);
+    // Route::resource('users', UserController::class);
 
-    // Route::resource('home', HomeController::class);
+    // Route::resource('products', ProductController::class);
 
-    Route::resource('products', ProductController::class);
+    // Route::resource('product_variants', Product_VariantController::class);
 
-    Route::resource('product_variants', Product_VariantController::class);
+    // Route::resource('brands', BrandController::class);
 
-    Route::resource('brands', BrandController::class);
-
-    Route::resource('blogs', BlogController::class);
+    // Route::resource('blogs', BlogController::class);
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');

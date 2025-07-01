@@ -12,7 +12,7 @@
         </h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-md rounded-lg p-6">
-                <form method="POST" action="{{ route('brands.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('admin.brands.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <!-- Tên thương hiệu -->
@@ -116,7 +116,7 @@
 
                     <!-- Nút điều hướng -->
                     <div class="flex justify-between">
-                        <a href="{{ route('brands.index') }}"
+                        <a href="{{ route('admin.brands.index') }}"
                             class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-2 rounded transition duration-200">
                             Quay lại
                         </a>

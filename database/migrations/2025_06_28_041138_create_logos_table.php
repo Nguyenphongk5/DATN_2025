@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable(); // Tên của logo (ví dụ: Logo chính, Logo footer)
             $table->string('image');           // Đường dẫn đến file ảnh logo
-            $table->boolean('active')->default(true); // Trạng thái kích hoạt (mặc định là true)
+            $table->boolean('is_active')->default(true); // Trạng thái kích hoạt (mặc định là true)
             $table->timestamps();              // created_at và updated_at
         });
     }

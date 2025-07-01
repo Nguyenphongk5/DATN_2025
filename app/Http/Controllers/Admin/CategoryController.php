@@ -7,15 +7,20 @@ use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $category = Category::with('parent')->latest('id')->paginate(10);
+        $query = DB::table('categories');
+        if($request->has('is_active') && $request->is_active !== ''){
+            $query->where('categories.is_active', $request->is_active);
+        }
+        $category = $query->latest('id')->paginate(10);
 
         return view('admin.category.list', compact('category'));
     }
@@ -43,7 +48,7 @@ class CategoryController extends Controller
             'is_active' => $validated['is_active'],
         ]);
 
-        return redirect()->route('admin.category.listCategory')
+        return redirect()->route('admin.categories.index')
             ->with('success', 'Thêm danh mục thành công!');
     }
 
@@ -78,7 +83,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('admin.category.listCategory')
+        return redirect()->route('admin.categories.index')
             ->with('success', 'Cập nhật danh mục thành công!');
     }
     /**
@@ -93,14 +98,14 @@ class CategoryController extends Controller
 
         if ($productCount > 0) {
             // Nếu còn sản phẩm, trả về thông báo nhắc nhở
-            return redirect()->route('admin.category.listCategory')
+            return redirect()->route('admin.categories.index')
                 ->with('warning', 'Không thể xóa danh mục vì vẫn còn sản phẩm thuộc danh mục này. Vui lòng xóa chọn danh mục khác!!!.');
         }
 
         // Nếu không còn sản phẩm, cho phép xóa
         $category->delete();
 
-        return redirect()->route('admin.category.listCategory')
+        return redirect()->route('admin.categories.index')
             ->with('success', 'Xóa danh mục thành công!');
     }
 }
