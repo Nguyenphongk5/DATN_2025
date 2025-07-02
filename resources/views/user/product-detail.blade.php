@@ -442,9 +442,9 @@
                             <span class="badge bg-success position-absolute m-3">-30%</span>
                             {{-- @endif --}}
                             <figure>
-                                <a href="{{ route('products.show', $product->id) }}">
+                                <a href="{{ route('home.show', $product->id) }}">
                                     <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="Product Thumbnail"
-                                        class="img-fluid">
+                                        height="100px">
                                 </a>
                             </figure>
                             <p>{{ $product->name }}</p>
@@ -484,7 +484,7 @@
                     </div>
 
                     @endforeach
-                    <div class="swiper-slide">
+                    {{-- <div class="swiper-slide">
                         <div class="product-item">
                             <span class="badge bg-success position-absolute m-3">-30%</span>
                             <figure>
@@ -515,7 +515,7 @@
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     {{-- <div class="swiper-slide">
                             <div class="product-item">

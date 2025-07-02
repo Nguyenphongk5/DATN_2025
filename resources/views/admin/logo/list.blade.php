@@ -71,10 +71,10 @@
                                     <tr>
                                         <td class="px-6 py-4">{{ $key + 1 }}</td>
                                         <td class="px-6 py-4">
-                                            @if ($logo->img_thumb)
-                                                <img src="{{ asset('storage/' . $logo->img_thumb) }}"
+                                            @if ($logo->image)
+                                                <img src="{{ asset('storage/' . $logo->image) }}"
                                                     alt="{{ $logo->name }}"
-                                                    class="w-16 h-16 object-cover rounded mx-auto">
+                                                    class=" h-16 object-cover rounded mx-auto">
                                             @else
                                                 <div
                                                     class="w-16 h-16 bg-gray-200 rounded mx-auto flex items-center justify-center">

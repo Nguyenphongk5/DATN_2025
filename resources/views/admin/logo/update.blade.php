@@ -99,15 +99,15 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label d-block">Trạng thái</label>
+                        <label for="is_active" class="form-label d-block">Trạng thái</label>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="active" id="active1" value="1"
-                                {{ old('active', $logo->active) == 1 ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="is_active" id="active1" value="1"
+                                {{ old('is_active', $logo->is_active) == 1 ? 'checked' : '' }}>
                             <label class="form-check-label" for="active1">Kích hoạt</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="active" id="active0" value="0"
-                                {{ old('active', $logo->active) == 0 ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="is_active" id="active0" value="0"
+                                {{ old('is_active', $logo->is_active) == 0 ? 'checked' : '' }}>
                             <label class="form-check-label" for="active0">Không kích hoạt</label>
                         </div>
                         @error('is_active')

@@ -17,7 +17,7 @@ class Logo extends Model
     protected $fillable = [
         'name',
         'image',
-        'active',
+        'is_active',
     ];
 
     /**
@@ -26,6 +26,6 @@ class Logo extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'active' => 'boolean', // Đảm bảo trường 'active' được cast thành boolean
+        'is_active' => 'boolean', // Đảm bảo trường 'active' được cast thành boolean
     ];
 }
