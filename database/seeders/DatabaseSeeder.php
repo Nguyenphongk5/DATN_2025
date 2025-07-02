@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         VoucherSeeder::class,
         OrderSeeder::class,
         OrderDetailSeeder::class,
-
+        BannerSeeder::class,
         ProductVariantSeeder::class
     ]);
 
