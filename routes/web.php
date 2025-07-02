@@ -11,8 +11,10 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
+use App\Http\Controllers\DashboardController;
 
 // <<<<<<< UI-Improved-Profile
 Route::get('', function () {
@@ -25,9 +27,9 @@ Route::get('', function () {
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
-Route::get('/dashboard', function () {
-    return view('admin.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 Route::resource('home', HomeController::class);
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
