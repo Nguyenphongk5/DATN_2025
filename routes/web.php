@@ -11,8 +11,10 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Logo;
 
 // <<<<<<< UI-Improved-Profile
@@ -27,6 +29,9 @@ Route::get('', function () {
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::resource('home', HomeController::class);
 Route::middleware('auth')->group(function () {
