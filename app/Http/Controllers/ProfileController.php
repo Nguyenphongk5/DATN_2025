@@ -44,12 +44,12 @@ class ProfileController extends Controller
     }
 
     public function avatar(Request $request)
-    {
-        $request->validate([
-            'avatar' => 'nullable|image|max:1024',
-        ]);
+{
+    $request->validate([
+        'avatar' => 'nullable|image|max:1024',
+    ]);
 
-        $user = $request->user();
+    $user = $request->user();
 
         if ($request->hasFile('avatar')) {
             // Xóa avatar cũ nếu có

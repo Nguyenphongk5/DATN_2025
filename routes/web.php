@@ -71,5 +71,15 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
 });
+// routes/web.php
+
+
+use App\Models\Blog;
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+use App\Http\Controllers\SubscribeController;
+
+Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
+
 
 require __DIR__ . '/auth.php';

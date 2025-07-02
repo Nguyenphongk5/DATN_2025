@@ -1,6 +1,6 @@
 @extends('layouts.user')
 @section('content')
-    
+
 
     <!-- Thêm Swiper CSS -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
@@ -641,156 +641,97 @@
             </div>
     </section>
 
-    <section class="py-5">
-        <div class="container-fluid">
-
-            <div class="bg-warning py-5">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-6 p-5">
-                            <div class="section-header">
-                                <h2 class="section-title display-4">Get <span class="text-danger">25% Discount</span> on
-                                    your first
-                                    purchase</h2>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst amet, metus, sit massa
-                                posuere
-                                maecenas. At tellus ut nunc amet vel egestas.</p>
-                        </div>
-                        <div class="col-md-6 p-5">
-                            <form>
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control form-control-lg" name="name"
-                                        id="name" placeholder="Name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control form-control-lg" name="email"
-                                        id="email" placeholder="abc@mail.com">
-                                </div>
-                                <div class="form-check form-check-inline mb-3">
-                                    <label class="form-check-label" for="subscribe">
-                                        <input class="form-check-input" type="checkbox" id="subscribe"
-                                            value="subscribe">
-                                        Subscribe to the newsletter</label>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-dark btn-lg">Submit</button>
-                                </div>
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                </div>
+ <section class="py-5">
+  <div class="container-fluid">
+    <div class="bg-warning py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 p-5">
+            <div class="section-header">
+              <h2 class="section-title display-4">Get <span class="text-danger">25% Discount</span> on your first purchase</h2>
             </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+          <div class="col-md-6 p-5">
+            @if(session('success'))
+              <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
+            <form action="{{ route('subscribe.store') }}" method="POST">
+              @csrf
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control form-control-lg" name="name" id="name" placeholder="Name">
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control form-control-lg" name="email" id="email" placeholder="abc@mail.com">
+              </div>
+              <div class="form-check form-check-inline mb-3">
+                <input class="form-check-input" type="checkbox" id="subscribe" value="subscribe">
+                <label class="form-check-label" for="subscribe">Subscribe to the newsletter</label>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-dark btn-lg">Submit</button>
+              </div>
+            </form>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section id="latest-blog" class="py-5">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="section-header d-flex align-items-center justify-content-between my-5">
-                    <h2 class="section-title">Our Recent Blog</h2>
-                    <div class="btn-wrap align-right">
-                        <a href="#" class="d-flex align-items-center nav-link">Read All Articles <svg
-                                width="24" height="24">
-                                <use xlink:href="#arrow-right"></use>
-                            </svg></a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <article class="post-item card border-0 shadow-sm p-3">
-                        <div class="image-holder zoom-effect">
-                            <a href="#">
-                                <img src="images/post-thumb-1.jpg" alt="post" class="card-img-top">
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
-                                <div class="meta-date"><svg width="16" height="16">
-                                        <use xlink:href="#calendar"></use>
-                                    </svg>22 Aug 2021</div>
-                                <div class="meta-categories"><svg width="16" height="16">
-                                        <use xlink:href="#category"></use>
-                                    </svg>tips & tricks</div>
-                            </div>
-                            <div class="post-header">
-                                <h3 class="post-title">
-                                    <a href="#" class="text-decoration-none">Top 10 casual look ideas to dress up
-                                        your kids</a>
-                                </h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipi elit. Aliquet eleifend viverra enim
-                                    tincidunt donec
-                                    quam. A in arcu, hendrerit neque dolor morbi...</p>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-md-4">
-                    <article class="post-item card border-0 shadow-sm p-3">
-                        <div class="image-holder zoom-effect">
-                            <a href="#">
-                                <img src="images/post-thumb-2.jpg" alt="post" class="card-img-top">
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
-                                <div class="meta-date"><svg width="16" height="16">
-                                        <use xlink:href="#calendar"></use>
-                                    </svg>25 Aug 2021</div>
-                                <div class="meta-categories"><svg width="16" height="16">
-                                        <use xlink:href="#category"></use>
-                                    </svg>trending</div>
-                            </div>
-                            <div class="post-header">
-                                <h3 class="post-title">
-                                    <a href="#" class="text-decoration-none">Latest trends of wearing street wears
-                                        supremely</a>
-                                </h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipi elit. Aliquet eleifend viverra enim
-                                    tincidunt donec
-                                    quam. A in arcu, hendrerit neque dolor morbi...</p>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <div class="col-md-4">
-                    <article class="post-item card border-0 shadow-sm p-3">
-                        <div class="image-holder zoom-effect">
-                            <a href="#">
-                                <img src="images/post-thumb-3.jpg" alt="post" class="card-img-top">
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
-                                <div class="meta-date"><svg width="16" height="16">
-                                        <use xlink:href="#calendar"></use>
-                                    </svg>28 Aug 2021</div>
-                                <div class="meta-categories"><svg width="16" height="16">
-                                        <use xlink:href="#category"></use>
-                                    </svg>inspiration</div>
-                            </div>
-                            <div class="post-header">
-                                <h3 class="post-title">
-                                    <a href="#" class="text-decoration-none">10 Different Types of comfortable
-                                        clothes ideas for women</a>
-                                </h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipi elit. Aliquet eleifend viverra enim
-                                    tincidunt donec
-                                    quam. A in arcu, hendrerit neque dolor morbi...</p>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-            </div>
+
+  <section id="latest-blog" class="py-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="section-header d-flex align-items-center justify-content-between my-5">
+        <h2 class="section-title">Our Recent Blog</h2>
+        <div class="btn-wrap align-right">
+          <a href="#" class="d-flex align-items-center nav-link">Read All Articles
+            <svg width="24" height="24"><use xlink:href="#arrow-right"></use></svg>
+          </a>
         </div>
-    </section>
+      </div>
+    </div>
+
+    <div class="row">
+      @foreach ($blogs as $blog)
+        <div class="col-md-4">
+          <article class="post-item card border-0 shadow-sm p-3">
+            <div class="image-holder zoom-effect">
+              {{-- <a href="{{ route('blog.detail', $blog->slug) }}"> --}}
+                <img src="{{ asset('storage/' . $blog->img_avt) }}" alt="{{ $blog->title }}" class="card-img-top">
+              </a>
+            </div>
+            <div class="card-body">
+              <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
+                <div class="meta-date">
+                  <svg width="16" height="16"><use xlink:href="#calendar"></use></svg>
+                  {{ \Carbon\Carbon::parse($blog->created_at)->format('d M Y') }}
+                </div>
+                <div class="meta-categories">
+                  <svg width="16" height="16"><use xlink:href="#category"></use></svg>
+                  Bài viết
+                </div>
+              </div>
+              <div class="post-header">
+                <h3 class="post-title">
+                  {{-- <a href="{{ route('blog.detail', $blog->slug) }}" class="text-decoration-none"> --}}
+                    {{ $blog->title }}
+                  </a>
+                </h3>
+                <p>{{ Str::limit($blog->short_description, 100) }}</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
+
 
     <section class="py-5">
         <div class="container-fluid">

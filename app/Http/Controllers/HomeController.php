@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Banner;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -27,9 +29,10 @@ class HomeController extends Controller
 
         // Lấy tất cả các danh mục để lọc
         $categories = DB::table('categories')->get();
+        $blogs = Blog::where('is_active', true)->latest()->take(3)->get();
 
         // Trả về view với các thông tin cần thiết
-        return view('user.index', compact('banners', 'latestProducts', 'categories', 'logos'));
+        return view('user.index', compact('banners', 'latestProducts', 'categories', 'logos', 'blogs'));
     }
 
 
@@ -97,14 +100,14 @@ class HomeController extends Controller
             ->get();
 
         $product = DB::table('products')
-        ->join('categories', 'products.category_id', '=', 'categories.id')
-        ->select('products.*', 'categories.name as category_name')
-        ->where('products.id', $id)->first();
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->select('products.*', 'categories.name as category_name')
+            ->where('products.id', $id)->first();
         $products = DB::table('products')
-        ->where('category_id', "=",$product->category_id)
-        ->limit(8)
-        ->get();
-        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products','logos'));
+            ->where('category_id', "=", $product->category_id)
+            ->limit(8)
+            ->get();
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'logos'));
     }
     public function edit(string $id)
     {
