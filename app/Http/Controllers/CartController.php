@@ -86,10 +86,9 @@ class CartController extends Controller
 
     public function index()
     {
-        $logos = DB::table('logos')->get();
 
         $cart = Cart::with(['items.productVariant.product'])->where('user_id', Auth::id())->first();
-        return view('user.cart', compact('cart', 'logos'));
+        return view('user.cart', compact('cart'));
     }
     public function remove($id)
     {

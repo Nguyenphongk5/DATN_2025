@@ -1,3 +1,6 @@
+<?php
+    $logos = \App\Models\Logo::all();
+?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -536,7 +539,7 @@
 </div>
 </body>
 <style>
-  
+
 </style>
 
 <!-- Floating Chat Icon -->
