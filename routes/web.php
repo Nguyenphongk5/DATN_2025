@@ -46,12 +46,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
 
-
     Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
-
-
     Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
-
+});
 
 
 
@@ -64,6 +61,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('brands', BrandController::class);
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
+    Route::resource('orders', OrderController::class);
 });
 
 require __DIR__.'/auth.php';
