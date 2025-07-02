@@ -83,9 +83,6 @@ class HomeController extends Controller
         // Trả về kết quả tìm kiếm
         return view('user.search', compact('products', 'categories', 'keywords'));  // Trả về kết quả tìm kiếm
     }
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
@@ -104,10 +101,6 @@ class HomeController extends Controller
         ->get();
         return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //

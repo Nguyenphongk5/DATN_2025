@@ -108,42 +108,55 @@
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <div class="order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">Giỏ hàng</span>
-                    <span class="badge bg-primary rounded-pill">3</span>
-                </h4>
-                <ul class="list-group mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Sản phẩm 1</h6>
-                            <small class="text-body-secondary">Mô tả ngắn</small>
-                        </div>
-                        <span class="text-body-secondary">$120</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Sản phẩm 2</h6>
-                            <small class="text-body-secondary">Mô tả ngắn</small>
-                        </div>
-                        <span class="text-body-secondary">$80</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Sản phẩm 3</h6>
-                            <small class="text-body-secondary">Mô tả ngắn</small>
-                        </div>
-                        <span class="text-body-secondary">$50</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Tổng cộng (USD)</span>
-                        <strong>$300</strong>
-                    </li>
-                </ul>
+    <div class="order-md-last">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-primary">Your cart</span>
+            <span class="badge bg-primary rounded-pill">{{ $cart?->items->count() ?? 0 }}</span>
+        </h4>
 
-                <button class="w-100 btn btn-primary btn-lg" type="submit">Tiếp tục thanh toán</button>
-            </div>
+        <ul class="list-group mb-3">
+            @php $total = 0; @endphp
+
+            @if ($cart && $cart->items->count())
+                @foreach ($cart->items as $item)
+    @php
+        $variant = $item->productVariant;
+        $product = $variant?->product ?? $item->product; // fallback nếu không có variant
+
+        $name = $product?->name ?? 'Sản phẩm không tên';
+        $price = $variant?->price ?? $product?->price ?? 0;
+        $subtotal = $price * $item->quantity;
+        $total += $subtotal;
+    @endphp
+
+    <li class="list-group-item d-flex justify-content-between lh-sm">
+        <div>
+            <h6 class="my-0">{{ $name }}</h6>
+
+            @if ($variant)
+                <small class="text-muted">Size: {{ $variant->size }} | Màu: {{ $variant->color_name }}</small><br>
+            @endif
+
+            <small class="text-muted">Số lượng: {{ $item->quantity }}</small>
         </div>
+        <span class="text-muted">${{ number_format($subtotal, 0, ',', '.') }}</span>
+    </li>
+@endforeach
+
+            @else
+                <li class="list-group-item text-center">Giỏ hàng trống</li>
+            @endif
+
+            <li class="list-group-item d-flex justify-content-between">
+                <span>Tổng</span>
+                <strong>${{ number_format($total, 0, ',', '.') }}</strong>
+            </li>
+        </ul>
+
+        <a href="{{ route('cart.index') }}" class="w-100 btn btn-primary btn-lg">Continue to checkout</a>
+    </div>
+</div>
+
     </div>
     <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch">
         <div class="offcanvas-header justify-content-center">
@@ -321,7 +334,7 @@
                                             <li><a href="blog.html" class="dropdown-item text-white">Bài viết <span
                                                         class="badge bg-warning text-dark ms-2">PRO</span></a></li>
                                             <li><a href="single-post.html" class="dropdown-item text-white">Bài viết đơn lẻ
-                                                    
+
                                                     <span class="badge bg-warning text-dark ms-2">PRO</span></a>
                                             </li>
                                             <li><a href="styles.html" class="dropdown-item text-white">Phong cách

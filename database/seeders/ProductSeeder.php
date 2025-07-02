@@ -3,150 +3,40 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Brand;
+use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Dữ liệu mẫu cho bảng products
-        DB::table('products')->insert([
-            [
-                'name' => 'Giày Sneakers Nam',
-                'slug' => 'giay-sneakers-nam',
-                'img_thumb' => 'product-thumb-1.png', // Sử dụng ảnh từ thư mục images
-                'description' => 'Giày sneakers nam thoải mái, thời trang.',
-                'price' => 500000,
-                'price_sale' => 450000,
-                'category_id' => 1, // Thuộc danh mục Giày Nam
-                'brand_id' => 1, // ID của thương hiệu (Giả sử ID = 1)
-                'view' => 100,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Boots Nam',
-                'slug' => 'giay-boots-nam',
-                'img_thumb' => 'product-thumb-2.png',
-                'description' => 'Giày boots nam phong cách, bền bỉ.',
-                'price' => 800000,
-                'price_sale' => 700000,
-                'category_id' => 1, // Thuộc danh mục Giày Nam
-                'brand_id' => 1,
-                'view' => 120,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Sneakers Nữ',
-                'slug' => 'giay-sneakers-nu',
-                'img_thumb' => 'product-thumb-3.png',
-                'description' => 'Giày sneakers nữ nhẹ nhàng và dễ phối đồ.',
-                'price' => 550000,
-                'price_sale' => 500000,
-                'category_id' => 2, // Thuộc danh mục Giày Nữ
-                'brand_id' => 2, // ID của thương hiệu
-                'view' => 150,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Cao Gót Nữ',
-                'slug' => 'giay-cao-got-nu',
-                'img_thumb' => 'product-thumb-4.png',
-                'description' => 'Giày cao gót nữ sang trọng, quyến rũ.',
-                'price' => 900000,
-                'price_sale' => 850000,
-                'category_id' => 2, // Thuộc danh mục Giày Nữ
-                'brand_id' => 2,
-                'view' => 200,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Thể Thao Nam',
-                'slug' => 'giay-the-thao-nam',
-                'img_thumb' => 'product-thumb-5.png',
-                'description' => 'Giày thể thao nam chất lượng cao, thoải mái cho mọi hoạt động.',
-                'price' => 600000,
-                'price_sale' => 550000,
-                'category_id' => 3, // Thuộc danh mục Giày Thể Thao
-                'brand_id' => 1, // ID của thương hiệu
-                'view' => 80,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Running Nam',
-                'slug' => 'giay-running-nam',
-                'img_thumb' => 'product-thumb-6.png',
-                'description' => 'Giày chạy thể thao nam giúp bạn vượt qua mọi thử thách.',
-                'price' => 650000,
-                'price_sale' => 600000,
-                'category_id' => 3, // Thuộc danh mục Giày Thể Thao
-                'brand_id' => 2,
-                'view' => 90,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Casual Nam',
-                'slug' => 'giay-casual-nam',
-                'img_thumb' => 'product-thumb-1.png',
-                'description' => 'Giày casual nam nhẹ nhàng, thoải mái cho mọi dịp.',
-                'price' => 400000,
-                'price_sale' => 350000,
-                'category_id' => 4, // Thuộc danh mục Giày Casual
-                'brand_id' => 1,
-                'view' => 110,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Loafer Nam',
-                'slug' => 'giay-loafer-nam',
-                'img_thumb' => 'product-thumb-2.png',
-                'description' => 'Giày loafer nam thanh lịch, dễ phối đồ.',
-                'price' => 500000,
-                'price_sale' => 450000,
-                'category_id' => 4, // Thuộc danh mục Giày Casual
-                'brand_id' => 1,
-                'view' => 95,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Loafer Nữ',
-                'slug' => 'giay-loafer-nu',
-                'img_thumb' => 'product-thumb-3.png',
-                'description' => 'Giày loafer nữ thời trang, dễ dàng kết hợp với mọi trang phục.',
-                'price' => 550000,
-                'price_sale' => 500000,
-                'category_id' => 2, // Thuộc danh mục Giày Nữ
-                'brand_id' => 2,
-                'view' => 160,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        $categories = Category::pluck('id')->toArray();
+        $brands = Brand::pluck('id')->toArray();
+
+        // Nếu chưa có category hoặc brand thì bỏ qua
+        if (empty($categories) || empty($brands)) {
+            $this->command->warn("Cần seed bảng categories và brands trước.");
+            return;
+        }
+
+        // Tạo 10 sản phẩm mẫu
+        for ($i = 1; $i <= 10; $i++) {
+            $name = "Sản phẩm mẫu $i";
+            Product::create([
+                'name' => $name,
+                'slug' => Str::slug($name),
+                'img_thumb' => 'product_images/sample.jpg',
+                'description' => 'Mô tả chi tiết cho ' . $name,
+                'price' => rand(100000, 5000000),
+                'price_sale' => rand(50000, 4000000),
+                'category_id' => $categories[array_rand($categories)],
+                'brand_id' => $brands[array_rand($brands)],
+                'view' => rand(0, 100),
+                'is_active' => rand(0, 1),
+            ]);
+        }
     }
 }
 

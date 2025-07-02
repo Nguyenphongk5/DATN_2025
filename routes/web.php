@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -19,7 +21,9 @@ Route::get('', function () {
         'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
         'categories' => \App\Models\Category::all(),
     ]);
-});
+})->name('home');
+
+
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
 Route::get('/dashboard', function () {
     return view('admin.index');
@@ -30,7 +34,26 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile', [ProfileController::class, 'avatar'])->name('profile.avatar');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    Route::resource('orders', OrderController::class);
+    Route::post('/cart/add', [CartController::class, 'handleAction'])->name('cart.add');
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    // web.php
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+
+    Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
+
+
+    Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
+
+
+    Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
+
+
+
 
 // Admin routes
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
@@ -43,27 +66,4 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('logos', LogoController::class);
 });
 
-require __DIR__ . '/auth.php';
-
-
-// Route::prefix('admin')->name('admin.')->group(function () {
-    // Route::get('/', [AdminController::class, 'index'])->name('index');
-
-    // Route::get('user/{id}/edit', [AdminController::class, 'editRole'])->name('user.edit');
-    // Route::post('user/{id}', [AdminController::class, 'updateRole'])->name('user.update');
-
-
-    // =============================CATEGORY============================
-    // Route::prefix('/category')->name('category.')->group(function () {
-    //     Route::get('/', [CategoryController::class, 'index'])->name('listCategory');
-
-    //     Route::get('/create', [CategoryController::class, 'create'])->name('createCategory');
-    //     Route::post('/store', [CategoryController::class, 'store'])->name('storeCategory');
-
-    //     Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('editCategory');
-    //     Route::put('/update/{id}', [CategoryController::class, 'update'])->name('updateCategory');
-
-    //     Route::get('/delete/{id}', [CategoryController::class, 'destroy'])->name('deleteCategory');
-    // });
-
-// });
+require __DIR__.'/auth.php';

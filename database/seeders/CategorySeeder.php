@@ -3,46 +3,46 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Dữ liệu mẫu cho bảng categories
-        DB::table('categories')->insert([
-            [
-                'name' => 'Giày Nam',
-                'parent_id' => null,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Nữ',
-                'parent_id' => null,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Thể Thao',
-                'parent_id' => null,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'name' => 'Giày Casual',
-                'parent_id' => null,
-                'is_active' => 1,
-                'deleted_at' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        // Danh mục cha
+        $electronics = Category::create([
+            'name' => 'Điện tử',
+            'is_active' => 1,
+        ]);
+
+        $fashion = Category::create([
+            'name' => 'Thời trang',
+            'is_active' => 1,
+        ]);
+
+        // Danh mục con
+        Category::create([
+            'name' => 'Điện thoại',
+            'parent_id' => $electronics->id,
+            'is_active' => 1,
+        ]);
+
+        Category::create([
+            'name' => 'Laptop',
+            'parent_id' => $electronics->id,
+            'is_active' => 1,
+        ]);
+
+        Category::create([
+            'name' => 'Nam',
+            'parent_id' => $fashion->id,
+            'is_active' => 1,
+        ]);
+
+        Category::create([
+            'name' => 'Nữ',
+            'parent_id' => $fashion->id,
+            'is_active' => 1,
         ]);
     }
 }
