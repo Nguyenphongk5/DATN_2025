@@ -1,4 +1,13 @@
-import axios from 'axios';
-window.axios = axios;
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    host: window.location.hostname + ':8080',
+    authEndpoint: '/broadcasting/auth',
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
+        }
+    }
+});
