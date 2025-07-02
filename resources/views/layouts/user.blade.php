@@ -514,5 +514,73 @@
     </div>
 
 </body>
+<style>
+  
+</style>
+
+<!-- Floating Chat Icon -->
+<div id="chat-toggle-btn" onclick="toggleChat()">💬</div>
+
+<!-- Chat Box -->
+<div id="chat-box-wrapper">
+  <div id="chat-header">Hỗ trợ trực tuyến</div>
+  <div id="chat-box"></div>
+  <div id="chat-footer">
+    @auth
+      <input type="hidden" id="chat_name" value="{{ Auth::user()->name }}">
+    @else
+      <input type="text" id="chat_name" placeholder="Tên..." style="width: 100%; margin-bottom: 5px;">
+    @endauth
+    <div style="display: flex; align-items: center;">
+      <input type="text" id="chat_message" placeholder="Nhập tin nhắn...">
+      <button id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+function toggleChat() {
+  const chatBox = document.getElementById('chat-box-wrapper');
+  chatBox.style.display = chatBox.style.display === 'none' ? 'block' : 'none';
+}
+
+function loadMessages() {
+  fetch('/chat/messages')
+    .then(res => res.json())
+    .then(data => {
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML = '';
+      data.forEach(msg => {
+        const alignClass = msg.is_admin ? 'chat-right' : 'chat-left';
+        chatBox.innerHTML += `<div class="chat-message ${alignClass}"><b>${msg.sender_name}:</b><br>${msg.message}</div><div style='clear:both'></div>`;
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+
+function sendMessage() {
+  const nameEl = document.getElementById('chat_name');
+  const message = document.getElementById('chat_message').value;
+  const name = nameEl ? nameEl.value : '';
+  if (!name || !message) return;
+
+  fetch('/chat/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': token
+    },
+    body: JSON.stringify({ sender_name: name, message, is_admin: false })
+  }).then(() => {
+    document.getElementById('chat_message').value = '';
+    loadMessages();
+  });
+}
+
+setInterval(loadMessages, 3000);
+loadMessages();
+</script>
 
 </html>

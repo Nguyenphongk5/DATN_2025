@@ -45,7 +45,7 @@ class ProfileController extends Controller
     $request->validate([
         'avatar' => 'nullable|image|max:1024',
     ]);
-
+  
     $user = $request->user();
 
     if ($request->hasFile('avatar')) {
