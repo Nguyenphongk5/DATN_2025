@@ -57,14 +57,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($stockData as $item)
+                        {{-- @foreach ($stockData as $item)
                             <tr>
                                 <td class="px-3 py-2">{{ $item->product_name }}</td>
                                 <td class="px-3 py-2">{{ $item->color_name }}</td>
                                 <td class="px-3 py-2">{{ $item->size }}</td>
                                 <td class="px-3 py-2">{{ $item->quantity }}</td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -74,9 +74,9 @@
         <div class="bg-white shadow p-4 rounded-lg">
             <h3 class="text-lg font-semibold mb-4">Các lệnh đã giao / huỷ / hoàn (%)</h3>
             <ul class="space-y-1">
-                @foreach ($percentStatus as $status => $percent)
+                {{-- @foreach ($percentStatus as $status => $percent)
                     <li>{{ ucfirst($status) }}: <strong>{{ $percent }}%</strong></li>
-                @endforeach
+                @endforeach --}}
             </ul>
         </div>
     </div>
@@ -159,4 +159,4 @@
             });
         });
     </script>
-</x-app-layout> 
+</x-app-layout>
