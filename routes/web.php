@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
+use App\Models\Logo;
 
 // <<<<<<< UI-Improved-Profile
 Route::get('', function () {
@@ -20,14 +21,13 @@ Route::get('', function () {
         'banners' => \App\Models\Banner::all(),
         'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
         'categories' => \App\Models\Category::all(),
+        'logos' => Logo::all(),
     ]);
 })->name('home');
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
-Route::get('/dashboard', function () {
-    return view('admin.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::resource('home', HomeController::class);
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -54,6 +54,9 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('admin.index');
+    })->middleware(['auth', 'verified'])->name('dashboard');
     Route::resource('categories', CategoryController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
@@ -64,4 +67,4 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('orders', OrderController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

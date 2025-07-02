@@ -19,9 +19,11 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $logos = DB::table('logos')->get();
+
         $categories = DB::table('categories')->get();
         $user = $request->user();
-        return view('profile.edit', compact('user', 'categories'));
+        return view('profile.edit', compact('user', 'categories', 'logos'));
     }
 
     /**
@@ -42,27 +44,27 @@ class ProfileController extends Controller
     }
 
     public function avatar(Request $request)
-{
-    $request->validate([
-        'avatar' => 'nullable|image|max:1024',
-    ]);
+    {
+        $request->validate([
+            'avatar' => 'nullable|image|max:1024',
+        ]);
 
-    $user = $request->user();
+        $user = $request->user();
 
-    if ($request->hasFile('avatar')) {
-        // Xóa avatar cũ nếu có
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
+        if ($request->hasFile('avatar')) {
+            // Xóa avatar cũ nếu có
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            // Lưu avatar mới
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+            $user->save();
         }
 
-        // Lưu avatar mới
-        $path = $request->file('avatar')->store('avatars', 'public');
-        $user->avatar = $path;
-        $user->save();
+        return back()->with('status', 'avatar-updated');
     }
-
-    return back()->with('status', 'avatar-updated');
-}
 
     /**
      * Delete the user's account.

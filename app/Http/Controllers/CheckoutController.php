@@ -11,13 +11,15 @@ class CheckoutController extends Controller
 {
     public function index()
     {
+        $logos = DB::table('logos')->get();
+
         $cart = Cart::with(['items.productVariant.product'])->where('user_id', Auth::id())->first();
 
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')->with('error', 'Giỏ hàng của bạn đang trống.');
         }
 
-        return view('user.order', compact('cart'));
+        return view('user.order', compact('cart', 'logos'));
     }
 
     public function placeOrder(Request $request)

@@ -39,7 +39,7 @@ class LogoController extends Controller
         $request->validate([
             'name' => 'nullable|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Yêu cầu file ảnh, max 2MB
-            'active' => 'boolean',
+            'is_active' => 'boolean',
         ]);
 
         $imagePath = $request->file('image')->store('logos', 'public');
@@ -51,7 +51,7 @@ class LogoController extends Controller
         Logo::create([
             'name' => $request->name,
             'image' => $imagePath,
-            'active' => $request->boolean('active'), // Sử dụng boolean() để lấy giá trị boolean
+            'is_active' => $request->boolean('active'), // Sử dụng boolean() để lấy giá trị boolean
         ]);
 
         return redirect()->route('admin.logos.index')->with('success', 'Logo đã được thêm thành công!');
@@ -79,11 +79,10 @@ class LogoController extends Controller
         $request->validate([
             'name' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 'nullable' vì user có thể không muốn đổi ảnh
-            'active' => 'boolean',
+            'is_active' => 'boolean',
         ]);
 
         $data = $request->except('_token', '_method');
-
         if ($request->hasFile('image')) {
 
             if ($logo->image) {

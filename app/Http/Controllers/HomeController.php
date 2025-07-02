@@ -16,6 +16,7 @@ class HomeController extends Controller
     {
         // Lấy các banner đang hoạt động
         $banners = DB::table('banners')->get();
+        $logos = DB::table('logos')->get();
 
         // Lấy sản phẩm mới nhất (giả sử là 5 sản phẩm mới nhất)
         $latestProducts = DB::table('products')
@@ -28,7 +29,7 @@ class HomeController extends Controller
         $categories = DB::table('categories')->get();
 
         // Trả về view với các thông tin cần thiết
-        return view('user.index', compact('banners', 'latestProducts', 'categories'));
+        return view('user.index', compact('banners', 'latestProducts', 'categories', 'logos'));
     }
 
 
@@ -38,8 +39,8 @@ class HomeController extends Controller
     public function create()
     {
         //
-        $categories = Category::all();
-        return view('user.product-detail', compact('categories'));
+        // $categories = Category::all();
+        // return view('user.product-detail', compact('categories'));
     }
 
     /**
@@ -52,6 +53,8 @@ class HomeController extends Controller
     public function search(Request $request)
     {
         // Khởi tạo query builder cho Product
+        $logos = DB::table('logos')->get();
+
         $query = Product::query();
 
         // Tìm kiếm theo tên sản phẩm nếu có
@@ -81,11 +84,13 @@ class HomeController extends Controller
         $categories = Category::all();
 
         // Trả về kết quả tìm kiếm
-        return view('user.search', compact('products', 'categories', 'keywords'));  // Trả về kết quả tìm kiếm
+        return view('user.search', compact('products', 'categories', 'keywords', 'logos'));  // Trả về kết quả tìm kiếm
     }
     public function show(string $id)
     {
         //
+        $logos = DB::table('logos')->get();
+
         $categories = Category::all();
         $productVariants = DB::table('product_variants')
             ->where('product_id', $id)
@@ -99,7 +104,7 @@ class HomeController extends Controller
         ->where('category_id', "=",$product->category_id)
         ->limit(8)
         ->get();
-        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products'));
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products','logos'));
     }
     public function edit(string $id)
     {
