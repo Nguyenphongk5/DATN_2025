@@ -18,7 +18,8 @@ class AuthenticatedSessionController extends Controller
     public function create(): View
     {
         $categories = DB::table('categories')->get();
-        return view('auth.login', compact('categories'));
+        $logos = DB::table('logos')->get();
+        return view('auth.login', compact('categories', 'logos'));
     }
 
     /**
