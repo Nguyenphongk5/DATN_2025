@@ -1,3 +1,6 @@
+<?php
+    $logos = \App\Models\Logo::all();
+?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -249,6 +252,11 @@
                                         </li>
                                     @endif
                                     <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Xem hồ sơ</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('orders.history') }}">Đơn Hàng </a>
                                     </li>
                                     <li>
                                         <hr class="dropdown-divider">
