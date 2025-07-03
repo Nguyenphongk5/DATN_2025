@@ -15,7 +15,7 @@ class LogoController extends Controller
     public function index()
     {
         $logos = Logo::latest()->paginate(10);
-        return view('admin.logo.list', compact('logos')); // Giả sử bạn có view này
+        return view('admin.logo.list', compact('logos'));
     }
 
     /**
@@ -23,7 +23,7 @@ class LogoController extends Controller
      */
     public function create()
     {
-        return view('admin.logo.create'); // Giả sử bạn có view này
+        return view('admin.logo.create');
     }
 
     /**
