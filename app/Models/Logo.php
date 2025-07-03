@@ -26,6 +26,6 @@ class Logo extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'active' => 'boolean', // Đảm bảo trường 'active' được cast thành boolean
+        'active' => 'boolean',
     ];
 }
