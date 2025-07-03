@@ -45,6 +45,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     // =============================LOGO============================ \\
     Route::resource('logos', LogoController::class);
+    
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
