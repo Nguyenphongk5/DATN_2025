@@ -81,7 +81,8 @@ class CartController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Đã thêm vào giỏ hàng');
+   return redirect()->back()->with('add_to_cart', 'Sản phẩm đã được thêm vào giỏ hàng!');
+
     }
 
     public function index()

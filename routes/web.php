@@ -81,5 +81,6 @@ use App\Http\Controllers\SubscribeController;
 
 Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
 
+// Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder1'])->name('checkout.placeOrder');
 
 require __DIR__ . '/auth.php';
