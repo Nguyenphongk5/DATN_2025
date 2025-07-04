@@ -112,11 +112,12 @@
                     <div class="button-wrap row g-2">
                         <div class="col-md-12">
                             <form id="checkout-form" action="{{ route('checkout.index') }}" method="GET">
-                                <input type="hidden" name="selected_items" id="selected-items">
-                                <button type="submit" class="btn btn-primary w-100 mt-3" id="checkout-button">
-                                    Đặt hàng 
-                                </button>
-                            </form>
+    <input type="hidden" name="selected_items" id="selected-items">
+    <button type="submit" class="btn btn-primary w-100 mt-3" id="checkout-button">
+        Đặt hàng
+    </button>
+</form>
+
                         </div>
                     </div>
                 </div>
@@ -161,19 +162,20 @@
 
 <script>
     document.getElementById('checkout-form').addEventListener('submit', function (e) {
-        const selected = [];
-        document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
-            selected.push(cb.value);
-        });
-
-        if (selected.length === 0) {
-            e.preventDefault();
-            alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
-            return;
-        }
-
-        document.getElementById('selected-items').value = selected.join(',');
+    const selected = [];
+    document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+        selected.push(cb.value);
     });
+
+    if (selected.length === 0) {
+        e.preventDefault();
+        alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
+        return;
+    }
+
+    document.getElementById('selected-items').value = selected.join(',');
+});
+
 </script>
 
 @endsection

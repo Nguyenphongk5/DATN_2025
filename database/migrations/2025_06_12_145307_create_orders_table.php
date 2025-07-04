@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('user_address');
             $table->foreignId('voucher_id')->nullable()->constrained();
             $table->decimal('discount_amount', 10, 2);
-            $table->decimal('total_amount', 10, 2);
+            $table->integer('total_amount');
             $table->enum('status', ['pending', 'confirmed', 'shipping', 'completed', 'cancelled'])->default('pending');
             $table->enum('payment_method', ['cod', 'online'])->default('cod');
             $table->enum('payment_status', ['Unpaid', 'Paid', 'Refunded'])->default('Unpaid');
