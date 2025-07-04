@@ -195,3 +195,187 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lấy các phần tử cần thiết từ DOM
+        const checkboxes = document.querySelectorAll('.product-select-checkbox');
+        const hiddenInput = document.getElementById('product_id_input');
+        const displayName = document.getElementById('selected_product_name');
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                // Nếu checkbox này được tick
+                if (this.checked) {
+                    // Bỏ tick tất cả các checkbox khác
+                    checkboxes.forEach(function (otherCheckbox) {
+                        if (otherCheckbox !== this) {
+                            otherCheckbox.checked = false;
+                        }
+                    }, this);
+
+                    // Lấy ID và tên sản phẩm từ data attributes
+                    const productId = this.dataset.productId;
+                    const productName = this.dataset.productName;
+
+                    // Cập nhật giá trị cho form upload
+                    hiddenInput.value = productId;
+                    displayName.textContent = productName;
+
+                } else {
+                    // Nếu người dùng bỏ tick, xóa giá trị
+                    hiddenInput.value = '';
+                    displayName.textContent = 'Chưa chọn sản phẩm';
+                }
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('fileUpload');
+        const previewContainer = document.getElementById('image-preview-container');
+
+        // DataTransfer sẽ giúp chúng ta quản lý danh sách file (thêm/xóa)
+        let fileListContainer = new DataTransfer();
+
+        // Lắng nghe sự kiện khi người dùng chọn file
+        fileInput.addEventListener('change', function (event) {
+            const files = event.target.files;
+
+            // Thêm các file mới chọn vào danh sách quản lý
+            for (let i = 0; i < files.length; i++) {
+                fileListContainer.items.add(files[i]);
+            }
+
+            // Cập nhật lại danh sách file trong input và hiển thị preview
+            updateFileInputAndPreviews();
+        });
+
+        // Dùng event delegation để xử lý sự kiện click nút xóa
+        previewContainer.addEventListener('click', function (event) {
+            // Chỉ hoạt động khi click vào phần tử có class 'remove-btn'
+            if (event.target && event.target.classList.contains('remove-btn')) {
+                const indexToRemove = parseInt(event.target.dataset.index, 10);
+
+                // Xóa file khỏi danh sách quản lý
+                fileListContainer.items.remove(indexToRemove);
+
+                // Cập nhật lại input và preview sau khi xóa
+                updateFileInputAndPreviews();
+            }
+        });
+
+        function updateFileInputAndPreviews() {
+            // Xóa các preview cũ
+            previewContainer.innerHTML = '';
+
+            // Lấy danh sách file hiện tại từ DataTransfer
+            const currentFiles = fileListContainer.files;
+
+            // Gán lại danh sách file đã được cập nhật vào input
+            fileInput.files = currentFiles;
+
+            // Tạo và hiển thị preview cho từng file trong danh sách
+            for (let i = 0; i < currentFiles.length; i++) {
+                const file = currentFiles[i];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    // Tạo HTML cho mỗi item preview
+                    const previewItemHTML = `
+                        <div class="flex items-center justify-between py-2 border pl-3 pr-3 transition-all duration-300 border-[#E8EDF2] dark:border-[#313442] rounded-[5px] gap-x-[10px] hover:shadow-sm">
+                            <img class="h-12 w-12 object-cover rounded" src="${e.target.result}" alt="${file.name}">
+                            <div class="flex-1 flex flex-col min-w-0">
+                                <span class="text-sm text-gray-800 dark:text-gray-200 truncate font-medium">${file.name}</span>
+                                <span class="text-xs text-gray-500">${(file.size / 1024).toFixed(2)} KB</span>
+                            </div>
+                            <button type="button" class="remove-btn text-red-500 hover:text-red-700 font-bold text-2xl p-1" data-index="${i}">&times;</button>
+                        </div>
+                    `;
+                    previewContainer.innerHTML += previewItemHTML;
+                }
+
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+    
+    // Lấy tất cả sản phẩm từ PHP và chuyển thành JSON cho JS sử dụng
+    const allProducts = @json(
+        $products->map(function ($product) {
+            return ['id' => $product->id, 'name' => $product->name];
+        })
+    );
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // === Các yếu tố của Modal ===
+        const editModal = document.getElementById('editModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const editForm = document.getElementById('editForm');
+        const editImagePreview = document.getElementById('editImagePreview');
+        const editProductIdSelect = document.getElementById('editProductId');
+        const editImageInput = document.getElementById('editImageInput'); // << Thêm dòng này
+
+        // === Các nút Sửa trong bảng ===
+        const editButtons = document.querySelectorAll('.edit-modal-btn');
+
+        // ... (code mở và đóng modal giữ nguyên) ...
+
+        function openModal() {
+            editModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            editModal.classList.add('hidden');
+        }
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // ... (code điền dữ liệu vào modal giữ nguyên) ...
+                const updateUrl = this.dataset.updateUrl;
+                const imageUrl = this.dataset.imageUrl;
+                const currentProductId = this.dataset.productId;
+                editForm.action = updateUrl;
+                editImagePreview.src = imageUrl;
+                editProductIdSelect.innerHTML = '';
+                allProducts.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    if (product.id == currentProductId) {
+                        option.selected = true;
+                    }
+                    editProductIdSelect.appendChild(option);
+                });
+
+                openModal();
+            });
+        });
+
+        // === BẮT ĐẦU PHẦN CODE MỚI ===
+        // Lắng nghe sự kiện khi người dùng chọn file mới trong modal
+        editImageInput.addEventListener('change', function (event) {
+            // Kiểm tra xem người dùng có thực sự chọn file không
+            if (event.target.files && event.target.files[0]) {
+                const file = event.target.files[0];
+
+                // Tạo một URL tạm thời cho file vừa chọn
+                const newImageUrl = URL.createObjectURL(file);
+
+                // Cập nhật ảnh preview bằng URL tạm thời đó
+                editImagePreview.src = newImageUrl;
+            }
+        });
+        // === KẾT THÚC PHẦN CODE MỚI ===
+
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModalBtn.addEventListener('click', closeModal);
+        editModal.addEventListener('click', function (event) {
+            if (event.target === editModal) {
+                closeModal();
+            }
+        });
+    });
+
+
+</script>
