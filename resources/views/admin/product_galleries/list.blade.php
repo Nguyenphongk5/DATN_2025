@@ -154,3 +154,44 @@
     </div>
     </div>
 </x-app-layout>
+<div id="editModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 m-4">
+        <div class="flex justify-between items-center border-b pb-3">
+            <h3 class="text-xl font-semibold">Chỉnh sửa ảnh</h3>
+            <button id="closeModalBtn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+        </div>
+
+        <div class="mt-4">
+            <form id="editForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT') {{-- Bắt buộc cho việc update --}}
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Ảnh hiện tại:</label>
+                    <img id="editImagePreview" src="" alt="Ảnh hiện tại" class="mt-2 h-32 w-auto rounded-md border">
+                </div>
+
+                <div class="mb-4">
+                    <label for="editImageInput" class="block text-sm font-medium text-gray-700">Thay đổi ảnh (để trống
+                        nếu không muốn đổi)</label>
+                    <input type="file" name="image" id="editImageInput"
+                        class="block w-full text-sm mt-1 border-gray-300 rounded-md">
+                </div>
+
+                <div class="mb-4">
+                    <label for="editProductId" class="block text-sm font-medium text-gray-700">Sản phẩm liên kết</label>
+                    <select id="editProductId" name="product_id" class="block w-full mt-1 border-gray-300 rounded-md">
+                        {{-- Options sẽ được thêm bằng JavaScript --}}
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-4 mt-6">
+                    <button type="button" id="cancelModalBtn"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Cập
+                        nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

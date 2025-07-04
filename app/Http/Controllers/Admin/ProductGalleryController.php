@@ -77,5 +77,60 @@ class ProductGalleryController extends Controller
     /**
      * Cập nhật một tài nguyên cụ thể trong bộ nhớ.
      */
-   
+    public function update(Request $request, ProductGallery $products_gallery)
+    {
+        // Đổi tên biến để code dễ đọc và nhất quán
+        $gallery = $products_gallery;
+
+        // 1. Validate dữ liệu gửi lên
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            // 'image' là nullable vì người dùng có thể không muốn thay đổi ảnh
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ], [
+            'product_id.required' => 'Vui lòng chọn một sản phẩm.',
+            'image.image' => 'Tệp tải lên phải là một hình ảnh.',
+            'image.max' => 'Kích thước ảnh không được vượt quá 2MB.',
+        ]);
+
+        // 2. Cập nhật ID của sản phẩm liên kết
+        $gallery->product_id = $request->product_id;
+
+        // 3. Kiểm tra xem người dùng có tải lên ảnh mới để thay thế không
+        if ($request->hasFile('image')) {
+
+            // Xóa ảnh cũ khỏi storage để tránh rác
+            if ($gallery->image && Storage::disk('public')->exists($gallery->image)) {
+                Storage::disk('public')->delete($gallery->image);
+            }
+
+            // Lưu ảnh mới vào storage
+            $file = $request->file('image');
+            $newFileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('products', $newFileName, 'public');
+
+            // Cập nhật đường dẫn ảnh mới vào model
+            $gallery->image = $path;
+        }
+
+        // 4. Lưu tất cả các thay đổi vào cơ sở dữ liệu
+        $gallery->save();
+
+        // 5. Chuyển hướng về trang danh sách với thông báo thành công
+        return redirect()->route('admin.products-galleries.index')->with('success', 'Cập nhật ảnh thành công!');
+    }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(ProductGallery $products_gallery)
+    {
+        // Đổi tất cả các biến $gallery bên trong thành $products_gallery
+        if ($products_gallery->image && Storage::disk('public')->exists($products_gallery->image)) {
+            Storage::disk('public')->delete($products_gallery->image);
+        }
+
+        $products_gallery->delete();
+
+        return redirect()->route('admin.products-galleries.index')->with('success', 'Đã xóa ảnh thành công!');
+    }
 }
