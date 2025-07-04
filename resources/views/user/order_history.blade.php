@@ -1,70 +1,69 @@
 @extends('layouts.user')
 
 @section('content')
-<section class="py-5 mb-5 bg-light">
+<section class="py-5 bg-light border-bottom mb-3">
     <div class="container-fluid">
-        <div class="d-flex justify-content-between">
-            <h1 class="page-title pb-2">Lịch sử đơn hàng</h1>
-            <nav class="breadcrumb fs-6">
-                <a class="breadcrumb-item nav-link" href="{{ route('home') }}">Trang chủ</a>
-                <span class="breadcrumb-item active" aria-current="page">Lịch sử đơn hàng</span>
-            </nav>
-        </div>
+        <h3 class="mb-0">Đơn hàng của tôi</h3>
     </div>
 </section>
 
-<section class="py-5">
-    <div class="container-fluid">
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle bg-white">
-                <thead class="bg-light">
-                    <tr class="text-uppercase text-muted">
-                        <th>Mã đơn hàng</th>
-                        <th>Ngày đặt</th>
-                        <th>Trạng thái</th>
-                        <th>Thanh toán</th>
-                        <th>Tổng tiền</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($orders as $order)
-                        <tr>
-                            <td><strong>{{ $order->order_code }}</strong></td>
-                            <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                @php
-                                    $badgeClass = match($order->status) {
-                                        'pending' => 'warning',
-                                        'confirmed' => 'primary',
-                                        'shipping' => 'info',
-                                        'completed' => 'success',
-                                        'cancelled' => 'danger',
-                                        default => 'secondary',
-                                    };
-                                @endphp
-                                <span class="badge bg-{{ $badgeClass }}">{{ ucfirst($order->status) }}</span>
-                            </td>
-                            <td>
-                                <span class="badge bg-{{ $order->payment_status === 'Paid' ? 'success' : 'secondary' }}">
-                                    {{ $order->payment_status }}
-                                </span>
-                            </td>
-                            <td>{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
-                            <td>
-                                <a href="{{ route('orders.show', $order->id) }}" class="btn btn-outline-primary btn-sm">
-                                    Xem chi tiết
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center">Bạn chưa có đơn hàng nào.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+<div class="container-fluid">
+    {{-- Tabs --}}
+    <ul class="nav nav-tabs mb-4" id="orderTabs">
+        @php
+            $tabs = [
+                '' => 'Tất cả',
+                'pending' => 'Chờ xác nhận',
+                'confirmed' => 'Chờ lấy hàng',
+                'shipping' => 'Đang giao',
+                'delivered' => 'Đã giao',
+                'cancelled' => 'Đã hủy',
+            ];
+        @endphp
+
+        @foreach ($tabs as $key => $label)
+            <li class="nav-item">
+                <a class="nav-link filter-tab {{ request('status') == $key ? 'active' : ($key == '' && !request('status') ? 'active' : '') }}"
+                   href="#"
+                   data-status="{{ $key }}">{{ $label }}</a>
+            </li>
+        @endforeach
+    </ul>
+
+    {{-- Danh sách đơn hàng --}}
+    <div id="orders-list">
+        @include('user.order_items', ['orders' => $orders])
     </div>
-</section>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function (e) {
+                e.preventDefault();
+                const status = this.dataset.status;
+
+                fetch("{{ url('/order-history/filter') }}?status=" + status)
+
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network response was not ok');
+                        return res.text();
+                    })
+                    .then(html => {
+                        document.getElementById('orders-list').innerHTML = html;
+
+                        // Cập nhật trạng thái tab active
+                        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                    })
+                    .catch(err => {
+                        console.error("Lỗi:", err);
+                        alert("Không thể tải đơn hàng. Vui lòng thử lại.");
+                    });
+            });
+        });
+    });
+</script>
 @endsection

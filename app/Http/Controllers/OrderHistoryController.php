@@ -2,20 +2,41 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Support\Facades\Session;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 
 class OrderHistoryController extends Controller
 {
-    public function history()
-    {
-        $orders = Order::where('user_id', Auth::id())
+   // Trong OrderController
+
+public function history()
+{
+    $orders = Order::with('orderDetails.productVariant.product')
+        ->where('user_id', auth()->id())
         ->orderByDesc('created_at')
-        ->paginate(5); // Hiển thị 5 đơn mỗi trang
+        ->paginate(5);
 
     return view('user.order_history', compact('orders'));
-    }
+}
+
+public function filter(Request $request)
+{
+    $status = $request->input('status');
+
+    $orders = Order::with('orderDetails.productVariant.product')
+        ->where('user_id', auth()->id())
+        ->when($status, fn($q) => $q->where('status', $status))
+        ->orderByDesc('created_at')
+        ->paginate(5);
+
+    return view('user.order_items', compact('orders'));
+}
+
+
 
     public function show($id)
     {
@@ -40,5 +61,29 @@ class OrderHistoryController extends Controller
 
     return back()->with('success', 'Đơn hàng đã được hủy.');
 }
+
+
+
+public function reorder(OrderDetail $orderDetail)
+{
+    $variant = $orderDetail->productVariant;
+
+    if (!$variant) {
+        return back()->with('error', 'Không tìm thấy biến thể sản phẩm.');
+    }
+
+    // Set dữ liệu giống như chức năng "buy now"
+    session([
+        'buy_now' => [
+            'product_id' => $variant->product_id,
+            'size' => $variant->size,
+            'color_name' => $variant->color_name,
+            'quantity' => $orderDetail->quantity
+        ]
+    ]);
+
+    return redirect()->route('checkout.buyNow');
+}
+
 
 }
