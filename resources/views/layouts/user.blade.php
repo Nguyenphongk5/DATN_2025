@@ -18,6 +18,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
     <link
         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         rel="stylesheet">
@@ -537,7 +541,50 @@
     </div>
 </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if(session('add_to_cart'))
+<script>
+    Swal.fire({
+        toast: true,
+        iconHtml: '<i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>',
+        title: '<span style="font-weight: 500">🎉 {{ session("add_to_cart") }}</span>',
+        position: 'top-end',
+        background: '#f0fff0',
+        customClass: {
+            popup: 'shadow border border-success rounded-3 p-3'
+        },
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+    });
+</script>
+@endif
+
+{{-- SweetAlert2 CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{-- Thông báo đặt hàng thành công --}}
+@if(session('success'))
+<script>
+    Swal.fire({
+        toast: true,
+        iconHtml: '<i class="bi bi-bag-check-fill text-success fs-4"></i>',
+        title: '{{ session("success") }}',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#f0fff0',
+        customClass: {
+            popup: 'shadow border border-success rounded-3 p-3'
+        }
+    });
+</script>
+@endif
+
 </body>
+
 <style>
 
 </style>

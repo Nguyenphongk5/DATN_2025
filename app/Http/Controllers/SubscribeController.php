@@ -32,3 +32,4 @@ class SubscribeController extends Controller
         return back()->with('success', 'Cảm ơn bạn đã đăng ký! Mã giảm giá đã được gửi qua email.');
     }
 }
+ 
