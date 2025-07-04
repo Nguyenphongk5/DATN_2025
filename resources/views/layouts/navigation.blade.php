@@ -99,6 +99,10 @@
                             class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.logos.*') ? 'bg-gray-700 font-semibold' : '' }}">
                             Logos
                         </a>
+                        <a href="{{ route('admin.orders.index') }}"
+                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                            Logos
+                        </a>
                         <a href="{{ route('profile.edit') }}"
                             class="block px-4 py-2 rounded hover:bg-gray-700 transition">
                             ⚙️ Hồ sơ
