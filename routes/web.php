@@ -80,6 +80,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 use App\Http\Controllers\SubscribeController;
 
 Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
+// routes/web.php
+
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 
 // Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder1'])->name('checkout.placeOrder');
 

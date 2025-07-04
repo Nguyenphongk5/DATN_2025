@@ -107,45 +107,48 @@
 
                     {{-- Luồng mua ngay --}}
                     @if (isset($variant))
-                    @php
-                    $product = $variant->product;
-                    $price = $variant->price;
-                    $subtotal = $price * $quantity;
-                    $total += $subtotal;
-                    @endphp
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">{{ $product->name }}</h6>
-                            <small class="text-muted">Size: {{ $variant->size }}, Màu:
-                                {{ $variant->color_name }}</small>
-                            <div><small class="text-muted">Số lượng: {{ $quantity }}</small></div>
-                        </div>
-                        <span class="text-muted">${{ number_format($subtotal, 0, ',', '.') }}</span>
-                    </li>
+                        @php
+                            $product = $variant->product;
+                            $price = $variant->price;
+                            $subtotal = $price * $quantity;
+                            $total += $subtotal;
+                        @endphp
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">{{ $product->name }}</h6>
+                                <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                <div><small class="text-muted">Số lượng: {{ $quantity }}</small></div>
+                            </div>
+                            <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
+                        </li>
 
                     {{-- Luồng giỏ hàng --}}
                     @elseif (!empty($cart?->items))
-                    @foreach ($cart->items as $item)
-                    @php
-                    $variant = $item->productVariant;
-                    $product = $variant?->product ?? $item->product;
-                    $name = $product?->name ?? 'Sản phẩm';
-                    $price = $variant?->price ?? $product?->price ?? 0;
-                    $subtotal = $price * $item->quantity;
-                    $total += $subtotal;
-                    @endphp
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">{{ $name }}</h6>
-                            @if ($variant)
-                            <small class="text-muted">Size: {{ $variant->size }}, Màu:
-                                {{ $variant->color_name }}</small>
+                        @php
+                            $selectedIds = session('selected_items', []);
+                        @endphp
+                        @foreach ($cart->items as $item)
+                            @if (empty($selectedIds) || in_array($item->id, $selectedIds))
+                                @php
+                                    $variant = $item->productVariant;
+                                    $product = $variant?->product ?? $item->product;
+                                    $name = $product?->name ?? 'Sản phẩm';
+                                    $price = $variant?->price ?? $product?->price ?? 0;
+                                    $subtotal = $price * $item->quantity;
+                                    $total += $subtotal;
+                                @endphp
+                                <li class="list-group-item d-flex justify-content-between lh-sm">
+                                    <div>
+                                        <h6 class="my-0">{{ $name }}</h6>
+                                        @if ($variant)
+                                            <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                        @endif
+                                        <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
+                                    </div>
+                                    <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
+                                </li>
                             @endif
-                            <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
-                        </div>
-                        <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
-                    </li>
-                    @endforeach
+                        @endforeach
                     @endif
 
                     <li class="list-group-item d-flex justify-content-between">
