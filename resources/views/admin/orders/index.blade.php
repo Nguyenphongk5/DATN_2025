@@ -71,7 +71,7 @@
                                 @foreach ($orders as $key => $order)
                                     <tr>
                                         <td class="px-6 py-4">{{ $key + 1 }}</td>
-                                        <td class="px-6 py-4">{{ $order->order_code }}</td>
+                                        <td class="px-6 py-4">{{$vnp_TxnRef = $order->order_code }}</td>
                                         <td class="px-6 py-4">{{ $order->user_name }}</td>
                                         <td class="px-6 py-4">{{ $order->user_email }}</td>
                                         <td class="px-6 py-4">{{ $order->user_phone }}</td>

@@ -114,7 +114,7 @@
                             <form id="checkout-form" action="{{ route('checkout.index') }}" method="GET">
                                 <input type="hidden" name="selected_items" id="selected-items">
                                 <button type="submit" class="btn btn-primary w-100 mt-3" id="checkout-button">
-                                    Đặt hàng (Chỉ các sản phẩm đã chọn)
+                                    Đặt hàng 
                                 </button>
                             </form>
                         </div>

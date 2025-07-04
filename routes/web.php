@@ -83,7 +83,15 @@ Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscrib
 // routes/web.php
 
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+use App\Http\Controllers\VnPayController;
 
 // Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder1'])->name('checkout.placeOrder');
+
+
+Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePayment'])->name('checkout.handlePayment');
+Route::post('/checkout/vnpay/create', [VnPayController::class, 'createPayment'])->name('vnpay.payment');
+Route::get('/checkout/vnpay/return', [VnPayController::class, 'vnpayReturn'])->name('vnpay.return');
+Route::get('/vnpay/return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
+Route::patch('/admin/orders/{order}/payment', [OrderController::class, 'updatePayment'])->name('orders.updatePayment');
 
 require __DIR__ . '/auth.php';
