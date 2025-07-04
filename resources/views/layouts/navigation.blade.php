@@ -15,7 +15,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             crossorigin="anonymous" />
 
         <script>
@@ -72,6 +72,10 @@
                             class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.products.*') ? 'bg-gray-700 font-semibold' : '' }}">
                             Products
                         </a>
+                        <a href="{{ route('admin.products-galleries.index') }}"
+                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.products-galleries.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                            Product Galleries
+                        </a>
                         {{-- <a href="{{ route('orders.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
                 🧾 Đơn hàng
             </a> --}}
@@ -107,7 +111,8 @@
                     <form method="POST" action="{{ route('logout') }}" class="mb-4 px-4">
                         @csrf
                         <button type="submit"
-                            class="w-full text-left px-4 py-2 rounded hover:bg-red-600 bg-red-500 transition text-white" style="position: absolute; bottom: 0; left: 20%; width: 150px; text-align: center;;">
+                            class="w-full text-left px-4 py-2 rounded hover:bg-red-600 bg-red-500 transition text-white"
+                            style="position: absolute; bottom: 0; left: 20%; width: 150px; text-align: center;;">
                             Đăng xuất
                         </button>
                     </form>

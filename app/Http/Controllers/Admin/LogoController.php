@@ -20,7 +20,7 @@ class LogoController extends Controller
             $query->where('logos.is_active', $request->is_active);
         }
         $logos = $query->latest()->paginate(10);
-        return view('admin.logo.list', compact('logos')); // Giả sử bạn có view này
+        return view('admin.logo.list', compact('logos')); 
     }
 
     /**
@@ -28,7 +28,7 @@ class LogoController extends Controller
      */
     public function create()
     {
-        return view('admin.logo.create'); // Giả sử bạn có view này
+        return view('admin.logo.create');
     }
 
     /**
@@ -38,7 +38,7 @@ class LogoController extends Controller
     {
         $request->validate([
             'name' => 'nullable|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Yêu cầu file ảnh, max 2MB
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
             'is_active' => 'boolean',
         ]);
 
@@ -51,7 +51,7 @@ class LogoController extends Controller
         Logo::create([
             'name' => $request->name,
             'image' => $imagePath,
-            'is_active' => $request->boolean('active'), // Sử dụng boolean() để lấy giá trị boolean
+            'is_active' => $request->boolean('active'), 
         ]);
 
         return redirect()->route('admin.logos.index')->with('success', 'Logo đã được thêm thành công!');

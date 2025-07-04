@@ -1,21 +1,24 @@
 <?php
 
-use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\DashboardController;
+use App\Models\Logo;
+
+//=======================================ADMIN========================================//
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
-use App\Http\Controllers\DashboardController;
-use App\Models\Logo;
+use App\Http\Controllers\Admin\ProductGalleryController;
 
 // <<<<<<< UI-Improved-Profile
 Route::get('', function () {
@@ -70,6 +73,12 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
+    Route::resource('products-galleries', ProductGalleryController::class)
+        ->except(['show']);
+});
+
+Route::get('/php-info', function () {
+    phpinfo();
 });
 // routes/web.php
 
@@ -77,6 +86,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
 use App\Models\Blog;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
 use App\Http\Controllers\SubscribeController;
 
 Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
