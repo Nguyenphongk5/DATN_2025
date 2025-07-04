@@ -61,8 +61,10 @@ Route::put('/order-history/{id}/cancel', [OrderHistoryController::class, 'cancel
     Route::get('/order/{id}', [OrderHistoryController::class, 'show'])->name('orders.show');
    Route::get('/order-history', [OrderHistoryController::class, 'history'])->name('orders.history');
 Route::get('/order-history/filter', [OrderHistoryController::class, 'filter']);
-Route::get('/reorder/{orderDetail}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
 
+Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
+
+Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
 
 
 

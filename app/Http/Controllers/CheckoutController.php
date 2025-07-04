@@ -265,4 +265,42 @@ class CheckoutController extends Controller
             return back()->with('error', 'Lỗi mua ngay: ' . $e->getMessage());
         }
     }
+public function reorderCheckout()
+{
+    $items = session('reorder_items');
+
+    if (!$items || empty($items)) {
+        return redirect()->route('home')->with('error', 'Không có sản phẩm để mua lại.');
+    }
+
+    // Lấy toàn bộ variant
+    $variants = [];
+    foreach ($items as $item) {
+        $variant = ProductVariant::where('product_id', $item['product_id'])
+            ->where('color_name', $item['color_name'])
+            ->where('size', $item['size'])
+            ->with('product')
+            ->first();
+
+        if ($variant) {
+            $variants[] = [
+                'variant' => $variant,
+                'quantity' => $item['quantity'],
+            ];
+        }
+    }
+
+    if (empty($variants)) {
+        return redirect()->route('home')->with('error', 'Không thể tìm thấy các sản phẩm để mua lại.');
+    }
+
+    return view('user.order', [
+        'variants' => $variants,
+        
+    ]);
+}
+
+
+
+
 }

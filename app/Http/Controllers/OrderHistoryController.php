@@ -64,25 +64,34 @@ public function filter(Request $request)
 
 
 
-public function reorder(OrderDetail $orderDetail)
+public function reorder(Order $order)
 {
-    $variant = $orderDetail->productVariant;
-
-    if (!$variant) {
-        return back()->with('error', 'Không tìm thấy biến thể sản phẩm.');
+    if ($order->user_id !== auth()->id()) {
+        abort(403, 'Bạn không có quyền mua lại đơn hàng này');
     }
 
-    // Set dữ liệu giống như chức năng "buy now"
-    session([
-        'buy_now' => [
+    $items = [];
+
+    foreach ($order->orderDetails as $detail) {
+        $variant = $detail->productVariant;
+        if (!$variant) continue;
+
+        $items[] = [
             'product_id' => $variant->product_id,
             'size' => $variant->size,
             'color_name' => $variant->color_name,
-            'quantity' => $orderDetail->quantity
-        ]
-    ]);
+            'quantity' => $detail->quantity,
+        ];
+    }
 
-    return redirect()->route('checkout.buyNow');
+    if (empty($items)) {
+        return back()->with('error', 'Không có sản phẩm hợp lệ để mua lại.');
+    }
+
+    // Gán toàn bộ vào session (dạng mảng nhiều sản phẩm)
+    session(['reorder_items' => $items]);
+
+    return redirect()->route('checkout.reorder');
 }
 
 

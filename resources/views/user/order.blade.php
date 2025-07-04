@@ -20,29 +20,27 @@
                 <h4 class="mb-4">Thông tin nhận hàng</h4>
 
                 @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
+                    <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
                 @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                    <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
                 @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
 
-                <form id="{{ isset($variant) ? 'buy-now-form' : 'cart-form' }}" action="{{ isset($variant) ? route('checkout.placeBuyNowOrder') : route('checkout.placeOrder') }}"
-                    method="POST">
+                <form id="{{ isset($variant) ? 'buy-now-form' : 'cart-form' }}" action="{{ isset($variant) ? route('checkout.placeBuyNowOrder') : route('checkout.placeOrder') }}" method="POST">
                     @csrf
 
                     <div class="mb-3">
                         <label class="form-label">Họ tên</label>
-                        <input type="text" name="name" class="form-control"
-                            value="{{ old('name', Auth::user()->name ?? '') }}" required>
+                        <input type="text" name="name" class="form-control" value="{{ old('name', Auth::user()->name ?? '') }}" required>
                     </div>
 
                     <div class="mb-3">
@@ -84,19 +82,17 @@
                 <h4 class="mb-4">Đơn hàng của bạn</h4>
                 <ul class="list-group mb-3">
                     @if (session('voucher_error'))
-                    <div class="alert alert-danger">{{ session('voucher_error') }}</div>
+                        <div class="alert alert-danger">{{ session('voucher_error') }}</div>
                     @endif
-
                     @if (session('voucher_success'))
-                    <div class="alert alert-success">{{ session('voucher_success') }}</div>
+                        <div class="alert alert-success">{{ session('voucher_success') }}</div>
                     @endif
 
                     <div class="card mb-3">
                         <div class="card-body">
                             <h6 class="mb-3">Mã giảm giá</h6>
                             <div class="input-group">
-                                <input type="text" name="voucher_code" class="form-control"
-                                    placeholder="Nhập mã giảm giá..."
+                                <input type="text" name="voucher_code" class="form-control" placeholder="Nhập mã giảm giá..."
                                     form="{{ isset($variant) ? 'buy-now-form' : 'cart-form' }}"
                                     value="{{ old('voucher_code') }}">
                             </div>
@@ -105,49 +101,68 @@
 
                     @php $total = 0; @endphp
 
-                    {{-- Luồng mua ngay --}}
+                    {{-- Mua ngay --}}
                     @if (isset($variant))
-                    @php
-                    $product = $variant->product;
-                    $price = $variant->price;
-                    $subtotal = $price * $quantity;
-                    $total += $subtotal;
-                    @endphp
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">{{ $product->name }}</h6>
-                            <small class="text-muted">Size: {{ $variant->size }}, Màu:
-                                {{ $variant->color_name }}</small>
-                            <div><small class="text-muted">Số lượng: {{ $quantity }}</small></div>
-                        </div>
-                        <span class="text-muted">${{ number_format($subtotal, 0, ',', '.') }}</span>
-                    </li>
+                        @php
+                            $product = $variant->product;
+                            $price = $variant->price;
+                            $subtotal = $price * $quantity;
+                            $total += $subtotal;
+                        @endphp
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">{{ $product->name }}</h6>
+                                <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                <div><small class="text-muted">Số lượng: {{ $quantity }}</small></div>
+                            </div>
+                            <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
+                        </li>
 
-                    {{-- Luồng giỏ hàng --}}
+                    {{-- Mua lại nhiều sản phẩm --}}
+                    @elseif (isset($variants))
+                        @foreach ($variants as $item)
+                            @php
+                                $variant = $item['variant'];
+                                $product = $variant->product;
+                                $quantity = $item['quantity'];
+                                $price = $variant->price;
+                                $subtotal = $price * $quantity;
+                                $total += $subtotal;
+                            @endphp
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">{{ $product->name }}</h6>
+                                    <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                    <div><small class="text-muted">Số lượng: {{ $quantity }}</small></div>
+                                </div>
+                                <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
+                            </li>
+                        @endforeach
+
+                    {{-- Mua từ giỏ hàng --}}
                     @elseif (!empty($cart?->items))
-                    @foreach ($cart->items as $item)
-                    @php
-                    $variant = $item->productVariant;
-                    $product = $variant?->product ?? $item->product;
-                    $name = $product?->name ?? 'Sản phẩm';
-                    $price = $variant?->price ?? $product?->price ?? 0;
-                    $subtotal = $price * $item->quantity;
-                    $total += $subtotal;
-                    @endphp
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">{{ $name }}</h6>
-                            @if ($variant)
-                            <small class="text-muted">Size: {{ $variant->size }}, Màu:
-                                {{ $variant->color_name }}</small>
-                            @endif
-                            <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
-                        </div>
-                        <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
-                    </li>
-                    @endforeach
+                        @foreach ($cart->items as $item)
+                            @php
+                                $variant = $item->productVariant;
+                                $product = $variant?->product ?? $item->product;
+                                $price = $variant?->price ?? $product?->price ?? 0;
+                                $subtotal = $price * $item->quantity;
+                                $total += $subtotal;
+                            @endphp
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">{{ $product?->name ?? 'Sản phẩm' }}</h6>
+                                    @if ($variant)
+                                        <small class="text-muted">Size: {{ $variant->size }}, Màu: {{ $variant->color_name }}</small>
+                                    @endif
+                                    <div><small class="text-muted">Số lượng: {{ $item->quantity }}</small></div>
+                                </div>
+                                <span class="text-muted">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
+                            </li>
+                        @endforeach
                     @endif
 
+                    {{-- Tổng tiền --}}
                     <li class="list-group-item d-flex justify-content-between">
                         <span><strong>Tổng cộng</strong></span>
                         <strong>{{ number_format($total, 0, ',', '.') }} VNĐ</strong>
