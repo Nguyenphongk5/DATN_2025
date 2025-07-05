@@ -24,11 +24,13 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Swiper -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
     <!-- Custom Scripts -->
     <script src="{{ asset('js/jquery-1.11.0.min.js') }}"></script>
+
+    @vite('resources/css/app.css')
 </head>
 
 <body>
@@ -659,5 +661,10 @@ document.getElementById('mobileMenuToggle')?.addEventListener('click', function(
   document.getElementById('mobileMenu').classList.toggle('hidden');
 });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 </html>

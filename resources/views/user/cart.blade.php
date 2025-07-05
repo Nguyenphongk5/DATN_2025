@@ -1,181 +1,235 @@
 @extends('layouts.user')
 @section('content')
 
-<section class="py-5 mb-5 bg-light">
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between">
-            <h1 class="page-title pb-2">Cart</h1>
-            <nav class="breadcrumb fs-6">
-                <a class="breadcrumb-item nav-link" href="#">Home</a>
-                <a class="breadcrumb-item nav-link" href="#">Pages</a>
-                <span class="breadcrumb-item active" aria-current="page">Cart</span>
-            </nav>
-        </div>
-    </div>
-</section>
+    <section class="py-12 bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Giỏ hàng của bạn</h1>
+                <nav class="text-sm text-gray-500 flex items-center gap-2">
+                    <a class="hover:text-purple-600 transition-colors" href="/">Home</a>
+                    <span>/</span>
+                    <span class="text-gray-400">Cart</span>
+                </nav>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-10">
+                <div class="w-full lg:w-8/12">
+                    @if (empty($cart) || count($cart->items) == 0)
+                        <div class="flex flex-col items-center justify-center py-24 animate-fade-in">
+                            <div
+                                class="w-24 h-24 flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6 shadow-lg">
+                                <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-700 mb-2">Giỏ hàng của bạn đang trống!</div>
+                            <div class="text-gray-500">Hãy thêm sản phẩm để bắt đầu mua sắm.</div>
+                        </div>
+                    @else
+                        <div class="bg-white rounded-2xl shadow-lg p-4 mb-6 border-2 border-purple-100">
+                            <div class="flex items-center gap-4">
+                                <input type="checkbox" id="select-all"
+                                    class="w-5 h-5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2">
+                                <label for="select-all" class="text-lg font-semibold text-gray-800 cursor-pointer">
+                                    Chọn tất cả sản phẩm
+                                </label>
+                            </div>
+                        </div>
 
-<section class="py-5">
-    <div class="container-fluid">
-        <div class="row g-5">
-            <div class="col-md-8">
-
-                <div class="table-responsive cart">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="select-all"></th>
-                                <th class="text-uppercase text-muted">Product</th>
-                                <th class="text-uppercase text-muted">Quantity</th>
-                                <th class="text-uppercase text-muted">Subtotal</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $total = 0; @endphp
-                            @forelse ($cart?->items ?? [] as $item)
+                        <div class="space-y-6">
+                            @foreach ($cart->items as $item)
                                 @php
                                     $variant = $item->productVariant;
-                                    $product = $variant?->product ?? $item->product;
-                                    $name = $product?->name ?? 'Sản phẩm không tên';
+                                    $product = $item->product;
+                                    $name = $product?->name ?? 'Sản phẩm';
                                     $price = $variant?->price ?? $product?->price ?? 0;
                                     $image = $variant?->image ?? $product?->img_thumb ?? 'images/no-image.png';
                                     $subtotal = $price * $item->quantity;
-                                    $total += $subtotal;
                                 @endphp
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" class="item-checkbox" value="{{ $item->id }}" data-subtotal="{{ $subtotal }}">
-                                    </td>
-                                    <td scope="row" class="py-4">
-                                        <div class="cart-info d-flex flex-wrap align-items-center mb-4">
-                                            <div class="col-lg-3">
-                                                <img src="{{ asset('storage/'.$image) }}" alt="{{ $name }}" class="img-fluid">
+                                <div
+                                    class="group flex items-center bg-white rounded-2xl shadow-xl border-2 border-purple-100 hover:border-purple-400 transition-all duration-300 overflow-hidden p-4 gap-6 animate-fade-in-up">
+                                    <div class="flex items-center">
+                                        <input type="checkbox"
+                                            class="item-checkbox w-5 h-5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
+                                            value="{{ $item->id }}" data-subtotal="{{ $subtotal }}">
+                                    </div>
+
+                                    <img src="{{ asset('storage/' . $image) }}" alt="{{ $name }}"
+                                        class="w-24 h-24 object-cover rounded-xl border border-gray-200 group-hover:scale-105 transition-transform duration-300">
+                                    <div class="flex-1">
+                                        <h5
+                                            class="font-bold text-lg text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
+                                            {{ $name }}
+                                        </h5>
+                                        @if ($variant)
+                                            <div class="flex gap-2 mb-1">
+                                                <span
+                                                    class="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">Size:
+                                                    {{ $variant->size }}</span>
+                                                <span
+                                                    class="inline-block bg-pink-100 text-pink-700 text-xs font-semibold px-2 py-0.5 rounded-full">Màu:
+                                                    {{ $variant->color_name }}</span>
                                             </div>
-                                            <div class="col-lg-9 ps-3">
-                                                <h5><a href="#" class="text-decoration-none">{{ $name }}</a></h5>
-                                                @if ($variant)
-                                                    <p class="small text-muted">Size: {{ $variant->size }} | Màu: {{ $variant->color_name }}</p>
-                                                @endif
-                                            </div>
+                                        @endif
+                                        <div class="flex items-center gap-2 text-gray-500 text-sm">
+                                            <span>Số lượng:</span>
+                                            <form action="{{ route('cart.update', $item->id) }}" method="POST"
+                                                class="flex items-center gap-2">
+                                                @csrf @method('PUT')
+                                                <input type="number" name="quantity"
+                                                    class="w-16 rounded-xl border-gray-300 text-center focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-1 px-2 text-base"
+                                                    value="{{ $item->quantity }}" min="1">
+                                                <button type="submit"
+                                                    class="py-1 px-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all text-xs shadow">
+                                                    Cập nhật
+                                                </button>
+                                            </form>
                                         </div>
-                                    </td>
-                                    <td class="py-4">
-                                        <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-flex align-items-center">
-                                            @csrf @method('PUT')
-                                            <input type="number" name="quantity" class="form-control text-center" value="{{ $item->quantity }}" min="1" style="width: 80px;">
-                                            <button type="submit" class="btn btn-outline-secondary btn-sm ms-2">Cập nhật</button>
-                                        </form>
-                                    </td>
-                                    <td class="py-4">
-                                        <span class="text-dark">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
-                                    </td>
-                                    <td class="py-4">
-                                        <a href="{{ route('cart.remove', $item->id) }}">
-                                            <svg width="24" height="24"><use xlink:href="#trash"></use></svg>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2">
+                                        <span class="text-xl font-bold text-pink-600">{{ number_format($subtotal, 0, ',', '.') }}
+                                            VNĐ</span>
+                                        <a href="{{ route('cart.remove', $item->id) }}"
+                                            class="text-red-500 hover:text-white hover:bg-red-500 rounded-full p-2 transition-colors duration-200 shadow">
+                                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M3 6h18M9 6v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V6m-6 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2">
+                                                </path>
+                                            </svg>
                                         </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="5" class="text-center">Giỏ hàng trống</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-            <div class="col-md-4">
-                <div class="cart-totals bg-grey py-5">
-                    <h4 class="text-dark pb-4">Cart Total</h4>
-                    <div class="total-price pb-5">
-                        <table class="table text-uppercase">
-                            <tbody>
-                                <tr class="subtotal pt-2 pb-2 border-top border-bottom">
-                                    <th>Subtotal</th>
-                                    <td>
-                                        <span id="subtotal-amount" class="text-dark ps-5">
-                                            {{ number_format($total, 0, ',', '.') }} VNĐ
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr class="order-total pt-2 pb-2 border-bottom">
-                                    <th>Total</th>
-                                    <td>
-                                        <span id="total-amount" class="text-dark ps-5">
-                                            {{ number_format($total, 0, ',', '.') }} VNĐ
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="button-wrap row g-2">
-                        <div class="col-md-12">
-                            <form id="checkout-form" action="{{ route('checkout.index') }}" method="GET">
-    <input type="hidden" name="selected_items" id="selected-items">
-    <button type="submit" class="btn btn-primary w-100 mt-3" id="checkout-button">
-        Đặt hàng
-    </button>
-</form>
-
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
+                    @endif
+                </div>
+                <div class="w-full lg:w-4/12 mt-10 lg:mt-0">
+                    <div class="bg-white rounded-2xl shadow-2xl border-2 border-purple-100 p-8">
+                        <h4 class="text-2xl font-bold mb-6 text-gray-800">Tổng cộng</h4>
+                        <div class="mb-6">
+                            <table class="w-full text-lg">
+                                <tbody>
+                                    <tr class="border-t border-b border-gray-200">
+                                        <th class="py-3 text-left font-medium">Tạm tính</th>
+                                        <td class="py-3 text-right font-semibold">
+                                            <span
+                                                id="subtotal-amount">{{ number_format($cart?->items->sum(fn($i) => ($i->productVariant?->price ?? $i->product?->price ?? 0) * $i->quantity) ?? 0, 0, ',', '.') }}
+                                                VNĐ</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="py-3 text-left font-bold text-xl">Tổng tiền</th>
+                                        <td class="py-3 text-right font-bold text-xl text-purple-700">
+                                            <span
+                                                id="total-amount">{{ number_format($cart?->items->sum(fn($i) => ($i->productVariant?->price ?? $i->product?->price ?? 0) * $i->quantity) ?? 0, 0, ',', '.') }}
+                                                VNĐ</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (!empty($cart) && count($cart->items) > 0)
+                            <form id="checkout-form" action="{{ route('checkout.index') }}" method="GET">
+                                <input type="hidden" name="selected_items" id="selected-items">
+                                <button type="submit"
+                                    class="w-full py-4 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl shadow-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 text-lg"
+                                    id="checkout-button">
+                                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01">
+                                        </path>
+                                    </svg>
+                                    Đặt hàng
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
-
         </div>
-    </div>
-</section>
+    </section>
 
-<script>
-    const checkboxes = document.querySelectorAll('.item-checkbox');
-    const selectAll = document.getElementById('select-all');
-    const checkoutBtn = document.getElementById('checkout-button');
-    const subtotalEl = document.getElementById('subtotal-amount');
-    const totalEl = document.getElementById('total-amount');
+    <script>
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        const selectAll = document.getElementById('select-all');
+        const checkoutBtn = document.getElementById('checkout-button');
+        const subtotalEl = document.getElementById('subtotal-amount');
+        const totalEl = document.getElementById('total-amount');
 
-    function updateTotal() {
-        let total = 0;
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                total += parseFloat(cb.dataset.subtotal);
+        function updateTotal() {
+            let total = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    total += parseFloat(cb.dataset.subtotal);
+                }
+            });
+
+            subtotalEl.textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VNĐ';
+            totalEl.textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VNĐ';
+
+            checkoutBtn.classList.toggle('disabled', total === 0);
+            checkoutBtn.style.pointerEvents = total === 0 ? 'none' : 'auto';
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+        if (selectAll) {
+            selectAll.addEventListener('change', function () {
+                checkboxes.forEach(cb => cb.checked = this.checked);
+                updateTotal();
+            });
+        }
+
+        updateTotal();
+    </script>
+
+    <script>
+        document.getElementById('checkout-form')?.addEventListener('submit', function (e) {
+            const selected = [];
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                selected.push(cb.value);
+            });
+
+            if (selected.length === 0) {
+                e.preventDefault();
+                alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
+                return;
             }
+
+            document.getElementById('selected-items').value = selected.join(',');
         });
+    </script>
 
-        subtotalEl.textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VNĐ';
-        totalEl.textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VNĐ';
+    <style>
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
 
-        checkoutBtn.classList.toggle('disabled', total === 0);
-        checkoutBtn.style.pointerEvents = total === 0 ? 'none' : 'auto';
-    }
+            to {
+                opacity: 1;
+            }
+        }
 
-    checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
-    if (selectAll) {
-        selectAll.addEventListener('change', function () {
-            checkboxes.forEach(cb => cb.checked = this.checked);
-            updateTotal();
-        });
-    }
+        .animate-fade-in {
+            animation: fade-in 0.7s ease;
+        }
 
-    updateTotal();
-</script>
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
 
-<script>
-    document.getElementById('checkout-form').addEventListener('submit', function (e) {
-    const selected = [];
-    document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
-        selected.push(cb.value);
-    });
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    if (selected.length === 0) {
-        e.preventDefault();
-        alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
-        return;
-    }
-
-    document.getElementById('selected-items').value = selected.join(',');
-});
-
-</script>
-
+        .animate-fade-in-up {
+            animation: fade-in-up 0.7s cubic-bezier(.39, .575, .565, 1) both;
+        }
+    </style>
 @endsection

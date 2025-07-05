@@ -164,104 +164,43 @@
             </div>
 
             <!-- Products Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
                 @foreach ($latestProducts as $product)
-                    <div class="group relative">
-                        <!-- Product Card -->
-                        <div class="bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2 border border-gray-100">
-                            <!-- Image Container -->
+                    <div class="group relative animate-fade-in-up">
+                        <div class="bg-white rounded-3xl shadow-2xl border-2 border-transparent group-hover:border-purple-400 transition-all duration-300 overflow-hidden">
                             <div class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                                <img src="{{ asset('storage/' . $product->img_thumb) }}"
-                                     alt="{{ $product->name }}"
-                                     class="w-full h-64 object-cover transform transition-transform duration-700 group-hover:scale-110">
-
-                                <!-- Overlay with gradient -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                <!-- Badges -->
-                                <div class="absolute top-4 left-4 flex flex-col gap-2">
-                                    @if ($product->created_at >= now()->subDays(7))
-                                        <span class="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg transform -rotate-12">
-                                            NEW
-                                        </span>
-                                    @endif
-                                    <span class="bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                        -30%
-                                    </span>
-                                </div>
-
-                                <!-- Quick Actions -->
-                                <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
-                                    <button class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-200 hover:scale-110">
-                                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-200 hover:scale-110">
-                                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <!-- View Details Button -->
-                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
-                                    <a href="{{ route('home.show', $product->id) }}"
-                                       class="bg-white/95 backdrop-blur-sm text-gray-800 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-white transition-all duration-200 hover:scale-105 flex items-center gap-2">
-                                        <span>Xem chi tiết</span>
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Product Info -->
-                            <div class="p-6">
-                                <!-- Category Badge -->
-                                <div class="mb-3">
-                                    <span class="inline-block bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                        {{ $product->category->name ?? 'Category' }}
-                                    </span>
-                                </div>
-
-                                <!-- Product Name -->
-                                <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-purple-600 transition-colors duration-200">
-                                    {{ $product->name }}
-                                </h3>
-
-                                <!-- Rating Stars -->
-                                <div class="flex items-center mb-4">
-                                    <div class="flex items-center">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <svg class="w-4 h-4 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                            </svg>
-                                        @endfor
-                                    </div>
-                                    <span class="text-sm text-gray-500 ml-2">(4.5)</span>
-                                </div>
-
-                                <!-- Price Section -->
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-2xl font-bold text-gray-900">
-                                            {{ number_format($product->price, 0, '', '.') }}
-                                        </span>
-                                        <span class="text-sm text-gray-500">VNĐ</span>
-                                    </div>
-                                    <del class="text-sm text-gray-400">
-                                        {{ number_format($product->price_sale, 0, '', '.') }} VNĐ
-                                    </del>
-                                </div>
-
-                                <!-- Add to Cart Button -->
-                                <button class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transform transition-all duration-200 hover:scale-105 hover:shadow-lg flex items-center justify-center gap-2 group/btn">
-                                    <svg class="w-5 h-5 group-hover/btn:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                                <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}"
+                                     class="w-full h-60 object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute top-4 left-4 flex items-center gap-1 bg-gradient-to-r from-pink-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"></path>
                                     </svg>
-                                    <span>Thêm vào giỏ</span>
-                                </button>
+                                    -30%
+                                </span>
+                            </div>
+                            <div class="p-6 flex flex-col h-full">
+                                <h3 class="text-lg font-extrabold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-200">
+                                    <a href="{{ route('home.show', $product->id) }}" class="hover:underline">{{ $product->name }}</a>
+                                </h3>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-2xl font-bold text-pink-600">{{ number_format($product->price, 0, '', '.') }} VNĐ</span>
+                                    <del class="text-base text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
+                                </div>
+                                <div class="flex items-center gap-1 mb-4">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <svg width="18" height="18" class="{{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                        </svg>
+                                    @endfor
+                                    <span class="ml-2 text-sm text-gray-500">(4.5)</span>
+                                </div>
+                                <a href="{{ route('home.show', $product->id) }}"
+                                   class="mt-auto w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg">
+                                    <span>Xem chi tiết</span>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
                             </div>
                         </div>
                     </div>

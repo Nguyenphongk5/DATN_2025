@@ -82,7 +82,7 @@ use App\Http\Controllers\SubscribeController;
 Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
 // routes/web.php
 
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+// Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 use App\Http\Controllers\VnPayController;
 
 // Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder1'])->name('checkout.placeOrder');

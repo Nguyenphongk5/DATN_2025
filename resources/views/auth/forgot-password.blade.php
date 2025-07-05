@@ -1,45 +1,36 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 160px); background-color: #f8f9fa;">
-    <div class="card shadow-lg rounded-4 p-5" style="width: 100%; max-width: 520px;">
-        <div class="text-center mb-4">
-            <h1 class="fw-bold display-6 text-primary">Forgot Password?</h1>
-            <p class="text-muted fs-6">
-                No problem. Enter your email and we’ll send you a link to reset your password.
-            </p>
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 py-8">
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
+            <div class="text-center mb-6">
+                <h1 class="font-bold text-2xl mb-1 text-purple-700">Quên mật khẩu?</h1>
+                <p class="text-gray-500 text-base">Nhập email để nhận liên kết đặt lại mật khẩu.</p>
+            </div>
+
+            @if (session('status'))
+                <div class="mb-4 text-green-700 bg-green-100 border border-green-200 rounded-lg px-4 py-2 text-center">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+                @csrf
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                        class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base @error('email') border-red-500 @enderror"
+                        placeholder="you@example.com">
+                    @error('email')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <button type="submit"
+                        class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">Gửi
+                        liên kết đặt lại mật khẩu</button>
+                </div>
+            </form>
         </div>
-
-        <!-- Session Status -->
-        @if (session('status'))
-            <div class="alert alert-success text-center py-2 mb-4">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-
-            <!-- Email Address -->
-            <div class="mb-4">
-                <label for="email" class="form-label fw-semibold">Email Address</label>
-                <input id="email" name="email" type="email"
-                    value="{{ old('email') }}"
-                    required autofocus
-                    class="form-control form-control-lg @error('email') is-invalid @enderror"
-                    placeholder="you@example.com">
-                @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Submit -->
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg rounded-pill">
-                    Email Password Reset Link
-                </button>
-            </div>
-        </form>
     </div>
-</div>
 @endsection
