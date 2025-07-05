@@ -444,8 +444,8 @@
 
                 <div class="products-carousel swiper ">
                     <div class="swiper-wrapper d-flex">
-                        @foreach ($products as $product)
-                            <div style="width: 25%; margin-right: 30px;">
+                        @foreach ($products as $product)<a href="{{ route('home.show', $product->id) }}"
+                                    style="width: 25%; margin-right: 30px; text-decoration: none;">
                                 <div class="product-item">
                                     {{-- @if ($product->discount > 0) --}}
                                     <span class="badge bg-success position-absolute m-3">-30%</span>
@@ -490,7 +490,7 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                         {{-- <div class="swiper-slide">
                         <div class="product-item">

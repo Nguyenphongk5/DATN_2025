@@ -3,7 +3,7 @@
         <h2 class="text-2xl font-bold text-center">Bảng điều khiển</h2>
 
         {{-- Form lọc theo ngày --}}
-        <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
+        <form method="GET" action="{{ route('admin.dashboard') }}" class="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
             <div>
                 <label for="from_date" class="block mb-1 text-sm">Từ ngày:</label>
                 <input type="date" name="from_date" id="from_date" value="{{ request('from_date') }}" class="border rounded px-3 py-2">

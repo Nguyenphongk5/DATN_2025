@@ -1,837 +1,566 @@
 @extends('layouts.user')
 @section('content')
 
-
-    <!-- Thêm Swiper CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
-    <section>
-        <div>
-            <div class="slideshow slide-in arrow-absolute text-white" style="height: 70vh;">
-                <div class="swiper-container">
-                    <div class="swiper-wrapper">
-                        @foreach ($banners as $banner)
-                            <div class="swiper-slide jarallax">
-                                <img src="{{ asset($banner->image) }}" class="jarallax-img" alt="slideshow">
-                                <div class="banner-content w-100">
-                                    <div class="container-fluid">
-                                        <div class="row justify-content-center text-center">
-                                            <div class="col-md-10 pt-5">
-                                                <h2 class="display-xl text-white ls-0 mt-5 pt-5 txt-fx slide-up">
-                                                    {{ $banner->title }}</h2>
-                                            </div>
-                                        </div>
-                                    </div>
+    <!-- Hero Slider Section -->
+    <section class="relative h-screen overflow-hidden">
+        <div class="swiper hero-swiper h-full">
+            <div class="swiper-wrapper">
+                @foreach ($banners as $banner)
+                    <div class="swiper-slide relative h-full">
+                        <div class="absolute inset-0">
+                            <img src="{{ asset($banner->image) }}"
+                                 alt="slideshow"
+                                 class="w-full h-full object-cover brightness-75">
+                            <div class="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-black/60"></div>
+                        </div>
+                        <div class="relative z-10 flex items-center justify-center h-full">
+                            <div class="text-center text-white max-w-4xl mx-auto px-4">
+                                <div class="inline-block mb-6">
+                                    <span class="bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg animate-pulse">
+                                        Hot Deal
+                                    </span>
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    <!-- Pagination và Navigation -->
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Thêm Swiper JavaScript -->
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script>
-        // Khởi tạo Swiper
-        var swiper = new Swiper('.swiper-container', {
-            loop: true, // Lặp lại các slide
-            autoplay: {
-                delay: 3000, // Tự động chuyển slide sau mỗi 3 giây
-            },
-            navigation: {
-                nextEl: '.swiper-button-next', // Nút next
-                prevEl: '.swiper-button-prev', // Nút previous
-            },
-            pagination: {
-                el: '.swiper-pagination', // Các chấm pagination
-                clickable: true, // Bấm vào các chấm để chuyển slide
-            },
-        });
-    </script>
-    </section>
-    </div>
-    <div class="pagination-wrapper position-absolute">
-        <div class="container">
-            <div class="slideshow-swiper-pagination text-center"></div>
-        </div>
-    </div>
-    <div class="icon-arrow icon-arrow-left text-white">
-        <svg width="50" height="50" viewBox="0 0 24 24">
-            <use xlink:href="#arrow-left"></use>
-        </svg>
-    </div>
-    <div class="icon-arrow icon-arrow-right text-white">
-        <svg width="50" height="50" viewBox="0 0 24 24">
-            <use xlink:href="#arrow-right"></use>
-        </svg>
-    </div>
-    </div>
-    </div>
-    </section>
-
-    <section class="features" style="position:relative; margin-top: -100px; z-index: 2;">
-        <div class="container-lg">
-            <div class="bg-white p-5">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="row">
-                            <div class="col-2">
-                                <svg width="40" height="40">
-                                    <use xlink:href="#cart"></use>
-                                </svg>
-                            </div>
-                            <div class="col-10">
-                                <h4 class="element-title text-capitalize mb-2">Pick up in store</h4>
-                                <p>At imperdiet dui accumsan sit amet nulla risus est ultricies quis.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="row">
-                            <div class="col-2">
-                                <svg width="40" height="40">
-                                    <use xlink:href="#gift"></use>
-                                </svg>
-                            </div>
-                            <div class="col-10">
-                                <h4 class="element-title text-capitalize mb-2">Special packaging</h4>
-                                <p>At imperdiet dui accumsan sit amet nulla risus est ultricies quis.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="row">
-                            <div class="col-2">
-                                <svg width="40" height="40">
-                                    <use xlink:href="#love"></use>
-                                </svg>
-                            </div>
-                            <div class="col-10">
-                                <h4 class="element-title text-capitalize mb-2">Free global returns</h4>
-                                <p>At imperdiet dui accumsan sit amet nulla risus est ultricies quis.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-4">
-        <div class="container-fluid">
-            <div class="row">
-                @foreach ($latestProducts as $product)
-                    <div class="col-md-6">
-                        <div class="banner-ad bg-secondary-subtle mb-3"
-                            style="background: url('{{ asset($product->img_thumb) }}'); background-repeat: no-repeat; background-position: right bottom;">
-                            <div class="banner-content p-5">
-                                <!-- Thêm badge New cho sản phẩm mới -->
-                                @if ($product->created_at >= now()->subDays(7))
-                                    <!-- Kiểm tra nếu sản phẩm được tạo trong vòng 7 ngày -->
-                                    <span class="new-arrival-badge">New Arrival</span> <!-- Áp dụng lớp CSS cho badge -->
-                                @endif
-                                <h3 class="banner-title">{{ $product->name }}</h3>
-                                <a href="{{ route('home.show', $product->id) }}" class="btn btn-dark text-uppercase">Show
-                                    Now</a>
+                                <h1 class="text-5xl md:text-7xl font-bold mb-6 text-shadow-lg">
+                                    {{ $banner->title }}
+                                </h1>
+                                <p class="text-xl md:text-2xl mb-8 opacity-90 text-shadow">
+                                    Khám phá bộ sưu tập mới nhất với những ưu đãi đặc biệt
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <a href="#" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:from-purple-600 hover:to-blue-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                                        </svg>
+                                        Mua ngay
+                                    </a>
+                                    <a href="#" class="inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transform hover:-translate-y-1 transition-all duration-300">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Xem thêm
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
             </div>
+            <!-- Navigation -->
+            <div class="swiper-button-next hero-button-next"></div>
+            <div class="swiper-button-prev hero-button-prev"></div>
+            <!-- Pagination -->
+            <div class="swiper-pagination hero-pagination"></div>
         </div>
     </section>
-    <style>
 
+    <!-- Features Section -->
+    <section class="relative -mt-24 z-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="bg-white rounded-2xl shadow-2xl p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                <!-- icon -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Pick up in store</h4>
+                            <p class="text-gray-600">Nhận hàng tại cửa hàng với dịch vụ nhanh chóng và tiện lợi.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                                <!-- icon -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Special packaging</h4>
+                            <p class="text-gray-600">Đóng gói đặc biệt với thiết kế độc đáo và bảo vệ tối ưu.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
+                                <!-- icon -->
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Free global returns</h4>
+                            <p class="text-gray-600">Đổi trả miễn phí toàn cầu với chính sách linh hoạt.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Banners Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-transparent z-10"></div>
+                    <img src="{{ asset('images/ad-image-3.png') }}"
+                         alt="Gentlemen Classics"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 z-20 flex items-center p-8">
+                        <div class="text-white">
+                            <div class="text-lg font-semibold mb-2">Upto 25% Off</div>
+                            <h3 class="text-3xl font-bold mb-4">Gentlemen Classics</h3>
+                            <a href="#" class="inline-flex items-center px-6 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-colors">
+                                Xem ngay
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-transparent z-10"></div>
+                    <img src="{{ asset('images/ad-image-4.png') }}"
+                         alt="Casual Wears"
+                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 z-20 flex items-center p-8">
+                        <div class="text-white">
+                            <div class="text-lg font-semibold mb-2">Upto 25% Off</div>
+                            <h3 class="text-3xl font-bold mb-4">Casual Wears</h3>
+                            <a href="#" class="inline-flex items-center px-6 py-3 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-colors">
+                                Xem ngay
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Products Section -->
+    <section class="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <!-- Section Header -->
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4">
+                    Trending Products
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Khám phá những sản phẩm hot nhất, được yêu thích nhất với thiết kế độc đáo và chất lượng cao cấp
+                </p>
+                <div class="w-24 h-1 bg-gradient-to-r from-purple-600 to-pink-600 mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                @foreach ($latestProducts as $product)
+                    <div class="group relative">
+                        <!-- Product Card -->
+                        <div class="bg-white rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2 border border-gray-100">
+                            <!-- Image Container -->
+                            <div class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                                <img src="{{ asset('storage/' . $product->img_thumb) }}"
+                                     alt="{{ $product->name }}"
+                                     class="w-full h-64 object-cover transform transition-transform duration-700 group-hover:scale-110">
+
+                                <!-- Overlay with gradient -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                <!-- Badges -->
+                                <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                    @if ($product->created_at >= now()->subDays(7))
+                                        <span class="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg transform -rotate-12">
+                                            NEW
+                                        </span>
+                                    @endif
+                                    <span class="bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                        -30%
+                                    </span>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                                    <button class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-200 hover:scale-110">
+                                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-200 hover:scale-110">
+                                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- View Details Button -->
+                                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
+                                    <a href="{{ route('home.show', $product->id) }}"
+                                       class="bg-white/95 backdrop-blur-sm text-gray-800 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-white transition-all duration-200 hover:scale-105 flex items-center gap-2">
+                                        <span>Xem chi tiết</span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Product Info -->
+                            <div class="p-6">
+                                <!-- Category Badge -->
+                                <div class="mb-3">
+                                    <span class="inline-block bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                        {{ $product->category->name ?? 'Category' }}
+                                    </span>
+                                </div>
+
+                                <!-- Product Name -->
+                                <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-purple-600 transition-colors duration-200">
+                                    {{ $product->name }}
+                                </h3>
+
+                                <!-- Rating Stars -->
+                                <div class="flex items-center mb-4">
+                                    <div class="flex items-center">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <svg class="w-4 h-4 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                            </svg>
+                                        @endfor
+                                    </div>
+                                    <span class="text-sm text-gray-500 ml-2">(4.5)</span>
+                                </div>
+
+                                <!-- Price Section -->
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl font-bold text-gray-900">
+                                            {{ number_format($product->price, 0, '', '.') }}
+                                        </span>
+                                        <span class="text-sm text-gray-500">VNĐ</span>
+                                    </div>
+                                    <del class="text-sm text-gray-400">
+                                        {{ number_format($product->price_sale, 0, '', '.') }} VNĐ
+                                    </del>
+                                </div>
+
+                                <!-- Add to Cart Button -->
+                                <button class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transform transition-all duration-200 hover:scale-105 hover:shadow-lg flex items-center justify-center gap-2 group/btn">
+                                    <svg class="w-5 h-5 group-hover/btn:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                                    </svg>
+                                    <span>Thêm vào giỏ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- View All Products Button -->
+            <div class="text-center mt-12">
+                <a href="#" class="inline-flex items-center gap-2 bg-white border-2 border-purple-600 text-purple-600 font-semibold py-3 px-8 rounded-full hover:bg-purple-600 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                    <span>Xem tất cả sản phẩm</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Swiper CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <script>
+        // Initialize Hero Swiper
+        var heroSwiper = new Swiper('.hero-swiper', {
+            loop: true,
+            effect: 'fade',
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            speed: 1000,
+            navigation: {
+                nextEl: '.hero-button-next',
+                prevEl: '.hero-button-prev',
+            },
+            pagination: {
+                el: '.hero-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+        });
+    </script>
+
+    <style>
+        /* Hero Slider Styles */
+        .hero-button-next,
+        .hero-button-prev {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .hero-button-next:hover,
+        .hero-button-prev:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .hero-button-next::after,
+        .hero-button-prev::after {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .hero-pagination {
+            bottom: 30px;
+        }
+
+        .hero-pagination .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background: rgba(255,255,255,0.5);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        .hero-pagination .swiper-pagination-bullet-active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transform: scale(1.3);
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .group {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .group:nth-child(1) { animation-delay: 0.1s; }
+        .group:nth-child(2) { animation-delay: 0.2s; }
+        .group:nth-child(3) { animation-delay: 0.3s; }
+        .group:nth-child(4) { animation-delay: 0.4s; }
+        .group:nth-child(5) { animation-delay: 0.5s; }
+        .group:nth-child(6) { animation-delay: 0.6s; }
+        .group:nth-child(7) { animation-delay: 0.7s; }
+        .group:nth-child(8) { animation-delay: 0.8s; }
+
+        /* Hover effects */
+        .group:hover .bg-gradient-to-r {
+            background-size: 200% 200%;
+            animation: gradientShift 2s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glass morphism effect */
+        .backdrop-blur-sm {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8b5cf6, #ec4899);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #7c3aed, #db2777);
+        }
     </style>
 
-    <section class="py-5">
-        <div class="container-fluid">
-
-            <div class="row">
-                <div class="col-md-12">
-
-                    <h3>Trending Products</h3>
-
-
-
-                    <div class="products-carousel swiper ">
-                        <div class="swiper-wrapper d-flex">
-
-                            @foreach ($latestProducts as $product)
-                                <div style="width: 25%; margin-right: 30px;">
-                                    <div class="product-item">
-                                        {{-- @if ($product->discount > 0) --}}
-                                        <span class="badge bg-success position-absolute m-3">-30%</span>
-                                        {{-- @endif --}}
-                                        <figure>
-                                            <a href="{{ route('home.show', $product->id) }}">
-                                                <img src="{{ asset('storage/' . $product->img_thumb) }}"
-                                                    alt="Product Thumbnail"  height="100px">
-                                            </a>
-                                        </figure>
-                                        <p>{{ $product->name }}</p>
-                                        <div class="d-block justify-content-between">
-                                            <p><span class=" d-block"
-                                                    style=" font-weight:800; font-size: large; color: red;">{{ number_format($product->price, 0, '', '.') }}
-                                                    VNĐ</span>
-                                                {{-- @if ($product->discount > 0) --}}
-                                                <del>{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
-                                                <span class="text-success">-30%</span>
-                                                {{-- @endif --}}
-                                            </p>
-                                            <span class="d-flex">
-                                                {{-- @for ($i = 1; $i <= 5; $i++)
-                                                <svg width="18" height="18" class="{{ $i <= $product->rating ? 'text-warning' : 'text-secondary' }}">
-                                    <use xlink:href="#star-{{ $i <= $product->rating ? 'solid' : 'outline' }}"></use>
-                                    </svg>
-                                    @endfor --}}
-                                                <svg width="18" height="18" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                                <svg width="18" height="18" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                                <svg width="18" height="18" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                                <svg width="18" height="18" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                                <svg width="18" height="18" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-
-                        </div>
-
-                        {{-- <div class="col">
-              <div class="product-item">
-                <figure>
-                  <a href="{{ route('home', $product->id) }}" title="{{ $product->name }}">
-                    <img src="{{ asset('images/product-thumb-7.png') }}" alt="{{ $product->name }}" class="img-fluid">
-                  </a>
-                </figure>
-                <span>{{ $product->name }}</span>
-                <div class="d-flex justify-content-between">
-                  <p>
-                    <span class="text-dark">${{ number_format($product->price, 2) }}</span>
-                    @if ($product->old_price)
-                      <del>${{ number_format($product->old_price, 2) }}</del>
-                      <span class="text-success">-{{ round((($product->old_price - $product->price) / $product->old_price) * 100) }}%</span>
+    <section class="py-16 bg-yellow-100">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="p-8">
+                    <h2 class="text-4xl font-bold mb-4">
+                        Get <span class="text-red-600">25% Discount</span> on your first purchase
+                    </h2>
+                    <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </div>
+                <div class="p-8 bg-white rounded-2xl shadow-lg">
+                    @if(session('success'))
+                        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
                     @endif
-                  </p>
-                  <span class="d-flex">
-                    @for ($i = 0; $i < 5; $i++)
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    @endfor
-                  </span>
+
+                    <form action="{{ route('subscribe.store') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <div>
+                            <label for="name" class="block text-gray-700 font-semibold mb-1">Name</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400" name="name" id="name" placeholder="Name">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-gray-700 font-semibold mb-1">Email</label>
+                            <input type="email" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400" name="email" id="email" placeholder="abc@mail.com">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input class="rounded border-gray-300" type="checkbox" id="subscribe" value="subscribe">
+                            <label class="text-gray-600" for="subscribe">Subscribe to the newsletter</label>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all">Submit</button>
+                    </form>
                 </div>
-              </div>
-            </div> --}}
+            </div>
+        </div>
+    </section>
 
+    <section id="latest-blog" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
+                <h2 class="text-3xl font-bold mb-4 md:mb-0">Our Recent Blog</h2>
+                <a href="#" class="inline-flex items-center text-blue-600 font-semibold hover:underline">
+                    Read All Articles
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach ($blogs as $blog)
+                    <article class="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
+                        <div class="relative group">
+                            <img src="{{ asset('storage/' . $blog->img_avt) }}" alt="{{ $blog->title }}"
+                                 class="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col">
+                            <div class="flex items-center text-xs text-gray-500 space-x-4 mb-2">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <use xlink:href="#calendar"></use>
+                                    </svg>
+                                    {{ \Carbon\Carbon::parse($blog->created_at)->format('d M Y') }}
+                                </div>
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <use xlink:href="#category"></use>
+                                    </svg>
+                                    Bài viết
+                                </div>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">{{ $blog->title }}</h3>
+                            <p class="text-gray-600 mb-4">{{ Str::limit($blog->short_description, 100) }}</p>
+                            {{-- <a href="{{ route('blog.detail', $blog->slug) }}" class="mt-auto text-blue-600 font-semibold hover:underline">Đọc tiếp</a> --}}
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
-                        <!-- / product-grid -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+                <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
+                    <div class="flex-shrink-0 text-blue-600">
+                        <!-- icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21.5 15a3 3 0 0 0-1.9-2.78l1.87-7a1 1 0 0 0-.18-.87A1 1 0 0 0 20.5 4H6.8l-.33-1.26A1 1 0 0 0 5.5 2h-2v2h1.23l2.48 9.26a1 1 0 0 0 1 .74H18.5a1 1 0 0 1 0 2h-13a1 1 0 0 0 0 2h1.18a3 3 0 1 0 5.64 0h2.36a3 3 0 1 0 5.82 1a2.94 2.94 0 0 0-.4-1.47A3 3 0 0 0 21.5 15Zm-3.91-3H9L7.34 6H19.2ZM9.5 20a1 1 0 1 1 1-1a1 1 0 0 1-1 1Zm8 0a1 1 0 1 1 1-1a1 1 0 0 1-1 1Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="text-lg font-bold mb-1">Free delivery</h5>
+                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
+                    <div class="flex-shrink-0 text-green-600">
+                        <!-- icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.63 3.65a1 1 0 0 0-.84-.2a8 8 0 0 1-6.22-1.27a1 1 0 0 0-1.14 0a8 8 0 0 1-6.22 1.27a1 1 0 0 0-.84.2a1 1 0 0 0-.37.78v7.45a9 9 0 0 0 3.77 7.33l3.65 2.6a1 1 0 0 0 1.16 0l3.65-2.6A9 9 0 0 0 20 11.88V4.43a1 1 0 0 0-.37-.78ZM18 11.88a7 7 0 0 1-2.93 5.7L12 19.77l-3.07-2.19A7 7 0 0 1 6 11.88v-6.3a10 10 0 0 0 6-1.39a10 10 0 0 0 6 1.39Zm-4.46-2.29l-2.69 2.7l-.89-.9a1 1 0 0 0-1.42 1.42l1.6 1.6a1 1 0 0 0 1.42 0L15 11a1 1 0 0 0-1.42-1.42Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="text-lg font-bold mb-1">100% secure payment</h5>
+                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
+                    <div class="flex-shrink-0 text-yellow-500">
+                        <!-- icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 5H2a1 1 0 0 0-1 1v4a3 3 0 0 0 2 2.82V22a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-9.18A3 3 0 0 0 23 10V6a1 1 0 0 0-1-1Zm-7 2h2v3a1 1 0 0 1-2 0Zm-4 0h2v3a1 1 0 0 1-2 0ZM7 7h2v3a1 1 0 0 1-2 0Zm-3 4a1 1 0 0 1-1-1V7h2v3a1 1 0 0 1-1 1Zm10 10h-4v-2a2 2 0 0 1 4 0Zm5 0h-3v-2a4 4 0 0 0-8 0v2H5v-8.18a3.17 3.17 0 0 0 1-.6a3 3 0 0 0 4 0a3 3 0 0 0 4 0a3 3 0 0 0 4 0a3.17 3.17 0 0 0 1 .6Zm2-11a1 1 0 0 1-2 0V7h2ZM4.3 3H20a1 1 0 0 0 0-2H4.3a1 1 0 0 0 0 2Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="text-lg font-bold mb-1">Quality guarantee</h5>
+                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
+                    <div class="flex-shrink-0 text-pink-500">
+                        <!-- icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 8.35a3.07 3.07 0 0 0-3.54.53a3 3 0 0 0 0 4.24L11.29 16a1 1 0 0 0 1.42 0l2.83-2.83a3 3 0 0 0 0-4.24A3.07 3.07 0 0 0 12 8.35Zm2.12 3.36L12 13.83l-2.12-2.12a1 1 0 0 0-1.42 1.42l1.6 1.6a1 1 0 0 0 1.42 0L15 11a1 1 0 0 0-1.42-1.42ZM12 2A10 10 0 0 0 2 12a9.89 9.89 0 0 0 2.26 6.33l-2 2a1 1 0 0 0-.21 1.09A1 1 0 0 0 3 22h9a10 10 0 0 0 0-20Zm0 18H5.41l.93-.93a1 1 0 0 0 0-1.41A8 8 0 1 1 12 20Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="text-lg font-bold mb-1">Guaranteed savings</h5>
+                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
+                    <div class="flex-shrink-0 text-indigo-600">
+                        <!-- icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18 7h-.35A3.45 3.45 0 0 0 18 5.5a3.49 3.49 0 0 0-6-2.44A3.49 3.49 0 0 0 6 5.5A3.45 3.45 0 0 0 6.35 7H6a3 3 0 0 0-3 3v2a1 1 0 0 0 1 1h1v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-6h1a1 1 0 0 0 1-1v-2a3 3 0 0 0-3-3Zm-7 13H8a1 1 0 0 1-1-1v-6h4Zm0-9H5v-1a1 1 0 0 1 1-1h5Zm0-4H9.5A1.5 1.5 0 1 1 11 5.5Zm2-1.5A1.5 1.5 0 1 1 14.5 7H13ZM17 19a1 1 0 0 1-1 1h-3v-7h4Zm2-8h-6V9h5a1 1 0 0 1 1 1Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="text-lg font-bold mb-1">Daily offers</h5>
+                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-5">
-        <div class="container-fluid">
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="banner-ad bg-secondary-subtle mb-3"
-                        style="background: url('images/ad-image-3.png');background-repeat: no-repeat;background-position: right bottom;">
-                        <div class="banner-content p-5">
-
-                            <div class="fs-6 pt-5">Upto 25% Off</div>
-                            <h3 class="banner-title">Gentlemen Classics</h3>
-                            <a href="#" class="btn btn-dark text-uppercase">Show Now</a>
-
-                        </div>
-
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="banner-ad bg-secondary-subtle"
-                        style="background: url('images/ad-image-4.png');background-repeat: no-repeat;background-position: right bottom;">
-                        <div class="banner-content p-5">
-
-                            <div class="fs-6 pt-5">Upto 25% Off</div>
-                            <h3 class="banner-title">Casual Wears</h3>
-                            <a href="#" class="btn btn-dark text-uppercase">Show Now</a>
-
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section class="py-5 overflow-hidden">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-
-                    <div class="section-header d-flex flex-wrap justify-content-between my-5">
-
-                        <h2 class="section-title">Best selling products</h2>
-
-                        <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
-                            <div class="swiper-buttons">
-                                <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
-                                <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-
-                    <div class="products-carousel swiper">
-                        <style>
-                            .swiper-wrapper {
-                                display: flex;
-                            }
-
-                            .swiper-slide {
-                                flex: 0 0 auto;
-                                width: 20%;
-                            }
-                        </style>
-                        <div class="swiper-wrapper">
-
-                            {{-- <div class="swiper-slide">
-                <div class="product-item">
-                  <span class="badge bg-success position-absolute m-3">-30%</span>
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-1.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Super Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <span class="badge bg-success position-absolute m-3">-30%</span>
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-2.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Leather Brown</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <span class="badge bg-success position-absolute m-3">-30%</span>
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-3.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Trending Shoes Party Wear For Men</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-outline"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-4.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Sports Shoes Training & Gym Shoes For Men</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-5.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Kids Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div> --}}
-
-                            {{-- <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-6.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Super Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-7.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Super Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-5.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Super Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-6.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Super Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="swiper-slide">
-                <div class="product-item">
-                  <figure>
-                    <a href="{{ route('home.create') }}" title="Product Title">
-                      <img src="images/product-thumb-7.png" alt="Product Thumbnail" class="img-fluid">
-                    </a>
-                  </figure>
-                  <p>Super Shoes</p>
-                  <div class="d-flex justify-content-between">
-                    <p><span class="text-dark">$18.00</span><del>$23</del><span class="text-success">-30%</span></p>
-                    <span class="d-flex">
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                      <svg width="18" height="18" class="text-warning">
-                        <use xlink:href="#star-solid"></use>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-            </div> --}}
-                        </div>
-                        <!-- / products-carousel -->
-
-                    </div>
-                </div>
-            </div>
-    </section>
-
- <section class="py-5">
-  <div class="container-fluid">
-    <div class="bg-warning py-5">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 p-5">
-            <div class="section-header">
-              <h2 class="section-title display-4">Get <span class="text-danger">25% Discount</span> on your first purchase</h2>
-            </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          </div>
-          <div class="col-md-6 p-5">
-            @if(session('success'))
-              <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-
-            <form action="{{ route('subscribe.store') }}" method="POST">
-              @csrf
-              <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control form-control-lg" name="name" id="name" placeholder="Name">
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control form-control-lg" name="email" id="email" placeholder="abc@mail.com">
-              </div>
-              <div class="form-check form-check-inline mb-3">
-                <input class="form-check-input" type="checkbox" id="subscribe" value="subscribe">
-                <label class="form-check-label" for="subscribe">Subscribe to the newsletter</label>
-              </div>
-              <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-dark btn-lg">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-  <section id="latest-blog" class="py-5">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="section-header d-flex align-items-center justify-content-between my-5">
-        <h2 class="section-title">Our Recent Blog</h2>
-        <div class="btn-wrap align-right">
-          <a href="#" class="d-flex align-items-center nav-link">Read All Articles
-            <svg width="24" height="24"><use xlink:href="#arrow-right"></use></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      @foreach ($blogs as $blog)
-        <div class="col-md-4">
-          <article class="post-item card border-0 shadow-sm p-3">
-            <div class="image-holder zoom-effect">
-              {{-- <a href="{{ route('blog.detail', $blog->slug) }}"> --}}
-                <img src="{{ asset('storage/' . $blog->img_avt) }}" alt="{{ $blog->title }}" class="card-img-top">
-              </a>
-            </div>
-            <div class="card-body">
-              <div class="post-meta d-flex text-uppercase gap-3 my-2 align-items-center">
-                <div class="meta-date">
-                  <svg width="16" height="16"><use xlink:href="#calendar"></use></svg>
-                  {{ \Carbon\Carbon::parse($blog->created_at)->format('d M Y') }}
-                </div>
-                <div class="meta-categories">
-                  <svg width="16" height="16"><use xlink:href="#category"></use></svg>
-                  Bài viết
-                </div>
-              </div>
-              <div class="post-header">
-                <h3 class="post-title">
-                  {{-- <a href="{{ route('blog.detail', $blog->slug) }}" class="text-decoration-none"> --}}
-                    {{ $blog->title }}
-                  </a>
-                </h3>
-                <p>{{ Str::limit($blog->short_description, 100) }}</p>
-              </div>
-            </div>
-          </article>
-        </div>
-      @endforeach
-    </div>
-  </div>
-</section>
-
-
-    <section class="py-5">
-        <div class="container-fluid">
-            <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-5">
-                <div class="col">
-                    <div class="card mb-3 border-0">
-                        <div class="row">
-                            <div class="col-md-2 text-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                    viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M21.5 15a3 3 0 0 0-1.9-2.78l1.87-7a1 1 0 0 0-.18-.87A1 1 0 0 0 20.5 4H6.8l-.33-1.26A1 1 0 0 0 5.5 2h-2v2h1.23l2.48 9.26a1 1 0 0 0 1 .74H18.5a1 1 0 0 1 0 2h-13a1 1 0 0 0 0 2h1.18a3 3 0 1 0 5.64 0h2.36a3 3 0 1 0 5.82 1a2.94 2.94 0 0 0-.4-1.47A3 3 0 0 0 21.5 15Zm-3.91-3H9L7.34 6H19.2ZM9.5 20a1 1 0 1 1 1-1a1 1 0 0 1-1 1Zm8 0a1 1 0 1 1 1-1a1 1 0 0 1-1 1Z" />
-                                </svg>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="card-body p-0">
-                                    <h5>Free delivery</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card mb-3 border-0">
-                        <div class="row">
-                            <div class="col-md-2 text-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                    viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M19.63 3.65a1 1 0 0 0-.84-.2a8 8 0 0 1-6.22-1.27a1 1 0 0 0-1.14 0a8 8 0 0 1-6.22 1.27a1 1 0 0 0-.84.2a1 1 0 0 0-.37.78v7.45a9 9 0 0 0 3.77 7.33l3.65 2.6a1 1 0 0 0 1.16 0l3.65-2.6A9 9 0 0 0 20 11.88V4.43a1 1 0 0 0-.37-.78ZM18 11.88a7 7 0 0 1-2.93 5.7L12 19.77l-3.07-2.19A7 7 0 0 1 6 11.88v-6.3a10 10 0 0 0 6-1.39a10 10 0 0 0 6 1.39Zm-4.46-2.29l-2.69 2.7l-.89-.9a1 1 0 0 0-1.42 1.42l1.6 1.6a1 1 0 0 0 1.42 0L15 11a1 1 0 0 0-1.42-1.42Z" />
-                                </svg>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="card-body p-0">
-                                    <h5>100% secure payment</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card mb-3 border-0">
-                        <div class="row">
-                            <div class="col-md-2 text-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                    viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M22 5H2a1 1 0 0 0-1 1v4a3 3 0 0 0 2 2.82V22a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-9.18A3 3 0 0 0 23 10V6a1 1 0 0 0-1-1Zm-7 2h2v3a1 1 0 0 1-2 0Zm-4 0h2v3a1 1 0 0 1-2 0ZM7 7h2v3a1 1 0 0 1-2 0Zm-3 4a1 1 0 0 1-1-1V7h2v3a1 1 0 0 1-1 1Zm10 10h-4v-2a2 2 0 0 1 4 0Zm5 0h-3v-2a4 4 0 0 0-8 0v2H5v-8.18a3.17 3.17 0 0 0 1-.6a3 3 0 0 0 4 0a3 3 0 0 0 4 0a3 3 0 0 0 4 0a3.17 3.17 0 0 0 1 .6Zm2-11a1 1 0 0 1-2 0V7h2ZM4.3 3H20a1 1 0 0 0 0-2H4.3a1 1 0 0 0 0 2Z" />
-                                </svg>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="card-body p-0">
-                                    <h5>Quality guarantee</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card mb-3 border-0">
-                        <div class="row">
-                            <div class="col-md-2 text-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                    viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M12 8.35a3.07 3.07 0 0 0-3.54.53a3 3 0 0 0 0 4.24L11.29 16a1 1 0 0 0 1.42 0l2.83-2.83a3 3 0 0 0 0-4.24A3.07 3.07 0 0 0 12 8.35Zm2.12 3.36L12 13.83l-2.12-2.12a1 1 0 0 1 0-1.42a1 1 0 0 1 1.41 0a1 1 0 0 0 1.42 0a1 1 0 0 1 1.41 0a1 1 0 0 1 0 1.42ZM12 2A10 10 0 0 0 2 12a9.89 9.89 0 0 0 2.26 6.33l-2 2a1 1 0 0 0-.21 1.09A1 1 0 0 0 3 22h9a10 10 0 0 0 0-20Zm0 18H5.41l.93-.93a1 1 0 0 0 0-1.41A8 8 0 1 1 12 20Z" />
-                                </svg>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="card-body p-0">
-                                    <h5>guaranteed savings</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card mb-3 border-0">
-                        <div class="row">
-                            <div class="col-md-2 text-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                    viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M18 7h-.35A3.45 3.45 0 0 0 18 5.5a3.49 3.49 0 0 0-6-2.44A3.49 3.49 0 0 0 6 5.5A3.45 3.45 0 0 0 6.35 7H6a3 3 0 0 0-3 3v2a1 1 0 0 0 1 1h1v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-6h1a1 1 0 0 0 1-1v-2a3 3 0 0 0-3-3Zm-7 13H8a1 1 0 0 1-1-1v-6h4Zm0-9H5v-1a1 1 0 0 1 1-1h5Zm0-4H9.5A1.5 1.5 0 1 1 11 5.5Zm2-1.5A1.5 1.5 0 1 1 14.5 7H13ZM17 19a1 1 0 0 1-1 1h-3v-7h4Zm2-8h-6V9h5a1 1 0 0 1 1 1Z" />
-                                </svg>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="card-body p-0">
-                                    <h5>Daily offers</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 @endsection

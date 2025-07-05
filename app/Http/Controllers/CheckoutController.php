@@ -238,6 +238,20 @@ class CheckoutController extends Controller
                     'price' => $variant->price,
                 ]);
 
+                $variant = ProductVariant::find($variant->id); // đảm bảo dữ liệu mới nhất
+
+                if ($variant->quantity < $buyNow['quantity']) {
+                    return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
+                }
+
+                // Trừ tồn kho
+                $variant->decrement('quantity', $buyNow['quantity']);
+
+                // Nếu sau khi trừ tồn kho = 0 hoặc < 0, thì ngưng bán
+                if ($variant->quantity - $buyNow['quantity'] <= 0) {
+                    $variant->update(['is_active' => 0]);
+                }
+
                 if ($voucher) {
                     $voucher->increment('used_count');
                 }
@@ -251,28 +265,28 @@ class CheckoutController extends Controller
                 DB::rollBack();
                 return back()->with('error', 'Lỗi mua ngay: ' . $e->getMessage());
             }
-        }else{
+        } else {
 
-        $cart = Cart::with(['items.productVariant.product'])
-            ->where('user_id', $user->id)
-            ->first();
+            $cart = Cart::with(['items.productVariant.product'])
+                ->where('user_id', $user->id)
+                ->first();
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Giỏ hàng của bạn đang trống.');
-        }
+            if (!$cart || $cart->items->isEmpty()) {
+                return redirect()->route('cart.index')->with('error', 'Giỏ hàng của bạn đang trống.');
+            }
 
-        $selectedIds = session('selected_items', []);
-        $items = $cart->items;
-        if (!empty($selectedIds)) {
-            $items = $items->whereIn('id', $selectedIds)->values();
-        }
+            $selectedIds = session('selected_items', []);
+            $items = $cart->items;
+            if (!empty($selectedIds)) {
+                $items = $items->whereIn('id', $selectedIds)->values();
+            }
 
-        $totalAmount = $items->sum(function ($item) {
-            $price = $item->productVariant?->price ?? ($item->product?->price ?? 0);
-            return $price * $item->quantity;
-        });
-        $discountAmount = 0;
-        $voucher = null;
+            $totalAmount = $items->sum(function ($item) {
+                $price = $item->productVariant?->price ?? ($item->product?->price ?? 0);
+                return $price * $item->quantity;
+            });
+            $discountAmount = 0;
+            $voucher = null;
 
             if ($request->filled('voucher_code')) {
                 $voucher = Voucher::where('code', $request->voucher_code)
@@ -302,54 +316,76 @@ class CheckoutController extends Controller
                 $discountAmount = min($discountAmount, $totalAmount);
                 $totalAmount -= $discountAmount;
             }
-        DB::beginTransaction();
+            DB::beginTransaction();
 
-        try {
-            $order = Order::create([
-                'user_id' => $user->id,
-                'user_name' => $request->name,
-                'user_email' => $user->email,
-                'user_phone' => $request->phone,
-                'user_address' => $request->address,
-                'voucher_id' => $voucher?->id,
-                'discount_amount' => 0,
-                'total_amount' => $isPaid ? 0 : $totalAmount,
-                'status' => 'pending',
-                'payment_method' => $request->payment_method,
-                'payment_status' => $isPaid ? 'Paid' : 'Unpaid',
-                'shipping_fee' => 0,
-                'shipping_method' => $request->shipping_method,
-                'order_code' => 'ODR-' . strtoupper(Str::random(10)),
-                'note' => $request->note,
-            ]);
-
-            foreach ($items as $item) {
-                $variant = $item->productVariant;
-                $product = $variant?->product ?? $item->product;
-                $price = $variant?->price ?? ($product?->price ?? 0);
-
-                OrderDetail::create([
-                    'order_id' => $order->id,
-                    'product_variant_id' => $variant?->id,
-                    'product_name' => $product?->name ?? 'Không rõ',
-                    'size_name' => $variant?->size,
-                    'color_name' => $variant?->color_name,
-                    'quantity' => $item->quantity,
-                    'price' => $price,
+            try {
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'user_name' => $request->name,
+                    'user_email' => $user->email,
+                    'user_phone' => $request->phone,
+                    'user_address' => $request->address,
+                    'voucher_id' => $voucher?->id,
+                    'discount_amount' => 0,
+                    'total_amount' => $isPaid ? 0 : $totalAmount,
+                    'status' => 'pending',
+                    'payment_method' => $request->payment_method,
+                    'payment_status' => $isPaid ? 'Paid' : 'Unpaid',
+                    'shipping_fee' => 0,
+                    'shipping_method' => $request->shipping_method,
+                    'order_code' => 'ODR-' . strtoupper(Str::random(10)),
+                    'note' => $request->note,
                 ]);
+
+                foreach ($items as $item) {
+                    $variant = $item->productVariant;
+                    $product = $variant?->product ?? $item->product;
+                    $price = $variant?->price ?? ($product?->price ?? 0);
+
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        'product_variant_id' => $variant?->id,
+                        'product_name' => $product?->name ?? 'Không rõ',
+                        'size_name' => $variant?->size,
+                        'color_name' => $variant?->color_name,
+                        'quantity' => $item->quantity,
+                        'price' => $price,
+                    ]);
+                }
+                foreach ($items as $item) {
+                    $variant = $item->productVariant;
+
+                    // Kiểm tra trước khi trừ
+                    if ($variant->quantity < $item->quantity) {
+                        return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
+                    }
+
+                    // Trừ tồn kho
+                    ProductVariant::where('id', $variant->id)
+                        ->decrement('quantity', $item->quantity);
+
+                    // Nếu tồn kho sau khi trừ = 0 → set is_active = 0
+                    if ($variant->quantity - $item->quantity <= 0) {
+                        ProductVariant::where('id', $variant->id)
+                            ->update(['is_active' => 0]);
+                    }
+                }
+
+                if ($voucher) {
+                    $voucher->increment('used_count');
+                }
+
+                DB::commit();
+
+                $cart->items()->delete();
+                $cart->delete();
+                session()->forget('selected_items');
+
+                return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
             }
-
-            DB::commit();
-
-            $cart->items()->delete();
-            $cart->delete();
-            session()->forget('selected_items');
-
-            return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
-        }
         }
     }
 
