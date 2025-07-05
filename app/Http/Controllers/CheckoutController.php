@@ -20,10 +20,10 @@ class CheckoutController extends Controller
             ->where('user_id', Auth::id())
             ->first();
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cart.index')
-                ->with('error', 'Giỏ hàng của bạn đang trống.');
-        }
+        // if (!$cart || $cart->items->isEmpty()) {
+        //     return redirect()->route('cart.index')
+        //         ->with('error', 'Giỏ hàng của bạn đang trống.');
+        // }
 
         /* -- Lọc sản phẩm đã chọn (từ query ?selected_items=1,3,5) -- */
         $selected = $request->input('selected_items');   // chuỗi "1,3,5"
@@ -377,8 +377,22 @@ class CheckoutController extends Controller
 
                 DB::commit();
 
-                $cart->items()->delete();
-                $cart->delete();
+                // Chỉ xóa những sản phẩm đã được chọn
+                $selectedIds = session('selected_items', []);
+                if (!empty($selectedIds)) {
+                    // Xóa chỉ những items đã chọn
+                    $cart->items()->whereIn('id', $selectedIds)->delete();
+
+                    // Kiểm tra nếu cart còn items thì giữ lại cart, không thì xóa
+                    if ($cart->items()->count() == 0) {
+                        $cart->delete();
+                    }
+                } else {
+                    // Nếu không có selected_items (chọn tất cả) thì xóa toàn bộ cart
+                    $cart->items()->delete();
+                    $cart->delete();
+                }
+
                 session()->forget('selected_items');
 
                 return redirect()->route('home')->with('success', 'Đặt hàng thành công!');

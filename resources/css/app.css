@@ -3,3 +3,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar for the whole site */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #8b5cf6, #ec4899);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #7c3aed, #db2777);
+}
+
+/* Fix Swiper slider direction for related products */
+.swiper-wrapper {
+    flex-direction: row !important;
+}
+.swiper-slide {
+    height: auto !important;
+}
+
