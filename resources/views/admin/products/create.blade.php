@@ -47,6 +47,20 @@
                         @enderror
                     </div>
 
+                    <!-- Hình ảnh gallery -->
+                    <div class="mb-4">
+                        <label for="gallery_images" class="block text-gray-700 font-medium mb-1">Hình ảnh gallery</label>
+                        <input type="file" id="gallery_images" name="gallery_images[]" accept="image/*" multiple
+                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('gallery_images.*') border-red-500 @enderror"
+                            onchange="validateGalleryImages(this)">
+                        <p class="text-sm text-gray-500 mt-1">Có thể chọn nhiều ảnh cùng lúc. Hỗ trợ: JPG, PNG, GIF, SVG (tối đa 2MB mỗi ảnh)</p>
+                        <p class="text-sm text-red-500 mt-1">⚠️ <strong>Giới hạn:</strong> Tối đa 6 ảnh gallery cho mỗi sản phẩm</p>
+                        @error('gallery_images.*')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                        <div id="gallery-preview" class="mt-3 grid grid-cols-3 gap-2"></div>
+                    </div>
+
                     <!-- Mô tả -->
                     <div class="mb-4">
                         <label for="description" class="block text-gray-700 font-medium mb-1">Mô tả</label>
@@ -145,5 +159,62 @@
                 .trim('-');
             document.getElementById('slug').value = slug;
         });
+
+        // Validate gallery images
+        function validateGalleryImages(input) {
+            const files = input.files;
+            const maxFiles = 6;
+            const previewContainer = document.getElementById('gallery-preview');
+            
+            // Clear previous preview
+            previewContainer.innerHTML = '';
+            
+            if (files.length > maxFiles) {
+                alert(`Chỉ được chọn tối đa ${maxFiles} ảnh. Bạn đã chọn ${files.length} ảnh.`);
+                input.value = '';
+                return;
+            }
+            
+            // Preview selected images
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative border rounded p-2 bg-gray-50';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'w-full h-20 object-cover rounded';
+                    img.alt = 'Preview';
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.onclick = function() {
+                        previewDiv.remove();
+                        // Remove file from input
+                        const dt = new DataTransfer();
+                        const input = document.getElementById('gallery_images');
+                        const { files } = input;
+                        
+                        for (let i = 0; i < files.length; i++) {
+                            if (i !== Array.from(previewContainer.children).indexOf(previewDiv)) {
+                                dt.items.add(files[i]);
+                            }
+                        }
+                        input.files = dt.files;
+                    };
+                    
+                    previewDiv.appendChild(img);
+                    previewDiv.appendChild(removeBtn);
+                    previewContainer.appendChild(previewDiv);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
 </x-app-layout>

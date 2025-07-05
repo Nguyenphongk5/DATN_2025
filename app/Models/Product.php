@@ -37,4 +37,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    // Quan hệ với ProductGallery
+    public function galleries()
+    {
+        return $this->hasMany(ProductGallery::class)->orderBy('sort_order', 'asc');
+    }
 }

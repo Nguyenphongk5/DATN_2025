@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('product_galleries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('image');
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }

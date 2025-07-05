@@ -96,10 +96,13 @@ class HomeController extends Controller
             ->where('product_id', $id)
             ->get();
 
-        $product = DB::table('products')
-        ->join('categories', 'products.category_id', '=', 'categories.id')
-        ->select('products.*', 'categories.name as category_name')
-        ->where('products.id', $id)->first();
+        $product = Product::with('galleries')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('brands', 'products.brand_id', '=', 'brands.id')
+            ->select('products.*', 'categories.name as category_name', 'brands.name as brand_name')
+            ->where('products.id', $id)
+            ->first();
+            
         $products = DB::table('products')
         ->where('category_id', "=",$product->category_id)
         ->limit(8)

@@ -55,25 +55,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
     Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
 });
-
-// Nhóm route cho chatbox (người dùng)
-Route::middleware('auth:sanctum')->group(function () {
-    // Hiển thị giao diện chatbox
-    Route::get('/chat', function () {
-        return view('chat.index', [
-            'user' => auth()->user(),
-        ]);
-    })->name('chat.index');
-
-    // API gửi tin nhắn
-    Route::post('/send-message', [ChatController::class, 'sendMessage'])
-        ->name('chat.send');
-
-    // API lấy danh sách tin nhắn
-    Route::get('/messages', [ChatController::class, 'getMessages'])
-        ->name('chat.messages');
-});
-
 // Nhóm route cho admin (bao gồm chat hỗ trợ)
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
@@ -87,6 +68,10 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
+
+    // Routes cho quản lý ảnh gallery
+    Route::delete('/gallery/{id}', [ProductController::class, 'deleteGalleryImage'])->name('gallery.delete');
+    Route::post('/gallery/update-order', [ProductController::class, 'updateGalleryOrder'])->name('gallery.updateOrder');
 
     // Trang hỗ trợ chat cho admin
     Route::get('/chat-support', function () {

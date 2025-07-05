@@ -1,71 +1,128 @@
 @extends('layouts.user')
 @section('content')
+
+<style>
+/* Chỉ sửa layout phần ảnh */
+.product-image-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.main-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.main-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.main-image-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+.thumbnail-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.thumbnail-item {
+    width: 70px;
+    height: 70px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.thumbnail-item.active {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+}
+
+.thumbnail-item:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .main-image-wrapper {
+        height: 300px;
+    }
+    
+    .thumbnail-item {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-image-wrapper {
+        height: 250px;
+    }
+    
+    .thumbnail-item {
+        width: 50px;
+        height: 50px;
+    }
+}
+</style>
+
 <section id="selling-product" class="single-product mt-0 mt-md-5">
     <div class="container-fluid">
         <div class="row g-5">
             <div class="col-lg-7">
-                <div class="row flex-column-reverse flex-lg-row">
-                    <div class="col-md-12 col-lg-2">
-                        <!-- product-thumbnail-slider -->
-                        <div class="swiper product-thumbnail-slider">
-                            <div class="swiper-wrapper ">
-                                <div class="swiper-slide">
-                                    <img src="" alt="" class="thumb-image img-fluid">
-                                </div>
-                                <div class="swiper-slide">
-                                    <img src="images/product-thumbnail-2.jpg" alt="" class="thumb-image img-fluid">
-                                </div>
-                                <div class="swiper-slide">
-                                    <img src="images/product-thumbnail-3.jpg" alt="" class="thumb-image img-fluid">
-                                </div>
-                                <div class="swiper-slide">
-                                    <img src="images/product-thumbnail-4.jpg" alt="" class="thumb-image img-fluid">
-                                </div>
-                                <div class="swiper-slide">
-                                    <img src="images/product-thumbnail-5.jpg" alt="" class="thumb-image img-fluid">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- / product-thumbnail-slider -->
+                <div class="product-image-section">
+                    <!-- Main Image -->
+                    <div class="main-image-wrapper" id="mainImageWrapper">
+                        @if($product->img_thumb)
+                            <img src="{{ asset('storage/' . $product->img_thumb) }}" 
+                                 alt="{{ $product->name }}" 
+                                 id="mainImage">
+                        @else
+                            <img src="{{ asset('images/no-image.png') }}" 
+                                 alt="No image available" 
+                                 id="mainImage">
+                        @endif
                     </div>
-                    <div class="col-md-12 col-lg-10">
-                        <!-- product-large-slider -->
-                        <div class="swiper product-large-slider">
-                            <div class="swiper-wrapper">
-                                <div>
-                                    <div class="image-zoom" style="margin: 40px" data-scale="2.5"
-                                        data-image="{{ asset('storage/' . $product->img_thumb) }}">
-                                        {{-- <img src="images/product-large-1.jpg" alt="product-large" class="img-fluid"> --}}
-                                        <img src="{{ asset('storage/' . $product->img_thumb) }}"
-                                            style="width:100%; height: 100%; object-fit: cover; display: block;"
-                                            alt="product-large" class="">
-                                    </div>
-                                </div>
+                    
+                    <!-- Thumbnail Images -->
+                    <div class="thumbnail-wrapper" id="thumbnailWrapper">
+                        @if($product->img_thumb)
+                            <div class="thumbnail-item active" onclick="changeMainImage('{{ asset('storage/' . $product->img_thumb) }}', this)">
+                                <img src="{{ asset('storage/' . $product->img_thumb) }}" 
+                                     alt="{{ $product->name }}">
                             </div>
-                            {{-- <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-2.jpg">
-                                            <img src="images/product-large-2.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-3.jpg">
-                                            <img src="images/product-large-3.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-4.jpg">
-                                            <img src="images/product-large-4.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-scale="2.5" data-image="images/product-large-5.jpg">
-                                            <img src="images/product-large-5.jpg" alt="product-large" class="img-fluid">
-                                        </div>
-                                    </div>
+                        @endif
+                        
+                        @if($product->galleries && $product->galleries->count() > 0)
+                            @foreach($product->galleries as $gallery)
+                                <div class="thumbnail-item" onclick="changeMainImage('{{ asset('storage/' . $gallery->image) }}', this)">
+                                    <img src="{{ asset('storage/' . $gallery->image) }}" 
+                                         alt="{{ $product->name }}">
                                 </div>
-                                <div class="swiper-pagination"></div> --}}
-                        </div>
-                        <!-- / product-large-slider -->
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -210,198 +267,27 @@
                         aria-selected="false">Additional Information</button>
                     <button class="nav-link text-start" id="v-pills-reviews-tab" data-bs-toggle="pill"
                         data-bs-target="#v-pills-reviews" type="button" role="tab" aria-controls="v-pills-reviews"
-                        aria-selected="false">Customer Reviews</button>
+                        aria-selected="false">Reviews</button>
                 </div>
-                <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-content col-lg-9" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="v-pills-description" role="tabpanel"
-                        aria-labelledby="v-pills-description-tab" tabindex="0">
-                        <h5>Product Description</h5>
-                        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis
-                            eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit,
-                            posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris
-                            sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh.
-                            Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus.</p>
-                        <ul style="list-style-type:disc;" class="list-unstyled ps-4">
-                            <li>Donec nec justo eget felis facilisis fermentum.</li>
-                            <li>Suspendisse urna viverra non, semper suscipit pede.</li>
-                            <li>Aliquam porttitor mauris sit amet orci.</li>
-                        </ul>
-                        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis
-                            eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit,
-                            posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris
-                            sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh.
-                            Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                        aria-labelledby="v-pills-description-tab">
+                        <div class="product-description">
+                            <p>{{ $product->description }}</p>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-additional" role="tabpanel"
-                        aria-labelledby="v-pills-additional-tab" tabindex="0">
-                        <p>It is Comfortable and Best</p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                            mollit anim id est laborum. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                            in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        aria-labelledby="v-pills-additional-tab">
+                        <div class="additional-info">
+                            <h4>Additional Information</h4>
+                            <p>Additional information about the product will be displayed here.</p>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-reviews" role="tabpanel"
-                        aria-labelledby="v-pills-reviews-tab" tabindex="0">
-                        <div class="review-box d-flex flex-wrap">
-                            <div class="col-lg-6 d-flex flex-wrap gap-3">
-                                <div class="col-md-2">
-                                    <div class="image-holder">
-                                        <img src="images/reviewer-1.jpg" alt="review" class="img-fluid rounded-circle">
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="review-content">
-                                        <div class="rating-container d-flex align-items-center">
-                                            <div class="rating" data-rating="1">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="2">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="3">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="4">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-outline"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="5">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-outline"></use>
-                                                </svg>
-                                            </div>
-                                            <span class="rating-count">(3.5)</span>
-                                        </div>
-                                        <div class="review-header">
-                                            <span class="author-name">Tina Johnson</span>
-                                            <span class="review-date">– 03/07/2023</span>
-                                        </div>
-                                        <p>Vitae tortor condimentum lacinia quis vel eros donec ac. Nam at lectus urna
-                                            duis convallis convallis</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 d-flex flex-wrap gap-3">
-                                <div class="col-md-2">
-                                    <div class="image-holder">
-                                        <img src="images/reviewer-2.jpg" alt="review" class="img-fluid rounded-circle">
-                                    </div>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="review-content">
-                                        <div class="rating-container d-flex align-items-center">
-                                            <div class="rating" data-rating="1">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="2">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="3">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="4">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-outline"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="5">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-outline"></use>
-                                                </svg>
-                                            </div>
-                                            <span class="rating-count">(3.5)</span>
-                                        </div>
-                                        <div class="review-header">
-                                            <span class="author-name">Jenny Willis</span>
-                                            <span class="review-date">– 03/06/2022</span>
-                                        </div>
-                                        <p>Vitae tortor condimentum lacinia quis vel eros donec ac. Nam at lectus urna
-                                            duis convallis convallis</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="add-review mt-5">
-                            <h3>Add a review</h3>
-                            <p>Your email address will not be published. Required fields are marked *</p>
-                            <form id="form" class="form-group">
-
-                                <div class="pb-3">
-                                    <div class="review-rating">
-                                        <span>Your rating *</span>
-                                        <div class="rating-container d-flex align-items-center">
-                                            <div class="rating" data-rating="1">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="2">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="3">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="4">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-outline"></use>
-                                                </svg>
-                                            </div>
-                                            <div class="rating" data-rating="5">
-                                                <svg width="24" height="24" class="text-warning">
-                                                    <use xlink:href="#star-outline"></use>
-                                                </svg>
-                                            </div>
-                                            <span class="rating-count">(3.5)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="pb-3">
-                                    <input type="file" class="form-control" data-text="Choose your file">
-                                </div>
-                                <div class="pb-3">
-                                    <label>Your Review *</label>
-                                    <textarea class="form-control" placeholder="Write your review here"></textarea>
-                                </div>
-                                <div class="pb-3">
-                                    <label>Your Name *</label>
-                                    <input type="text" name="name" placeholder="Write your name here"
-                                        class="form-control">
-                                </div>
-                                <div class="pb-3">
-                                    <label>Your Email *</label>
-                                    <input type="text" name="email" placeholder="Write your email here"
-                                        class="form-control">
-                                </div>
-                                <div class="pb-3">
-                                    <label>
-                                        <input type="checkbox" required="">
-                                        <span class="label-body">Save my name, email, and website in this browser for
-                                            the next
-                                            time.</span>
-                                    </label>
-                                </div>
-                                <button type="submit" name="submit"
-                                    class="btn btn-dark btn-large text-uppercase w-100">Submit</button>
-                            </form>
+                        aria-labelledby="v-pills-reviews-tab">
+                        <div class="reviews">
+                            <h4>Customer Reviews</h4>
+                            <p>Customer reviews will be displayed here.</p>
                         </div>
                     </div>
                 </div>
@@ -816,4 +702,27 @@
 
     </div>
 </section>
+
+<script>
+// Chỉ xử lý phần ảnh
+function changeMainImage(imageSrc, thumbnailElement) {
+    // Update main image
+    document.getElementById('mainImage').src = imageSrc;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    thumbnailElement.classList.add('active');
+}
+
+// Initialize first thumbnail as active if no thumbnails are active
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbnails = document.querySelectorAll('.thumbnail-item');
+    if (thumbnails.length > 0 && !document.querySelector('.thumbnail-item.active')) {
+        thumbnails[0].classList.add('active');
+    }
+});
+</script>
+
 @endsection
