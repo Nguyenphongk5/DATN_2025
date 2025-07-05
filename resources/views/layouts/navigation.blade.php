@@ -127,8 +127,10 @@
                         @yield('title', 'Quản trị hệ thống')
                     </div>
                     <div class="flex items-center space-x-3">
-                        <span>{{ Auth::user()->name }}</span>
-                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+                       <span>{{ auth()->user()->name }}</span>
+
+                        <img src="{{ asset('storage/' . auth()->user()->avatar
+) }}" alt="Avatar"
                             class="w-8 h-8 rounded-full object-cover border border-gray-300">
                     </div>
                 </header>

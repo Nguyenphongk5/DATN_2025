@@ -41,6 +41,11 @@ return [
     */
 
     'debug' => (bool) env('APP_DEBUG', false),
+    'aliases' => [
+    'App'       => Illuminate\Support\Facades\App::class,
+    'Route'     => Illuminate\Support\Facades\Route::class,
+    'QrCode'    => \SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+],
 
     /*
     |--------------------------------------------------------------------------

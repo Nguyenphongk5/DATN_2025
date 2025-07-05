@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderSuccessMail;
 use App\Mail\NewOrderNotification;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class CheckoutController extends Controller
 {
