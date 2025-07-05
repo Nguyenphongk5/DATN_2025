@@ -15,7 +15,7 @@ class ProductController extends Controller
     {
         //
         $query = DB::table('products');
-        if($request->has('is_active') && $request->is_active !== ''){
+        if ($request->has('is_active') && $request->is_active !== '') {
             $query->where('products.is_active', $request->is_active);
         }
         $categories = DB::table('categories')->get();
@@ -44,26 +44,69 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $data = $request->validate([
+
+        // 1. Validate dữ liệu đầu vào
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:products,slug',
-            'img_thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'img_thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'price_sale' => 'nullable|numeric|min:0',
+            'price_sale' => 'nullable|numeric|min:0|lt:price', // Giá sale phải nhỏ hơn giá gốc
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
-            'view' => 'nullable|integer|min:0',
-            'is_active' => 'boolean'
+            // Validate mảng ảnh gallery
+            'image' => 'nullable|array', // "image" là một mảng
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Mỗi phần tử trong mảng phải là ảnh
         ]);
-        if ($request->hasFile('img_thumb')) {
-            $data['img_thumb'] = $request->file('img_thumb')->store('product_images', 'public');
-        } else {
-            $data['img_thumb'] = null;
+
+        // 2. Sử dụng DB Transaction để đảm bảo an toàn dữ liệu
+        try {
+            DB::beginTransaction();
+
+            // Chuẩn bị dữ liệu cho bảng products
+            $productData = [
+                'name' => $validatedData['name'],
+                'slug' => $validatedData['slug'],
+                'description' => $validatedData['description'],
+                'price' => $validatedData['price'],
+                'price_sale' => $validatedData['price_sale'],
+                'category_id' => $validatedData['category_id'],
+                'brand_id' => $validatedData['brand_id'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            // Xử lý ảnh thumbnail
+            if ($request->hasFile('img_thumb')) {
+                $productData['img_thumb'] = $request->file('img_thumb')->store('products/thumbnails', 'public');
+            }
+
+            // 3. Thêm sản phẩm vào DB và lấy ID
+            $productId = DB::table('products')->insertGetId($productData);
+
+            // 4. Xử lý thư viện ảnh (gallery)
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $file) {
+                    $path = $file->store('products/gallery', 'public');
+                    DB::table('product_galleries')->insert([
+                        'product_id' => $productId,
+                        'image' => $path,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+            DB::commit(); // Hoàn tất giao dịch nếu mọi thứ thành công
+        } catch (\Exception $e) {
+            DB::rollBack(); // Hoàn tác lại mọi thay đổi nếu có lỗi
+            // Tùy chọn: Ghi log lỗi
+            // Log::error('Failed to create product: ' . $e->getMessage());
+            return back()->with('error', 'Đã xảy ra lỗi khi tạo sản phẩm. Vui lòng thử lại.')->withInput();
         }
-        DB::table('products')->insert($data);
-        return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
+
+        return redirect()->route('admin.products.index')->with('success', 'Tạo sản phẩm thành công!');
     }
 
     /**
