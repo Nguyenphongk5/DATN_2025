@@ -1,16 +1,36 @@
 @extends('layouts.user')
 @section('content')
 
-    <section class="py-12 bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
+    <!-- Header Section -->
+    <section class="py-12 bg-gradient-to-r from-purple-50 via-pink-50 to-blue-50 mb-8">
         <div class="max-w-6xl mx-auto px-4">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-800 tracking-tight">Giỏ hàng của bạn</h1>
-                <nav class="text-sm text-gray-500 flex items-center gap-2">
-                    <a class="hover:text-purple-600 transition-colors" href="/">Home</a>
-                    <span>/</span>
-                    <span class="text-gray-400">Cart</span>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1
+                        class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                        Giỏ hàng của bạn
+                    </h1>
+                    <p class="text-gray-600 text-lg">Quản lý và thanh toán đơn hàng</p>
+                </div>
+                <nav
+                    class="text-sm text-gray-500 flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
+                    <a class="hover:text-purple-600 transition-colors font-medium" href="/">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                        Home
+                    </a>
+                    <span class="mx-2 text-gray-400">/</span>
+                    <span class="text-purple-600 font-semibold">Giỏ hàng</span>
                 </nav>
             </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
+        <div class="max-w-6xl mx-auto px-4">
             <div class="flex flex-col lg:flex-row gap-10">
                 <div class="w-full lg:w-8/12">
                     @if (empty($cart) || count($cart->items) == 0)

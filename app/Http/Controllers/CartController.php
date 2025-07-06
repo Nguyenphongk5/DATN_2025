@@ -19,13 +19,30 @@ class CartController extends Controller
     {
         $action = $request->input('action');
 
-
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'color_name' => 'nullable|string',
             'size' => 'nullable|integer',
         ]);
+
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (!Auth::check()) {
+            // Lưu thông tin sản phẩm vào session để thêm vào giỏ hàng sau khi đăng nhập
+            session([
+                'pending_cart_item' => [
+                    'product_id' => $request->product_id,
+                    'color_name' => $request->color_name,
+                    'size' => $request->size,
+                    'quantity' => $request->quantity,
+                    'action' => $action,
+                    'return_url' => url()->previous()
+                ]
+            ]);
+
+            return redirect()->route('login')->with('info', 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+        }
+
         if ($action === 'buy_now') {
             session([
                 'buy_now' => [
@@ -81,7 +98,6 @@ class CartController extends Controller
                     'quantity' => $request->quantity,
                 ]);
             }
-
 
             // Trả về trang trước đó với thông báo thành công
             return redirect()->back()->with('add_to_cart', 'Sản phẩm đã được thêm vào giỏ hàng!');

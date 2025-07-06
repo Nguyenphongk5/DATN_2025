@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Banner;
 use App\Models\Blog;
+use App\Models\Logo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -30,8 +31,11 @@ class HomeController extends Controller
         $categories = DB::table('categories')->get();
         $blogs = Blog::where('is_active', true)->latest()->take(3)->get();
 
+        // Lấy logos
+        $logos = Logo::all();
+
         // Trả về view với các thông tin cần thiết
-        return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs'));
+        return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'logos'));
     }
 
 
