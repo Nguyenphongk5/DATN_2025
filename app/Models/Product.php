@@ -37,4 +37,28 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
+
+    /**
+     * Quan hệ với ProductGallery
+     */
+    public function galleries()
+    {
+        return $this->hasMany(ProductGallery::class)->ordered();
+    }
+
+    /**
+     * Lấy ảnh chính (ảnh đầu tiên trong gallery)
+     */
+    public function getMainImageAttribute()
+    {
+        return $this->galleries()->first()?->image ?? $this->img_thumb;
+    }
+
+    /**
+     * Lấy tất cả ảnh gallery
+     */
+    public function getAllImagesAttribute()
+    {
+        return $this->galleries()->pluck('image')->toArray();
+    }
 }

@@ -112,11 +112,14 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex gap-2 justify-center">
-                                            <a href="{{ route('admin.products.show', $product->id) }}" class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white px-4 py-2 rounded-lg font-bold shadow-md flex items-center gap-2 transition">
+                                            <a href="{{ route('admin.products.show', $product->id) }}" class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
                                                 <i class="fas fa-eye"></i> Chi tiết
                                             </a>
-                                            <a href="{{ route('admin.products.edit', $product->id) }}" class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white px-4 py-2 rounded-lg font-bold shadow-md flex items-center gap-2 transition">
+                                            <a href="{{ route('admin.products.edit', $product->id) }}" class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
                                                 <i class="fas fa-edit"></i> Sửa
+                                            </a>
+                                            <a href="{{ route('admin.products.galleries.index', $product->id) }}" class="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-pink-500 hover:to-purple-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
+                                                <i class="fas fa-images"></i> Ảnh
                                             </a>
                                         </div>
                                     </td>

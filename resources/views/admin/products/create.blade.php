@@ -60,6 +60,41 @@
                         @enderror
                     </div>
 
+                    <!-- Ảnh gallery -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-bold mb-2">Ảnh gallery sản phẩm</label>
+                        <div class="border-2 border-dashed border-indigo-200 rounded-xl p-6 bg-gradient-to-r from-indigo-50 to-cyan-50">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-images text-3xl text-indigo-400 mb-2"></i>
+                                <p class="text-gray-600">Kéo thả ảnh vào đây hoặc click để chọn</p>
+                                <p class="text-sm text-gray-500 mt-1">Hỗ trợ: JPG, PNG, GIF, WebP (Tối đa 2MB mỗi ảnh)</p>
+                                <p class="text-sm text-red-500 mt-1 font-semibold">⚠️ Tối đa 6 ảnh gallery</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="gallery-preview">
+                                <!-- Preview sẽ hiển thị ở đây -->
+                            </div>
+                            
+                            <div class="mt-4">
+                                <input type="file" id="gallery_images" name="gallery_images[]" accept="image/*" multiple
+                                    class="hidden" onchange="previewGalleryImages(this)">
+                                <button type="button" onclick="document.getElementById('gallery_images').click()"
+                                    class="w-full bg-gradient-to-r from-purple-400 to-pink-500 hover:from-pink-500 hover:to-purple-400 text-white font-bold py-3 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 transition">
+                                    <i class="fas fa-plus"></i> Chọn ảnh gallery
+                                </button>
+                            </div>
+                            
+                            <div class="mt-4 text-sm text-gray-600">
+                                <p><i class="fas fa-info-circle text-indigo-400"></i> Có thể chọn nhiều ảnh cùng lúc</p>
+                                <p><i class="fas fa-info-circle text-indigo-400"></i> Ảnh sẽ được sắp xếp theo thứ tự upload</p>
+                                <p><i class="fas fa-exclamation-triangle text-orange-400"></i> Giới hạn tối đa 6 ảnh gallery</p>
+                            </div>
+                        </div>
+                        @error('gallery_images')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <!-- Mô tả -->
                     <div class="mb-4">
                         <label for="description" class="block text-gray-700 font-bold mb-1">Mô tả</label>
@@ -158,5 +193,86 @@
                 .trim('-');
             document.getElementById('slug').value = slug;
         });
+
+        // Preview ảnh gallery
+        function previewGalleryImages(input) {
+            const preview = document.getElementById('gallery-preview');
+            preview.innerHTML = '';
+
+            if (input.files && input.files.length > 0) {
+                // Kiểm tra giới hạn 6 ảnh
+                if (input.files.length > 6) {
+                    alert('⚠️ Chỉ được chọn tối đa 6 ảnh gallery!');
+                    input.value = '';
+                    return;
+                }
+
+                for (let i = 0; i < input.files.length; i++) {
+                    const file = input.files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'relative group';
+                        div.innerHTML = `
+                            <div class="relative">
+                                <img src="${e.target.result}" alt="Preview" class="w-full h-32 object-cover rounded-lg shadow-md">
+                                <div class="absolute top-2 right-2">
+                                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded">${i + 1}</span>
+                                </div>
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-lg flex items-center justify-center">
+                                    <div class="opacity-0 group-hover:opacity-100 transition-all duration-300 text-white text-xs text-center">
+                                        <div class="font-bold">${file.name}</div>
+                                        <div class="text-xs">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        preview.appendChild(div);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Drag and drop functionality
+        const dropZone = document.querySelector('.border-dashed');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('border-indigo-400', 'bg-indigo-100');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('border-indigo-400', 'bg-indigo-100');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            const input = document.getElementById('gallery_images');
+            input.files = files;
+            previewGalleryImages(input);
+        }
     </script>
 </x-app-layout>

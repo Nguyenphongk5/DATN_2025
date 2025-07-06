@@ -30,7 +30,8 @@ class DatabaseSeeder extends Seeder
         OrderSeeder::class,
         OrderDetailSeeder::class,
         BannerSeeder::class,
-        ProductVariantSeeder::class
+        ProductVariantSeeder::class,
+        ProductGallerySeeder::class,
     ]);
 
     }

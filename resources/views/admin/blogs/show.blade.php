@@ -99,14 +99,14 @@
                             <div class="flex border-b pb-2">
                                 <span class="font-medium text-gray-700 w-32">Ngày tạo:</span>
                                 <span
-                                    class="text-gray-900">{{ $blog->created_at ? $blog->created_at->format('d/m/Y H:i') : 'N/A' }}</span>
+                                    class="text-gray-900">{{ $blog->created_at ? \Carbon\Carbon::parse($blog->created_at)->format('d/m/Y H:i') : 'N/A' }}</span>
                             </div>
 
                             <!-- Ngày cập nhật -->
                             <div class="flex border-b pb-2">
                                 <span class="font-medium text-gray-700 w-32">Cập nhật lần cuối:</span>
                                 <span
-                                    class="text-gray-900">{{ $blog->updated_at ? $blog->updated_at->format('d/m/Y H:i') : 'N/A' }}</span>
+                                    class="text-gray-900">{{ $blog->updated_at ? \Carbon\Carbon::parse($blog->updated_at)->format('d/m/Y H:i') : 'N/A' }}</span>
                             </div>
                         </div>
                     </div>

@@ -91,9 +91,73 @@ class HomeController extends Controller
         // Trả về kết quả tìm kiếm
         return view('user.search', compact('products', 'categories', 'keywords'));  // Trả về kết quả tìm kiếm
     }
+
+    public function allProducts(Request $request)
+    {
+        // Khởi tạo query builder cho Product
+        $query = DB::table('products')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('brands', 'products.brand_id', '=', 'brands.id')
+            ->select('products.*', 'categories.name as category_name', 'brands.name as brand_name')
+            ->where('products.is_active', 1);
+
+        // Lọc theo danh mục nếu có
+        if ($request->has('category') && $request->category != '') {
+            $query->where('products.category_id', $request->category);
+        }
+
+        // Lọc theo thương hiệu nếu có
+        if ($request->has('brand') && $request->brand != '') {
+            $query->where('products.brand_id', $request->brand);
+        }
+
+        // Lọc theo giá nếu có
+        if ($request->has('min_price') && $request->min_price != '') {
+            $query->where('products.price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price != '') {
+            $query->where('products.price', '<=', $request->max_price);
+        }
+
+        // Sắp xếp
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'price_low':
+                $query->orderBy('products.price', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('products.price', 'desc');
+                break;
+            case 'name':
+                $query->orderBy('products.name', 'asc');
+                break;
+            case 'popular':
+                $query->orderBy('products.view', 'desc');
+                break;
+            default:
+                $query->orderBy('products.created_at', 'desc');
+                break;
+        }
+
+        // Lấy sản phẩm và phân trang (12 sản phẩm mỗi trang)
+        $products = $query->paginate(12);
+
+        // Lấy tất cả các danh mục để lọc
+        $categories = DB::table('categories')->where('is_active', 1)->get();
+        
+        // Lấy tất cả các thương hiệu để lọc
+        $brands = DB::table('brands')->where('is_active', 1)->get();
+
+        // Lấy thống kê
+        $totalProducts = DB::table('products')->where('is_active', 1)->count();
+        $totalCategories = DB::table('categories')->where('is_active', 1)->count();
+        $totalBrands = DB::table('brands')->where('is_active', 1)->count();
+
+        return view('user.all-products', compact('products', 'categories', 'brands', 'totalProducts', 'totalCategories', 'totalBrands'));
+    }
     public function show(string $id)
     {
-        //
         $categories = Category::all();
         $productVariants = DB::table('product_variants')
             ->where('product_id', $id)
@@ -103,11 +167,20 @@ class HomeController extends Controller
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->select('products.*', 'categories.name as category_name')
             ->where('products.id', $id)->first();
+            
+        // Lấy ảnh gallery
+        $galleryImages = DB::table('product_galleries')
+            ->where('product_id', $id)
+            ->where('is_active', 1)
+            ->orderBy('sort_order', 'asc')
+            ->get();
+            
         $products = DB::table('products')
             ->where('category_id', "=", $product->category_id)
             ->limit(8)
             ->get();
-        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products'));
+            
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'galleryImages'));
     }
     public function edit(string $id)
     {

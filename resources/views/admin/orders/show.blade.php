@@ -26,7 +26,7 @@
                     <div>
                         <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin đơn hàng</div>
                         <div class="mb-1"><span class="font-semibold">Mã đơn:</span> <span class="font-mono text-indigo-600">{{ $order->order_code }}</span></div>
-                        <div class="mb-1"><span class="font-semibold">Ngày đặt:</span> {{ $order->created_at->format('d/m/Y H:i') }}</div>
+                        <div class="mb-1"><span class="font-semibold">Ngày đặt:</span> {{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y H:i') }}</div>
                         <div class="mb-1"><span class="font-semibold">Trạng thái:</span>
                             @php
                                 $statusMap = [

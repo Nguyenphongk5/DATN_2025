@@ -209,7 +209,7 @@
 
             <!-- View All Products Button -->
             <div class="text-center mt-12">
-                <a href="#" class="inline-flex items-center gap-2 bg-white border-2 border-purple-600 text-purple-600 font-semibold py-3 px-8 rounded-full hover:bg-purple-600 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                <a href="{{ route('home.products') }}" class="inline-flex items-center gap-2 bg-white border-2 border-purple-600 text-purple-600 font-semibold py-3 px-8 rounded-full hover:bg-purple-600 hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
                     <span>Xem tất cả sản phẩm</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
