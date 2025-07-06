@@ -1,81 +1,63 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="container py-5">
-    <!-- Tiêu đề -->
-    <div class="mb-4 text-center">
-        <h2 class="fw-bold text-primary">👤 Profile Settings</h2>
-        <p class="text-muted mb-0">Manage your account settings and preferences</p>
-    </div>
+    <div class="py-10 min-h-screen bg-gradient-to-br from-white via-blue-50 to-cyan-50" x-data="{ tab: 'avatar' }">
+        <!-- Tiêu đề -->
+        <div class="mb-8 text-center">
+            <h2
+                class="font-extrabold text-3xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 drop-shadow-lg inline-flex items-center gap-2">
+                <i class="fas fa-user-circle animate-pulse"></i> Profile Settings
+            </h2>
+            <p class="text-gray-500 mt-2">Manage your account settings and preferences</p>
+        </div>
 
-    <!-- Tabs -->
-    <ul class="nav nav-pills mb-4 justify-content-center" id="profileTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab-avatar" data-bs-toggle="pill" data-bs-target="#pane-avatar" type="button" role="tab">Avatar</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-info" data-bs-toggle="pill" data-bs-target="#pane-info" type="button" role="tab">Information</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab-password" data-bs-toggle="pill" data-bs-target="#pane-password" type="button" role="tab">Password</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link text-danger" id="tab-delete" data-bs-toggle="pill" data-bs-target="#pane-delete" type="button" role="tab">Danger Zone</button>
-        </li>
-    </ul>
+        <!-- Tabs -->
+        <div class="flex justify-center mb-8">
+            <nav class="flex rounded-2xl shadow bg-white/90 divide-x divide-indigo-100 overflow-hidden">
+                <button
+                    class="tab-btn px-8 py-3 font-bold text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-100 focus:outline-none transition"
+                    :class="{ 'bg-indigo-100 text-indigo-700': tab === 'avatar' }" @click="tab = 'avatar'">Avatar</button>
+                <button
+                    class="tab-btn px-8 py-3 font-bold text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-100 focus:outline-none transition"
+                    :class="{ 'bg-indigo-100 text-indigo-700': tab === 'info' }" @click="tab = 'info'">Information</button>
+                <button
+                    class="tab-btn px-8 py-3 font-bold text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-100 focus:outline-none transition"
+                    :class="{ 'bg-indigo-100 text-indigo-700': tab === 'password' }"
+                    @click="tab = 'password'">Password</button>
+                <button
+                    class="tab-btn px-8 py-3 font-bold text-red-500 hover:bg-red-50 focus:bg-red-100 focus:outline-none transition"
+                    :class="{ 'bg-red-100 text-red-700': tab === 'delete' }" @click="tab = 'delete'">Danger Zone</button>
+            </nav>
+        </div>
 
-    <!-- Nội dung tab -->
-    <div class="tab-content bg-white shadow rounded-4 p-4" id="profileTabContent">
-
-        <div class="tab-pane fade show active" id="pane-avatar" role="tabpanel">
-            <h5 class="fw-bold mb-3">Update Profile Picture</h5>
-            <div class="col-md-8">
+        <!-- Nội dung tab -->
+        <div class="max-w-3xl mx-auto bg-white/90 shadow-2xl rounded-3xl p-8">
+            <div x-show="tab === 'avatar'">
+                <h3 class="text-xl font-bold text-indigo-700 mb-4 flex items-center gap-2"><i class="fas fa-image"></i>
+                    Update Profile Picture</h3>
                 @include('profile.partials.update-profile-avatar')
             </div>
-        </div>
-
-        <div class="tab-pane fade" id="pane-info" role="tabpanel">
-            <h5 class="fw-bold mb-3">Update Personal Information</h5>
-            <div class="col-md-8">
+            <div x-show="tab === 'info'">
+                <h3 class="text-xl font-bold text-indigo-700 mb-4 flex items-center gap-2"><i class="fas fa-user-edit"></i>
+                    Update Personal Information</h3>
                 @include('profile.partials.update-profile-information-form')
             </div>
-        </div>
-
-        <div class="tab-pane fade" id="pane-password" role="tabpanel">
-            <h5 class="fw-bold mb-3">Change Password</h5>
-            <div class="col-md-8">
+            <div x-show="tab === 'password'">
+                <h3 class="text-xl font-bold text-indigo-700 mb-4 flex items-center gap-2"><i class="fas fa-key"></i> Change
+                    Password</h3>
                 @include('profile.partials.update-password-form')
             </div>
-        </div>
-
-        <div class="tab-pane fade" id="pane-delete" role="tabpanel">
-            <h5 class="fw-bold text-danger mb-3">Delete Account</h5>
-            <div class="col-md-8">
+            <div x-show="tab === 'delete'">
+                <h3 class="text-xl font-bold text-red-600 mb-4 flex items-center gap-2"><i
+                        class="fas fa-exclamation-triangle"></i> Delete Account</h3>
                 @include('profile.partials.delete-user-form')
             </div>
         </div>
-
     </div>
-</div>
 @endsection
 
 @push('scripts')
-<script>
-    // Nếu có session('status') thì tạo 1 toast tự động hiển thị
-    @if (session('status'))
-    const toast = document.createElement('div');
-    toast.className = 'toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-4 show';
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">
-                ✅ {{ session('status') }}
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 5000);
-    @endif
-</script>
+    <script>
+        // Không cần Alpine.data cho tab ở đây nữa
+    </script>
 @endpush

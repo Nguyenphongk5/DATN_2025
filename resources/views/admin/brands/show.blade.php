@@ -1,137 +1,48 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Quản lý thương hiệu') }}
-        </h2>
+        <div class="flex items-center gap-3 bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 rounded-2xl shadow-xl px-6 py-4 mb-6">
+            <i class="fas fa-copyright text-3xl text-white drop-shadow-lg animate-pulse"></i>
+            <h2 class="font-extrabold text-2xl text-white tracking-wide drop-shadow-lg">Chi tiết thương hiệu</h2>
+        </div>
     </x-slot>
-
-    <div class="py-12">
-        <h1 class="font-semibold text-gray-800 leading-tight" style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
-            {{ __('Chi tiết thương hiệu') }}
-        </h1>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-xl sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Hình ảnh thương hiệu -->
-                        <div class="space-y-4">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Hình ảnh thương hiệu</h3>
-                            @if ($brand->logo)
-                                <div class="border rounded-lg overflow-hidden">
-                                    <img src="{{ asset('storage/' . $brand->logo) }}"
-                                         alt="{{ $brand->name }}"
-                                         class="w-50 h-64 object-cover">
-                                </div>
-                            @else
-                                <div class="border rounded-lg h-64 bg-gray-100 flex items-center justify-center">
-                                    <span class="text-gray-400 italic">Không có hình ảnh</span>
-                                </div>
-                            @endif
-                        </div>
-
-                        <!-- Thông tin thương hiệu -->
-                        <div class="space-y-6">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Thông tin thương hiệu</h3>
-
-                            <div class="space-y-4">
-                                <!-- ID -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">ID:</span>
-                                    <span class="text-gray-900">{{ $brand->id }}</span>
-                                </div>
-
-                                <!-- Tên thương hiệu -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Tên thương hiệu:</span>
-                                    <span class="text-gray-900">{{ $brand->name }}</span>
-                                </div>
-
-                                <!-- Slug -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Slug:</span>
-                                    <span class="text-gray-900">{{ $brand->slug }}</span>
-                                </div>
-
-                                {{-- <!-- Danh mục -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Danh mục:</span>
-                                    <span class="text-gray-900">{{ $brand->category_name ?? 'N/A' }}</span>
-                                </div>
-
-                                <!-- Thương hiệu -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Thương hiệu:</span>
-                                    <span class="text-gray-900">{{ $brand->brand_name ?? 'N/A' }}</span>
-                                </div>
-
-                                <!-- Giá gốc -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Giá gốc:</span>
-                                    <span class="text-gray-900 font-semibold">{{ number_format($brand->price, 0, ',', '.') }} VNĐ</span>
-                                </div>
-
-                                <!-- Giá khuyến mãi -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Giá khuyến mãi:</span>
-                                    @if ($brand->price_sale)
-                                        <span class="text-red-600 font-semibold">{{ number_format($brand->price_sale, 0, ',', '.') }} VNĐ</span>
-                                    @else
-                                        <span class="text-gray-400 italic">Không có</span>
-                                    @endif
-                                </div>
-
-                                <!-- Lượt xem -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Lượt xem:</span>
-                                    <span class="text-gray-900">{{ number_format($brand->view) }}</span>
-                                </div> --}}
-
-                                <!-- Trạng thái -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Trạng thái:</span>
-                                    @if ($brand->is_active === 1)
-                                        <span class="text-green-600 font-semibold">Đang hoạt động</span>
-                                    @else
-                                        <span class="text-red-600 font-semibold">Đã ẩn</span>
-                                    @endif
-                                </div>
-
-                                <!-- Ngày tạo -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Ngày tạo:</span>
-                                    <span class="text-gray-900">{{ $brand->created_at ? $brand->created_at->format('d/m/Y H:i') : 'N/A' }}</span>
-                                </div>
-
-                                <!-- Ngày cập nhật -->
-                                <div class="flex border-b pb-2">
-                                    <span class="font-medium text-gray-700 w-32">Cập nhật lần cuối:</span>
-                                    <span class="text-gray-900">{{ $brand->updated_at ? $brand->updated_at->format('d/m/Y H:i') : 'N/A' }}</span>
-                                </div>
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
+                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 drop-shadow-lg flex items-center gap-2 mb-8">
+                    <i class="fas fa-copyright animate-bounce text-indigo-400"></i>
+                    Chi tiết thương hiệu
+                </h1>
+                <div class="flex flex-col md:flex-row gap-8 mb-8">
+                    <div class="flex-shrink-0 flex flex-col items-center justify-center">
+                        @if ($brand->logo)
+                            <img src="{{ asset('storage/' . $brand->logo) }}" alt="Logo" class="w-32 h-32 object-cover rounded-full ring-4 ring-sky-300 shadow-lg mb-4">
+                        @else
+                            <div class="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                                <span class="text-gray-400 text-xs">No Image</span>
                             </div>
+                        @endif
+                        <span class="mt-2 px-4 py-1 rounded-full text-xs font-bold shadow @if($brand->is_active == 1) bg-gradient-to-r from-green-300 via-emerald-400 to-cyan-300 text-green-900 ring-2 ring-green-200/60 animate-pulse @else bg-gradient-to-r from-red-300 via-pink-400 to-fuchsia-300 text-red-900 ring-2 ring-pink-200/60 @endif">
+                            {{ $brand->is_active == 1 ? 'Đang hoạt động' : 'Đã ẩn' }}
+                        </span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="mb-4">
+                            <span class="block text-lg font-bold text-indigo-700 mb-1">Tên thương hiệu:</span>
+                            <span class="text-xl font-extrabold text-gray-900">{{ $brand->name }}</span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="block text-lg font-bold text-indigo-700 mb-1">Mô tả:</span>
+                            <span class="text-base text-gray-700">{{ $brand->description ?? '-' }}</span>
                         </div>
                     </div>
-
-                    <!-- Mô tả thương hiệu -->
-                    @if ($brand->description)
-                        <div class="mt-8">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Mô tả thương hiệu</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <p class="text-gray-700 whitespace-pre-wrap">{{ $brand->description }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Nút điều hướng -->
-                    <div class="mt-8 flex gap-4">
-                        <a href="{{ route('admin.brands.index') }}"
-                            class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-2 rounded transition duration-200">
-                            Quay lại danh sách
-                        </a>
-                        <a href="{{ route('admin.brands.edit', $brand->id) }}"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded transition duration-200">
-                            Chỉnh sửa
-                        </a>
-                    </div>
+                </div>
+                <div class="mt-8 flex gap-4 justify-center">
+                    <a href="{{ route('admin.brands.index') }}" class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
+                        <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                    </a>
+                    <a href="{{ route('admin.brands.edit', $brand->id) }}" class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
+                        <i class="fas fa-edit"></i> Sửa
+                    </a>
                 </div>
             </div>
         </div>
