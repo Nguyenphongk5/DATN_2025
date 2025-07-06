@@ -8,6 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Admin\Product_VariantController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductGalleryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ use App\Models\Logo;
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
+Route::get('home/products', [HomeController::class, 'allProducts'])->name('home.products');
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -71,6 +73,18 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
+    
+    // Product Gallery routes
+    Route::prefix('products/{product}/galleries')->name('products.galleries.')->group(function () {
+        Route::get('/', [ProductGalleryController::class, 'index'])->name('index');
+        Route::get('/create', [ProductGalleryController::class, 'create'])->name('create');
+        Route::post('/', [ProductGalleryController::class, 'store'])->name('store');
+        Route::get('/{gallery}/edit', [ProductGalleryController::class, 'edit'])->name('edit');
+        Route::put('/{gallery}', [ProductGalleryController::class, 'update'])->name('update');
+        Route::delete('/{gallery}', [ProductGalleryController::class, 'destroy'])->name('destroy');
+        Route::post('/update-order', [ProductGalleryController::class, 'updateOrder'])->name('updateOrder');
+        Route::post('/{gallery}/toggle-active', [ProductGalleryController::class, 'toggleActive'])->name('toggleActive');
+    });
 });
 // routes/web.php
 

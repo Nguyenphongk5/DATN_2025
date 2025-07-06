@@ -117,19 +117,11 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <!-- Product Images -->
-                @php
-                    $gallery = [];
-                    if (!empty($product->gallery)) {
-                        $gallery = is_array($product->gallery) ? $product->gallery : json_decode($product->gallery, true);
-                        if (!is_array($gallery))
-                            $gallery = [];
-                    }
-                    $thumbs = array_merge([asset('storage/' . $product->img_thumb)], array_map(fn($img) => asset('storage/' . $img), array_slice($gallery, 0, 5)));
-                @endphp
-                <div x-data="{ currentImg: '{{ $thumbs[0] }}', thumbs: @json($thumbs) }" class="mb-6">
-                    <div class="relative bg-white rounded-3xl shadow-xl overflow-hidden flex items-center justify-center">
-                        <img src="{{ $thumbs[0] }}" alt="{{ $product->name }}"
-                            class="w-full h-[420px] object-cover transition-transform duration-500 hover:scale-105">
+                <div class="mb-6">
+                    <!-- Ảnh chính -->
+                    <div class="relative bg-white rounded-3xl shadow-xl overflow-hidden flex items-center justify-center mb-4">
+                        <img id="main-product-image" src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}"
+                            class="w-full h-[420px] object-cover transition-all duration-300 hover:scale-105">
                         <!-- Badge -->
                         <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
                             @if ($product->created_at >= now()->subDays(7))
@@ -140,16 +132,97 @@
                                 class="bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">-30%</span>
                         </div>
                     </div>
-                    <!-- Thumbnails -->
-                    <div class="flex gap-3 mt-4 justify-center">
-                        <template x-for="(thumb, idx) in thumbs" :key="thumb">
-                            <button type="button" @click="currentImg = thumb"
-                                :class="currentImg === thumb ? 'ring-2 ring-blue-500 scale-105' : 'ring-1 ring-gray-200'"
-                                class="transition-all duration-200 rounded-xl overflow-hidden focus:outline-none bg-white">
-                                <img :src="thumb" alt="thumb" class="w-20 h-20 object-cover">
-                            </button>
-                        </template>
-                    </div>
+                    
+                    <!-- Ảnh gallery (tối đa 6 ảnh) -->
+                    @if($galleryImages->count() > 0)
+                        <div class="bg-white rounded-2xl shadow-lg p-4">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-palette text-indigo-500"></i>
+                                Ảnh sản phẩm cùng loại khác màu
+                            </h4>
+                            <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                                <!-- Ảnh chính (đầu tiên) -->
+                                <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer gallery-image border-2 border-purple-500">
+                                    <img src="{{ asset('storage/' . $product->img_thumb) }}" 
+                                         alt="{{ $product->name }}" 
+                                         class="w-full h-20 object-cover">
+                                    
+                                    <!-- Overlay với click icon -->
+                                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                                        <div class="opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                            <div class="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
+                                                <svg class="w-4 h-4 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Badge cho ảnh chính -->
+                                    <div class="absolute top-1 left-1">
+                                        <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg">
+                                            Chính
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Ảnh gallery -->
+                                @foreach($galleryImages->take(5) as $gallery)
+                                    <div class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer gallery-image border-2 border-transparent">
+                                        <img src="{{ asset('storage/product_galleries/' . $gallery->image) }}" 
+                                             alt="{{ $gallery->alt_text ?? $product->name }}" 
+                                             class="w-full h-20 object-cover">
+                                        
+                                        <!-- Overlay với click icon -->
+                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                                            <div class="opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                                <div class="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
+                                                    <svg class="w-4 h-4 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            <!-- Thông báo nếu có nhiều hơn 5 ảnh gallery -->
+                            @if($galleryImages->count() > 5)
+                                <div class="mt-3 text-center">
+                                    <p class="text-sm text-gray-500">
+                                        <i class="fas fa-info-circle text-indigo-400"></i>
+                                        Hiển thị {{ 1 + min(5, $galleryImages->count()) }}/{{ 1 + $galleryImages->count() }} màu sắc
+                                    </p>
+                                </div>
+                            @endif
+                            
+                            <!-- Test button -->
+                            <div class="mt-3 text-center">
+                                <button onclick="testGallery()" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm">
+                                    Test Gallery
+                                </button>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Empty state khi không có ảnh gallery -->
+                        <div class="bg-white rounded-2xl shadow-lg p-4">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                                <i class="fas fa-palette text-indigo-500"></i>
+                                Ảnh sản phẩm cùng loại khác màu
+                            </h4>
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-palette text-2xl text-gray-400"></i>
+                                </div>
+                                <p class="text-gray-500 text-sm">
+                                    Chưa có ảnh màu sắc khác cho sản phẩm này
+                                </p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <!-- Product Info Card -->
                 <div>
@@ -417,6 +490,8 @@
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded, initializing gallery...'); // Debug log
+            
             new Swiper('.related-swiper', {
                 slidesPerView: 4,
                 spaceBetween: 32,
@@ -434,6 +509,20 @@
 
             // Initialize notifications with beautiful animations
             initializeNotifications();
+            
+            // Add click event listeners to gallery images
+            const galleryImages = document.querySelectorAll('.gallery-image');
+            console.log('Found gallery images:', galleryImages.length); // Debug log
+            
+            galleryImages.forEach((img, index) => {
+                img.addEventListener('click', function(e) {
+                    console.log('Gallery image clicked:', index); // Debug log
+                    const imgElement = this.querySelector('img');
+                    if (imgElement) {
+                        changeMainImage(imgElement.src, imgElement.alt, this);
+                    }
+                });
+            });
         });
 
         function initializeNotifications() {
@@ -580,6 +669,125 @@
             setTimeout(() => {
                 createConfetti();
             }, 200);
+        }
+
+        // Function to change main product image
+        function changeMainImage(imageSrc, imageAlt, clickedElement) {
+            console.log('changeMainImage called with:', imageSrc, imageAlt); // Debug log
+            
+            const mainImage = document.getElementById('main-product-image');
+            if (!mainImage) {
+                console.error('Main image element not found');
+                return;
+            }
+            
+            const currentMainSrc = mainImage.src;
+            const currentMainAlt = mainImage.alt;
+            
+            console.log('Current main image:', currentMainSrc); // Debug log
+            
+            // Simple image swap without complex animations for now
+            mainImage.src = imageSrc;
+            mainImage.alt = imageAlt;
+            
+            // Update the clicked gallery image with the old main image
+            const clickedImage = clickedElement.querySelector('img');
+            if (clickedImage) {
+                clickedImage.src = currentMainSrc;
+                clickedImage.alt = currentMainAlt;
+            }
+            
+            // Handle badge "Chính" - remove from all and add to clicked
+            const allBadges = document.querySelectorAll('.gallery-image .absolute.top-1.left-1 span');
+            allBadges.forEach(badge => {
+                if (badge.textContent === 'Chính') {
+                    badge.remove();
+                }
+            });
+            
+            // Add badge to clicked element if it doesn't have one
+            const clickedBadge = clickedElement.querySelector('.absolute.top-1.left-1 span');
+            if (!clickedBadge) {
+                const badgeContainer = clickedElement.querySelector('.absolute.top-1.left-1');
+                if (badgeContainer) {
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg';
+                    newBadge.textContent = 'Chính';
+                    badgeContainer.appendChild(newBadge);
+                }
+            }
+            
+            // Add visual feedback to clicked gallery image
+            const galleryImages = document.querySelectorAll('.gallery-image');
+            galleryImages.forEach(img => {
+                img.style.border = '2px solid transparent';
+                img.style.transform = 'scale(1)';
+            });
+            
+            // Highlight the clicked image
+            clickedElement.style.border = '2px solid #8b5cf6';
+            clickedElement.style.transform = 'scale(1.05)';
+            
+            console.log('Image change completed'); // Debug log
+        }
+
+        // Test function
+        function testGallery() {
+            console.log('Test button clicked');
+            const mainImage = document.getElementById('main-product-image');
+            const galleryImages = document.querySelectorAll('.gallery-image');
+            
+            console.log('Main image:', mainImage);
+            console.log('Gallery images found:', galleryImages.length);
+            
+            if (galleryImages.length > 0) {
+                const firstGalleryImage = galleryImages[0].querySelector('img');
+                if (firstGalleryImage) {
+                    console.log('First gallery image src:', firstGalleryImage.src);
+                    changeMainImage(firstGalleryImage.src, firstGalleryImage.alt, galleryImages[0]);
+                }
+            }
+        }
+
+        // Function to show notification when image changes
+        function showImageChangeNotification() {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full';
+            notification.innerHTML = `
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 backdrop-blur-sm">
+                    <div class="flex items-center space-x-2">
+                        <div class="flex-shrink-0">
+                            <div class="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-sm">Đã thay đổi ảnh chính</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-x-full');
+                notification.classList.add('opacity-100', 'translate-x-0');
+            }, 100);
+            
+            // Hide notification after 2 seconds
+            setTimeout(() => {
+                notification.classList.remove('opacity-100', 'translate-x-0');
+                notification.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 2000);
         }
     </script>
 @endsection

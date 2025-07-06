@@ -41,7 +41,7 @@
                                     </td>
                                     <td class="px-6 py-4 font-semibold">{{ $logo->name }}</td>
                                     <td class="px-6 py-4">
-                                        @if ($logo->is_active === '1')
+                                        @if ($logo->is_active == '1')
                                             <span
                                                 class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-white font-bold shadow">Đang
                                                 sử dụng</span>
