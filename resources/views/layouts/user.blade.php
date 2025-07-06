@@ -174,6 +174,95 @@
 
     <!-- Cart Overlay -->
     <div id="cartOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- Notification System -->
+    @if (session('success'))
+        <div id="success-notification" class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full notification-enter">
+            <div class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-emerald-400/30 backdrop-blur-sm animate-pulse">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
+                            <svg class="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-sm">{{ session('success') }}</p>
+                        <p class="text-xs text-emerald-100">Thao tác thành công!</p>
+                    </div>
+                    <button onclick="closeNotification('success-notification')" class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Progress bar -->
+                <div class="mt-3 w-full bg-white/20 rounded-full h-1">
+                    <div id="success-progress-bar" class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div id="error-notification" class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full notification-enter">
+            <div class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-red-400/30 backdrop-blur-sm">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
+                            <svg class="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-sm">{{ session('error') }}</p>
+                        <p class="text-xs text-red-100">Đã xảy ra lỗi, vui lòng thử lại!</p>
+                    </div>
+                    <button onclick="closeNotification('error-notification')" class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Progress bar -->
+                <div class="mt-3 w-full bg-white/20 rounded-full h-1">
+                    <div id="error-progress-bar" class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session('info'))
+        <div id="info-notification" class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full notification-enter">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-blue-400/30 backdrop-blur-sm">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
+                            <svg class="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-sm">{{ session('info') }}</p>
+                        <p class="text-xs text-blue-100">Thông tin quan trọng!</p>
+                    </div>
+                    <button onclick="closeNotification('info-notification')" class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Progress bar -->
+                <div class="mt-3 w-full bg-white/20 rounded-full h-1">
+                    <div id="info-progress-bar" class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Search Modal -->
     <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
@@ -499,7 +588,25 @@
 </body>
 
 <style>
+/* Notification animations */
+.notification-enter {
+    transition: all 0.5s ease-out;
+}
 
+.notification-enter.opacity-0 {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.notification-enter.opacity-100 {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Progress bar animation */
+.progress-bar-shrink {
+    transition: width 5s linear;
+}
 </style>
 
 <!-- Floating Chat Icon -->
@@ -659,6 +766,56 @@ document.getElementById('searchModal')?.addEventListener('click', function(e) {
 // Mobile menu toggle
 document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
   document.getElementById('mobileMenu').classList.toggle('hidden');
+});
+
+// Notification System
+function showNotification(notificationId) {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+        // Show notification
+        notification.classList.remove('opacity-0', 'translate-x-full');
+        notification.classList.add('opacity-100', 'translate-x-0');
+
+        // Start progress bar animation
+        const progressBar = document.getElementById(notificationId.replace('-notification', '-progress-bar'));
+        if (progressBar) {
+            setTimeout(() => {
+                progressBar.style.width = '0%';
+            }, 100);
+        }
+
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            closeNotification(notificationId);
+        }, 5000);
+    }
+}
+
+function closeNotification(notificationId) {
+    const notification = document.getElementById(notificationId);
+    if (notification) {
+        notification.classList.remove('opacity-100', 'translate-x-0');
+        notification.classList.add('opacity-0', 'translate-x-full');
+    }
+}
+
+// Show notifications on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const successNotification = document.getElementById('success-notification');
+    const errorNotification = document.getElementById('error-notification');
+    const infoNotification = document.getElementById('info-notification');
+
+    if (successNotification) {
+        setTimeout(() => showNotification('success-notification'), 100);
+    }
+
+    if (errorNotification) {
+        setTimeout(() => showNotification('error-notification'), 100);
+    }
+
+    if (infoNotification) {
+        setTimeout(() => showNotification('info-notification'), 100);
+    }
 });
 </script>
 

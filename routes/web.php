@@ -18,14 +18,15 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Logo;
 
 // <<<<<<< UI-Improved-Profile
-Route::get('', function () {
-    return view('user.index', [
-        'banners' => \App\Models\Banner::all(),
-        'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
-        'categories' => \App\Models\Category::all(),
-        'logos' => Logo::all(),
-    ]);
-})->name('home');
+// Route này đã được thay thế bằng HomeController::index
+// Route::get('', function () {
+//     return view('user.index', [
+//         'banners' => \App\Models\Banner::all(),
+//         'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
+//         'categories' => \App\Models\Category::all(),
+//         'logos' => Logo::all(),
+//     ]);
+// })->name('home');
 
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
@@ -77,7 +78,9 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
 use App\Models\Blog;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
 use App\Http\Controllers\SubscribeController;
+
 
 Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
 // routes/web.php
