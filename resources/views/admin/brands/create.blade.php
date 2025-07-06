@@ -1,149 +1,69 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Quản lý thương hiệu') }}
-        </h2>
+        <div
+            class="flex items-center gap-3 bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 rounded-2xl shadow-xl px-6 py-4 mb-6">
+            <i class="fas fa-copyright text-3xl text-white drop-shadow-lg animate-pulse"></i>
+            <h2 class="font-extrabold text-2xl text-white tracking-wide drop-shadow-lg">Thêm thương hiệu mới</h2>
+        </div>
     </x-slot>
-
-    <div class="py-12">
-        <h1 class="font-semibold text-gray-800 leading-tight"
-            style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
-            {{ __('Thêm thương hiệu mới') }}
-        </h1>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-md rounded-lg p-6">
-                <form method="POST" action="{{ route('admin.brands.store') }}" enctype="multipart/form-data">
+    <div class="py-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
+                <h1
+                    class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 drop-shadow-lg flex items-center gap-2 mb-8">
+                    <i class="fas fa-plus-circle animate-bounce text-indigo-400"></i>
+                    Thêm thương hiệu mới
+                </h1>
+                <form action="{{ route('admin.brands.store') }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-6">
                     @csrf
-
-                    <!-- Tên thương hiệu -->
-                    <div class="mb-4">
-                        <label for="name" class="block text-gray-700 font-medium mb-1">Tên thương hiệu <span class="text-red-500">*</span></label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('name') border-red-500 @enderror"
-                            placeholder="Nhập tên thương hiệu">
+                    <div>
+                        <label for="name" class="block text-sm font-bold mb-2 text-indigo-700">Tên thương hiệu</label>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                            class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
                         @error('name')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <!-- Slug -->
-                    <div class="mb-4">
-                        <label for="slug" class="block text-gray-700 font-medium mb-1">Slug <span class="text-red-500">*</span></label>
-                        <input type="text" id="slug" name="slug" value="{{ old('slug') }}" required
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('slug') border-red-500 @enderror"
-                            placeholder="ten-thuong-hieu">
-                        @error('slug')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Hình ảnh thumbnail -->
-                    <div class="mb-4">
-                        <label for="logo" class="block text-gray-700 font-medium mb-1">Hình ảnh thumbnail <span class="text-red-500">*</span></label>
-                        <input type="file" id="logo" name="logo" accept="image/*" required
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('logo') border-red-500 @enderror">
-                        @error('logo')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Mô tả -->
-                    <div class="mb-4">
-                        <label for="description" class="block text-gray-700 font-medium mb-1">Mô tả</label>
-                        <textarea id="description" name="description" rows="4"
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('description') border-red-500 @enderror"
-                            placeholder="Nhập mô tả thương hiệu">{{ old('description') }}</textarea>
+                    <div>
+                        <label for="description" class="block text-sm font-bold mb-2 text-indigo-700">Mô tả</label>
+                        <textarea name="description" id="description" rows="4"
+                            class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">{{ old('description') }}</textarea>
                         @error('description')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-{{--
-                    <!-- Giá gốc -->
-                    <div class="mb-4">
-                        <label for="price" class="block text-gray-700 font-medium mb-1">Giá gốc <span class="text-red-500">*</span></label>
-                        <input type="number" id="price" name="price" value="{{ old('price') }}" step="0.01" min="0" required
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('price') border-red-500 @enderror"
-                            placeholder="0.00">
-                        @error('price')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <div>
+                        <label for="logo" class="block text-sm font-bold mb-2 text-indigo-700">Logo</label>
+                        <input type="file" name="logo" id="logo" accept="image/*"
+                            class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow bg-white">
+                        @error('logo')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <!-- Giá khuyến mãi -->
-                    <div class="mb-4">
-                        <label for="price_sale" class="block text-gray-700 font-medium mb-1">Giá khuyến mãi</label>
-                        <input type="number" id="price_sale" name="price_sale" value="{{ old('price_sale') }}" step="0.01" min="0"
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('price_sale') border-red-500 @enderror"
-                            placeholder="0.00">
-                        @error('price_sale')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Danh mục -->
-                    <div class="mb-4">
-                        <label for="category_id" class="block text-gray-700 font-medium mb-1">Danh mục <span class="text-red-500">*</span></label>
-                        <select id="category_id" name="category_id" required
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('category_id') border-red-500 @enderror">
-                            <option value="">Chọn danh mục</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
+                    <div>
+                        <label for="is_active" class="block text-sm font-bold mb-2 text-indigo-700">Trạng thái</label>
+                        <select name="is_active" id="is_active"
+                            class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
+                            <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Đang hoạt động</option>
+                            <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Ẩn</option>
                         </select>
-                        @error('category_id')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @error('is_active')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <!-- Thương hiệu -->
-                    <div class="mb-4">
-                        <label for="brand_id" class="block text-gray-700 font-medium mb-1">Thương hiệu <span class="text-red-500">*</span></label>
-                        <select id="brand_id" name="brand_id" required
-                            class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('brand_id') border-red-500 @enderror">
-                            <option value="">Chọn thương hiệu</option>
-                            @foreach($brands as $brand)
-                                <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>
-                                    {{ $brand->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('brand_id')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div> --}}
-
-                    <!-- Nút điều hướng -->
-                    <div class="flex justify-between">
+                    <div class="flex justify-end gap-4 mt-8">
                         <a href="{{ route('admin.brands.index') }}"
-                            class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-2 rounded transition duration-200">
-                            Quay lại
+                            class="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-600 hover:to-gray-400 text-white font-bold py-2 px-6 rounded-xl shadow-lg flex items-center gap-2 transition">
+                            <i class="fas fa-arrow-left"></i> Quay lại
                         </a>
                         <button type="submit"
-                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded transition duration-200">
-                            Thêm thương hiệu
+                            class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-2 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
+                            <i class="fas fa-save"></i> Lưu
                         </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <script>
-        // Tự động tạo slug từ tên thương hiệu
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value;
-            const slug = name
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[đĐ]/g, 'd')
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim('-');
-            document.getElementById('slug').value = slug;
-        });
-    </script>
 </x-app-layout>

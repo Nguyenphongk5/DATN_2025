@@ -3,171 +3,56 @@
 @endphp
 
 @if ($isAdminOrStaff)
-    <!DOCTYPE html>
-    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Fonts + Tailwind + Alpine -->
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-            crossorigin="anonymous" />
-
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            inter: ['Inter', 'sans-serif'],
-                        },
-                        animation: {
-                            fadeIn: 'fadeIn 0.5s ease-out',
-                        },
-                        keyframes: {
-                            fadeIn: {
-                                '0%': {
-                                    opacity: '0',
-                                    transform: 'translateY(10px)'
-                                },
-                                '100%': {
-                                    opacity: '1',
-                                    transform: 'translateY(0)'
-                                },
-                            },
-                        },
-                        colors: {
-                            primary: {
-                                DEFAULT: '#4f46e5',
-                                dark: '#4338ca',
-                                light: '#6366f1'
-                            }
-                        }
-                    }
-                },
-                darkMode: 'class',
-            }
-        </script>
-    </head>
-
-    <body class="font-inter bg-gray-100 text-gray-800 antialiased">
-        <div class="flex min-h-screen">
-
-            <!-- Sidebar -->
-            <aside class="w-64 bg-gray-800 text-white flex flex-col">
-                <div class="fixed top-0 left-0 h-screen w-60 bg-gray-800 text-white">
-                    <div class="h-16 flex items-center justify-center bg-gray-900 text-xl font-bold tracking-wide">
-                        Admin Panel
-                    </div>
-                    <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
-                        <a href="{{ route('admin.dashboard') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('dashboard') ? 'bg-gray-700 font-semibold' : '' }}">
-                            📊 Bảng điều khiển
-                        </a>
-                        <a href="{{ route('admin.products.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.products.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Products
-                        </a>
-                        {{-- <a href="{{ route('orders.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                🧾 Đơn hàng
-            </a> --}}
-                        <a href="{{ route('admin.users.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.users.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Users
-                        </a>
-                        <a href="{{ route('admin.product_variants.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.product_variants.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Product Variants
-                        </a>
-                        <a href="{{ route('admin.categories.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.categories.index') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Categories
-                        </a>
-                        <a href="{{ route('admin.brands.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.brands.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Brands
-                        </a>
-                        <a href="{{ route('admin.blogs.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.blogs.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Blogs
-                        </a>
-                        <a href="{{ route('admin.logos.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.logos.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Logos
-                        </a>
-                        <a href="{{ route('admin.orders.index') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                            Orders
-                        </a>
-                        <a href="{{ route('profile.edit') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition">
-                            ⚙️ Hồ sơ
-                        </a>
-                    </nav>
-                    <form method="POST" action="{{ route('logout') }}" class="mb-4 px-4">
-                        @csrf
-                        <button type="submit"
-                            class="w-full text-left px-4 py-2 rounded hover:bg-red-600 bg-red-500 transition text-white" style="position: absolute; bottom: 0; left: 20%; width: 150px; text-align: center;;">
-                            Đăng xuất
-                        </button>
-                    </form>
-                </div>
-            </aside>
-
-            <!-- Main Content -->
-            <div class="flex-1 flex flex-col">
-
-                <!-- Navbar -->
-                <header class="bg-white border-b shadow h-16 flex items-center justify-between px-6">
-                    <div class="text-lg font-semibold">
-                        @yield('title', 'Quản trị hệ thống')
-                    </div>
-                    <div class="flex items-center space-x-3">
-                       <span>{{ auth()->user()->name }}</span>
-
-                        <img src="{{ asset('storage/' . auth()->user()->avatar
-) }}" alt="Avatar"
-                            class="w-8 h-8 rounded-full object-cover border border-gray-300">
-                    </div>
-                </header>
-
-                <!-- Page Content -->
-                <main class="flex-1 p-6">
-                    {{-- @yield('content') --}}
-                    {{ $slot }}
-                </main>
-
+    <!-- Admin Sidebar -->
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed top-0 left-0 z-30 h-screen w-64 bg-gradient-to-b from-indigo-900 via-indigo-700 to-sky-800 text-white transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:inset-0 flex flex-col shadow-2xl ring-4 ring-indigo-300/30">
+        <div class="h-20 flex flex-col items-center justify-center bg-gradient-to-r from-indigo-700 via-sky-600 to-cyan-500 text-2xl font-extrabold tracking-wide border-b-2 border-indigo-400/30 shadow-lg relative">
+            <div class="w-14 h-14 bg-gradient-to-br from-pink-400 via-indigo-500 to-sky-400 rounded-full flex items-center justify-center text-white font-bold shadow-xl border-4 border-white/40 mt-2 mb-1 animate-pulse">
+                <i class="fas fa-crown text-yellow-300 text-2xl drop-shadow-lg animate-bounce"></i>
             </div>
+            <span class="text-white text-lg font-bold drop-shadow-lg tracking-widest">Admin Panel</span>
+            <button @click="sidebarOpen = false" class="md:hidden absolute right-4 top-4 text-white text-2xl focus:outline-none hover:scale-110 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-
-        <!-- Scrollbar custom -->
-        <style>
-            ::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: #f1f5f9;
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: #94a3b8;
-                border-radius: 4px;
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #64748b;
-            }
-        </style>
-    </body>
-
-    </html>
-@else
-    @include('layouts.user')
-    @section('content')
-    @endsection
+        <nav class="flex-1 px-4 py-6 space-y-1 text-base overflow-y-auto custom-scrollbar">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-chart-line text-sky-300 drop-shadow-lg"></i> Dashboard
+            </a>
+            <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.products.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-box text-pink-300 drop-shadow-lg"></i> Products
+            </a>
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.users.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-users text-yellow-200 drop-shadow-lg"></i> Users
+            </a>
+            <a href="{{ route('admin.product_variants.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.product_variants.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-cubes text-cyan-300 drop-shadow-lg"></i> Product Variants
+            </a>
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.categories.index') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-tags text-green-200 drop-shadow-lg"></i> Categories
+            </a>
+            <a href="{{ route('admin.brands.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.brands.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-copyright text-orange-200 drop-shadow-lg"></i> Brands
+            </a>
+            <a href="{{ route('admin.blogs.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.blogs.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-blog text-fuchsia-200 drop-shadow-lg"></i> Blogs
+            </a>
+            <a href="{{ route('admin.logos.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.logos.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-image text-cyan-200 drop-shadow-lg"></i> Logos
+            </a>
+            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.orders.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-receipt text-lime-200 drop-shadow-lg"></i> Orders
+            </a>
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60">
+                <i class="fas fa-user-cog text-white drop-shadow-lg"></i> Profile
+            </a>
+        </nav>
+        <form method="POST" action="{{ route('logout') }}" class="mt-auto mb-6 px-4">
+            @csrf
+            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 transition text-white font-semibold shadow-lg ring-2 ring-pink-200/40">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </form>
+    </aside>
+    <!-- Overlay for mobile -->
+    <div x-show="sidebarOpen" class="fixed inset-0 bg-black bg-opacity-40 z-20 md:hidden" @click="sidebarOpen = false"></div>
 @endif

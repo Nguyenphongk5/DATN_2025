@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BrandController extends Controller
 {
@@ -16,12 +17,11 @@ class BrandController extends Controller
     {
         //
         $query = DB::table('brands');
-        if($request->has('is_active') && $request->is_active !== ''){
+        if ($request->has('is_active') && $request->is_active !== '') {
             $query->where('brands.is_active', $request->is_active);
         }
         $brands = $query->paginate(10);
         return view('admin.brands.index', compact('brands'));
-
     }
 
     /**
@@ -41,10 +41,18 @@ class BrandController extends Controller
         //
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:brands,slug',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description' => 'nullable|string',
+            'is_active' => 'required|boolean',
         ]);
+        $data['slug'] = Str::slug($data['name']);
+        // Đảm bảo slug là duy nhất
+        $originalSlug = $data['slug'];
+        $i = 1;
+        while (DB::table('brands')->where('slug', $data['slug'])->exists()) {
+            $data['slug'] = $originalSlug . '-' . $i;
+            $i++;
+        }
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('brands', 'public');
         }
@@ -62,7 +70,7 @@ class BrandController extends Controller
         if (!$brand) {
             return redirect()->route('admin.brands.index')->with('error', 'Brand not found.');
         }
-        return view('admin.brands.detail', compact('brand'));
+        return view('admin.brands.show', compact('brand'));
     }
 
     /**
@@ -86,16 +94,23 @@ class BrandController extends Controller
         //
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:brands,slug,' . $brand->id,
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
+        $data['slug'] = Str::slug($data['name']);
+        // Đảm bảo slug là duy nhất
+        $originalSlug = $data['slug'];
+        $i = 1;
+        while (DB::table('brands')->where('slug', $data['slug'])->exists()) {
+            $data['slug'] = $originalSlug . '-' . $i;
+            $i++;
+        }
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('brands', 'public');
             // unset($data['logo']); // Remove logo from data if not uploaded
-        }else {
-             $data['logo'] = DB::table('brands')->where('id', $brand->id)->value('logo');
+        } else {
+            $data['logo'] = DB::table('brands')->where('id', $brand->id)->value('logo');
         }
         DB::table('brands')->where('id', $brand->id)->update($data);
         return redirect()->route('admin.brands.index')->with('success', 'Brand updated successfully.');

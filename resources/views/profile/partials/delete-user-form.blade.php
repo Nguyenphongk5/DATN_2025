@@ -1,47 +1,40 @@
-<section class="mb-5">
-    <div class="card border-danger shadow-sm rounded-4">
-        <div class="card-body">
-            <h5 class="card-title text-danger fw-bold">🗑️ Delete Account</h5>
-            <p class="card-text text-muted">
-                Once your account is deleted, all of its data will be permanently removed. Please download any data you want to keep before proceeding.
-            </p>
-
-            <!-- Trigger Delete Modal -->
-            <button type="button" class="btn btn-outline-danger rounded-pill mt-3" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-                Delete Account
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-danger">
+<section class="mb-8">
+    <div class="bg-white/90 shadow-xl rounded-2xl p-8 border border-red-200">
+        <h4 class="text-lg font-bold text-red-600 mb-2 flex items-center gap-2"><i
+                class="fas fa-exclamation-triangle"></i> Delete Account</h4>
+        <p class="text-gray-500 mb-4">Once your account is deleted, all of its data will be permanently removed. Please
+            download any data you want to keep before proceeding.</p>
+        <!-- Trigger Delete Modal -->
+        <button type="button" @click="showModal = true"
+            class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-pink-500 hover:to-red-400 text-white font-bold py-2 px-8 rounded-xl shadow-lg flex items-center gap-2 transition mt-3">Delete
+            Account</button>
+        <!-- Modal -->
+        <div x-data="{ showModal: false }" x-show="showModal" style="display: none;"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-red-400">
+                <h5 class="text-xl font-bold text-red-600 mb-4 flex items-center gap-2"><i
+                        class="fas fa-exclamation-circle"></i> Confirm Deletion</h5>
                 <form method="POST" action="{{ route('profile.destroy') }}">
                     @csrf
                     @method('delete')
-
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="confirmDeleteModalLabel">⚠️ Confirm Deletion</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <p class="mb-4 text-gray-700">Are you sure you want to delete your account? This action cannot be
+                        undone.</p>
+                    <div class="mb-6">
+                        <label for="password" class="block text-sm font-bold mb-2 text-indigo-700">Enter your
+                            password</label>
+                        <input type="password" id="password" name="password"
+                            class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-pink-400 focus:outline-none shadow @error('password', 'userDeletion') border-red-500 @enderror"
+                            placeholder="Password" required>
+                        @error('password', 'userDeletion')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
                     </div>
-
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold">Enter your password</label>
-                            <input type="password" id="password" name="password"
-                                   class="form-control @error('password', 'userDeletion') is-invalid @enderror"
-                                   placeholder="Password" required>
-                            @error('password', 'userDeletion')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger rounded-pill">Delete Account</button>
+                    <div class="flex justify-between gap-4">
+                        <button type="button" @click="showModal = false"
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-xl shadow">Cancel</button>
+                        <button type="submit"
+                            class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-pink-500 hover:to-red-400 text-white font-bold py-2 px-6 rounded-xl shadow">Delete
+                            Account</button>
                     </div>
                 </form>
             </div>
