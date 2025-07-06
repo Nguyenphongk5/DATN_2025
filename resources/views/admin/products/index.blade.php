@@ -139,15 +139,24 @@
 
                                         </td>
                                         <td class="px-6 py-4">
-                                            <div class="flex gap-2 justify-center">
+                                            <div class="d-flex gap-2 justify-center items-center">
                                                 <a href="{{ route('admin.products.show', $product->id) }}"
-                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                                    class="btn btn-outline-info">
                                                     Chi tiết
                                                 </a>
                                                 <a href="{{ route('admin.products.edit', $product->id) }}"
-                                                    class="bg-yellow-500 btn btn-primary hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                                                    class="btn btn-outline-warning">
                                                     Sửa
                                                 </a>
+                                                <form action="{{ route('admin.products.destroy', $product->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không? Hành động này không thể hoàn tác.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-outline-danger">
+                                                        Xóa
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>

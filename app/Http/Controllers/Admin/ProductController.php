@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\ProductGallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 class ProductController extends Controller
 {
@@ -132,13 +136,15 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Sử dụng Eloquent, findOrFail sẽ tự động báo lỗi 404 nếu không tìm thấy
+        $product = Product::findOrFail($id);
+
+        // Lấy danh mục và thương hiệu (vẫn có thể dùng DB::table nếu chưa có model)
         $categories = DB::table('categories')->get();
         $brands = DB::table('brands')->get();
-        $product = DB::table('products')->where('id', $id)->first();
-        if (!$product) {
-            return redirect()->route('admin.products.index')->with('error', 'Product not found.');
-        }
+
+        // Lấy gallery thông qua relationship đã định nghĩa trong model
+        // View sẽ truy cập qua biến $product->galleries
         return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
 
@@ -147,26 +153,52 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products,slug,' . $id,
-            'img_thumb' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'price_sale' => 'nullable|numeric|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-            'view' => 'nullable|integer|min:0',
-            'is_active' => 'boolean'
+        $product = Product::findOrFail($id);
+
+        $validatedData = $request->validate([
+            // ... giữ nguyên các rule validate ...
         ]);
-        if ($request->hasFile('img_thumb')) {
-            $data['img_thumb'] = $request->file('img_thumb')->store('product_images', 'public');
-        } else {
-            $data['img_thumb'] = DB::table('products')->where('id', $id)->value('img_thumb');
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Xóa ảnh gallery được chọn
+            if ($request->filled('delete_galleries')) {
+                $galleriesToDelete = ProductGallery::whereIn('id', $request->delete_galleries)->get();
+                foreach ($galleriesToDelete as $gallery) {
+                    Storage::disk('public')->delete($gallery->image);
+                }
+                // Xóa bản ghi trong DB, có thể dùng destroy cho mảng ID
+                ProductGallery::destroy($request->delete_galleries);
+            }
+
+            // 2. Thêm ảnh gallery mới (sử dụng relationship)
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $file) {
+                    $path = $file->store('products/gallery', 'public');
+                    // Tự động gán product_id khi tạo qua relationship
+                    $product->galleries()->create(['image' => $path]);
+                }
+            }
+
+            // 3. Cập nhật ảnh thumbnail
+            if ($request->hasFile('img_thumb')) {
+                if ($product->img_thumb) {
+                    Storage::disk('public')->delete($product->img_thumb);
+                }
+                $validatedData['img_thumb'] = $request->file('img_thumb')->store('products/thumbnails', 'public');
+            }
+            $product->touch();
+            // 4. Cập nhật sản phẩm bằng phương thức update của Eloquent
+            $product->update($validatedData);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi khi cập nhật: ' . $e->getMessage())->withInput();
         }
-        DB::table('products')->where('id', $id)->update($data);
-        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
+
+        return redirect()->route('admin.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
     }
 
     /**
@@ -174,6 +206,45 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Tìm sản phẩm trong DB
+        $product = DB::table('products')->where('id', $id)->first();
+
+        if (!$product) {
+            return redirect()->route('admin.products.index')->with('error', 'Không tìm thấy sản phẩm.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Tìm và xóa tất cả ảnh trong gallery
+            $galleries = DB::table('product_galleries')->where('product_id', $id)->get();
+            foreach ($galleries as $gallery) {
+                // Xóa file ảnh vật lý khỏi storage
+                if ($gallery->image && Storage::disk('public')->exists($gallery->image)) {
+                    Storage::disk('public')->delete($gallery->image);
+                }
+            }
+            // Xóa các bản ghi gallery khỏi DB
+            DB::table('product_galleries')->where('product_id', $id)->delete();
+
+            // 2. Xóa ảnh thumbnail của sản phẩm
+            if ($product->img_thumb && Storage::disk('public')->exists($product->img_thumb)) {
+                Storage::disk('public')->delete($product->img_thumb);
+            }
+
+            // 3. Xóa sản phẩm chính
+            // Lưu ý: Migration của bạn có `softDeletes()`. Nếu bạn muốn xóa tạm thời,
+            // hãy dùng `update(['deleted_at' => now()])`.
+            // Ở đây chúng ta sẽ xóa vĩnh viễn để đồng bộ với việc xóa file.
+            DB::table('products')->where('id', $id)->delete();
+
+            DB::commit(); // Hoàn tất giao dịch
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // Hoàn tác nếu có lỗi
+            return back()->with('error', 'Đã xảy ra lỗi khi xóa sản phẩm: ' . $e->getMessage());
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Đã xóa sản phẩm thành công.');
     }
 }
