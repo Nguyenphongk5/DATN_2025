@@ -29,7 +29,7 @@ class HomeController extends Controller
 
         // Lấy tất cả các danh mục để lọc
         $categories = DB::table('categories')->get();
-        $blogs = Blog::where('is_active', true)->latest()->take(3)->get();
+        $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
 
         // Lấy logos
         $logos = Logo::all();

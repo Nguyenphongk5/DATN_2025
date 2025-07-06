@@ -426,7 +426,7 @@
                                 </div>
                             </div>
                             <h3 class="text-lg font-bold mb-2">{{ $blog->title }}</h3>
-                            <p class="text-gray-600 mb-4">{{ Str::limit($blog->short_description, 100) }}</p>
+                            <p class="text-gray-600 mb-4">{{ \Illuminate\Support\Str::limit($blog->short_description, 100) }}</p>
                             {{-- <a href="{{ route('blog.detail', $blog->slug) }}" class="mt-auto text-blue-600 font-semibold hover:underline">Đọc tiếp</a> --}}
                         </div>
                     </article>

@@ -21,7 +21,7 @@
                     <div class="mb-4">
                         <label for="user_id" class="block text-gray-700 font-medium mb-1">Tên tác giả <span
                                 class="text-red-500">*</span></label>
-                        <input type="text" value="{{ Auth::user()->name }}" readonly
+                        <input type="text" value="{{ auth()->user()->name }}" readonly
                             class="w-full border border-gray-300 rounded px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none focus:border-blue-500">
                     </div>
 

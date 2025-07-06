@@ -97,14 +97,32 @@
                             <div class="flex border-b pb-2">
                                 <span class="font-bold text-indigo-700 w-40 flex items-center gap-2"><i
                                         class="fas fa-calendar-plus"></i> Ngày tạo:</span>
-                                <span
-                                    class="text-gray-900">{{ $product->created_at ? $product->created_at->format('d/m/Y H:i:s', $product->created_at) : 'N/A' }}</span>
+                                <span class="text-gray-900">
+                                    @if($product->created_at)
+                                        @if(is_string($product->created_at))
+                                            {{ \Carbon\Carbon::parse($product->created_at)->format('d/m/Y H:i:s') }}
+                                        @else
+                                            {{ $product->created_at->format('d/m/Y H:i:s') }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </span>
                             </div>
                             <div class="flex border-b pb-2">
                                 <span class="font-bold text-indigo-700 w-40 flex items-center gap-2"><i
                                         class="fas fa-calendar-check"></i> Cập nhật lần cuối:</span>
-                                <span
-                                    class="text-gray-900">{{ $product->updated_at ? $product->updated_at->format('d/m/Y H:i:s') : 'N/A' }}</span>
+                                <span class="text-gray-900">
+                                    @if($product->updated_at)
+                                        @if(is_string($product->updated_at))
+                                            {{ \Carbon\Carbon::parse($product->updated_at)->format('d/m/Y H:i:s') }}
+                                        @else
+                                            {{ $product->updated_at->format('d/m/Y H:i:s') }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     </div>

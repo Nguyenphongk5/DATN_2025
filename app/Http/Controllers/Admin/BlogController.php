@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -16,7 +17,7 @@ class BlogController extends Controller
     {
         //
         $query = DB::table('blogs');
-        if($request->has('is_active') && $request->is_active !== ''){
+        if ($request->has('is_active') && $request->is_active !== '') {
             $query->where('blogs.is_active', $request->is_active);
         }
         $blogs = $query
@@ -66,10 +67,10 @@ class BlogController extends Controller
     {
         //
         $blog = DB::table('blogs')
-        ->join('users', 'blogs.user_id', '=', 'users.id')
-        ->select('blogs.*', 'users.name as author_name')
-        ->where('blogs.id', $id)->first();
-        if(!$blog){
+            ->join('users', 'blogs.user_id', '=', 'users.id')
+            ->select('blogs.*', 'users.name as author_name')
+            ->where('blogs.id', $id)->first();
+        if (!$blog) {
             return redirect()->route('admin.blogs.index')->with('error', 'Blog not found.');
         }
         return view('admin.blogs.detail', compact('blog'));
@@ -96,13 +97,22 @@ class BlogController extends Controller
         //
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:blogs,slug,' . $id,
             'img_avt' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'short_description' => 'nullable|string|max:500',
             'content' => 'required|string',
-            'user_id' => 'required|exists:users,id',
             'is_active' => 'boolean'
         ]);
+
+        // Tự động tạo slug từ title
+        $data['slug'] = Str::slug($data['title']);
+
+        // Kiểm tra slug unique
+        $existingSlug = DB::table('blogs')->where('slug', $data['slug'])->where('id', '!=', $id)->first();
+        if ($existingSlug) {
+            $data['slug'] = $data['slug'] . '-' . time();
+        }
+        $data['user_id'] = Auth::id();
+
         if ($request->hasFile('img_avt')) {
             $data['img_avt'] = $request->file('img_avt')->store('blog_images', 'public');
         } else {

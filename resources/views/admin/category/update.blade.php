@@ -19,7 +19,7 @@
                     @method('PUT')
                     <div>
                         <label for="name" class="block text-sm font-bold mb-2 text-indigo-700">Tên danh mục</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}" required
+                        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}"
                             class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
                         @error('name')
                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
@@ -47,7 +47,7 @@
                         @enderror
                     </div>
                     <div class="flex justify-end gap-4 mt-8">
-                        <a href="{{ route('admin.categories.list') }}"
+                        <a href="{{ route('admin.categories.index') }}"
                             class="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-600 hover:to-gray-400 text-white font-bold py-2 px-6 rounded-xl shadow-lg flex items-center gap-2 transition">
                             <i class="fas fa-arrow-left"></i> Quay lại
                         </a>

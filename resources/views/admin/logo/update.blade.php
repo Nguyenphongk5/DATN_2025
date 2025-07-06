@@ -32,7 +32,7 @@
                             class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow bg-white">
                         @if ($logo->image)
                             <div class="mt-2 flex items-center gap-2">
-                                <img src="{{ asset('storage/logos/' . $logo->image) }}" alt="Logo hiện tại"
+                                <img src="{{ asset('storage/' . $logo->image) }}" alt="Logo hiện tại"
                                     class="h-12 w-12 object-contain rounded-xl shadow border border-indigo-100">
                                 <span class="text-xs text-gray-500">Logo hiện tại</span>
                             </div>
@@ -55,7 +55,7 @@
                         @enderror
                     </div>
                     <div class="flex justify-end gap-4 mt-8">
-                        <a href="{{ route('admin.logos.list') }}"
+                        <a href="{{ route('admin.logos.index') }}"
                             class="bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-600 hover:to-gray-400 text-white font-bold py-2 px-6 rounded-xl shadow-lg flex items-center gap-2 transition">
                             <i class="fas fa-arrow-left"></i> Quay lại
                         </a>
