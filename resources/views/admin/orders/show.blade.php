@@ -73,10 +73,10 @@
                                 @foreach ($order->orderDetails as $item)
                                     <tr>
                                         <td class="px-4 py-2 text-left font-semibold">{{ $item->product_name }}</td>
-                                        <td class="px-4 py-2">{{ $item->variant_name ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ $item->color_name ?? '-' }} | {{ $item->size_name ?? '-' }}</td>
                                         <td class="px-4 py-2">{{ $item->quantity }}</td>
-                                        <td class="px-4 py-2 text-right">{{ number_format($item->unit_price, 0, ',', '.') }} VNĐ</td>
-                                        <td class="px-4 py-2 text-right font-bold text-cyan-600">{{ number_format($item->total_price, 0, ',', '.') }} VNĐ</td>
+                                        <td class="px-4 py-2 text-right">{{ number_format($item->price, 0, ',', '.') }} VNĐ</td>
+                                        <td class="px-4 py-2 text-right font-bold text-cyan-600">{{ number_format($item->price, 0, ',', '.') }} VNĐ</td>
                                     </tr>
                                 @endforeach
                             </tbody>

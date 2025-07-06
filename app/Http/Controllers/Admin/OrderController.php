@@ -76,6 +76,10 @@ class OrderController extends Controller
         }
 
         // Nếu hợp lệ thì cập nhật
+        if ($newStatus == 4 && $order->payment_status !== 'Paid') {
+            $order->payment_status = 'Paid';
+            $order->save(); // Cập nhật phương thức thanh toán thành đã thanh toán
+        }
         $order->status = $request->status;
         $order->save();
 
