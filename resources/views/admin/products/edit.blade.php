@@ -275,20 +275,52 @@
         </div>
     </div>
 
-    <script>
-        // Tự động tạo slug từ tên sản phẩm
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value;
-            const slug = name
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[đĐ]/g, 'd')
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim('-');
-            document.getElementById('slug').value = slug;
-        });
-    </script>
+
 </x-app-layout>
+
+<script>
+    // Tự động tạo slug từ tên sản phẩm
+    document.getElementById('name').addEventListener('input', function() {
+        const name = this.value;
+        const slug = name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[đĐ]/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+        document.getElementById('slug').value = slug;
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileUpload');
+        const previewContainer = document.getElementById('image-preview-container');
+
+        if (fileInput && previewContainer) {
+            fileInput.addEventListener('change', function(event) {
+                previewContainer.innerHTML = ''; // Xóa nội dung mặc định
+                const files = event.target.files;
+
+                if (files.length === 0) {
+                    previewContainer.innerHTML =
+                        '<p class="col-span-full text-center self-center text-gray-400 italic">Chưa có ảnh nào được chọn</p>';
+                    return;
+                }
+
+                for (const file of files) {
+                    if (!file.type.startsWith('image/')) continue;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('w-full', 'h-24', 'object-cover', 'rounded-lg', 'border');
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
