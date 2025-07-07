@@ -20,7 +20,7 @@ class LogoController extends Controller
             $query->where('logos.is_active', $request->is_active);
         }
         $logos = $query->latest()->paginate(10);
-        return view('admin.logo.list', compact('logos')); // Giả sử bạn có view này
+        return view('admin.logo.index', compact('logos')); // Giả sử bạn có view này
     }
 
     /**
@@ -48,10 +48,15 @@ class LogoController extends Controller
         if (!Storage::disk('public')->exists($imagePath)) {
             throw new \Exception("Không thể lưu file ảnh.");
         }
+        if($request->boolean('is_active') == 1) {
+            Logo::where('id', '!=', $request->id)->update(['is_active' => 0]);
+        }else{
+            Logo::where('id', '!=', $request->id)->update(['is_active' => 1]);
+        }
         Logo::create([
             'name' => $request->name,
             'image' => $imagePath,
-            'is_active' => $request->boolean('active'), // Sử dụng boolean() để lấy giá trị boolean
+            'is_active' => $request->boolean('is_active'), // Sử dụng boolean() để lấy giá trị boolean
         ]);
 
         return redirect()->route('admin.logos.index')->with('success', 'Logo đã được thêm thành công!');
@@ -92,7 +97,11 @@ class LogoController extends Controller
             $newImagePath = $request->file('image')->store('logos', 'public');
             $data['image'] = $newImagePath;
         }
-
+        if($request->is_active == 1) {
+            Logo::where('id', '!=', $logo->id)->update(['is_active' => 0]);
+        }else{
+            Logo::where('id', '!=', $logo->id)->update(['is_active' => 1]);
+        }
         $logo->update($data);
 
         return redirect()->route('admin.logos.index')

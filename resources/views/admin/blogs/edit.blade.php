@@ -154,12 +154,12 @@
                         <label for="is_active" class="block text-gray-700 font-medium mb-1">Trạng Thái <span class="text-red-500">*</span></label>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="is_active" id="active1"
-                                value="1" {{ old('is_active', $product->is_active) == 1 ? 'checked' : '' }}>
+                                value="1" {{ old('is_active', $blog->is_active) == 1 ? 'checked' : '' }}>
                             <label class="form-check-label" for="active1">Kích hoạt</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="is_active" id="active0"
-                                value="0" {{ old('is_active', $product->is_active) == 0 ? 'checked' : '' }}>
+                                value="0" {{ old('is_active', $blog->is_active) == 0 ? 'checked' : '' }}>
                             <label class="form-check-label" for="active0">Ngưng hoạt động</label>
                         </div>
                         @error('is_active')
@@ -185,9 +185,8 @@
 
     <script>
         // Tự động tạo slug từ tên bài viết
-        document.getElementById('name').addEventListener('input', function() {
-            const name = this.value;
-            const slug = name
+        function generateSlug(str) {
+            return str
                 .toLowerCase()
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
@@ -195,8 +194,11 @@
                 .replace(/[^a-z0-9\s-]/g, '')
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-')
-                .trim('-');
-            document.getElementById('slug').value = slug;
+                .replace(/^[-]+|[-]+$/g, '');
+        }
+        document.getElementById('title').addEventListener('input', function() {
+            const title = this.value;
+            document.getElementById('slug').value = generateSlug(title);
         });
     </script>
 </x-app-layout>

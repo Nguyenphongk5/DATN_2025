@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Logo;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -162,9 +163,9 @@ class CartController extends Controller
 
     public function index()
     {
-
+        $logo = Logo::where('is_active', '1')->first();
         $cart = Cart::with(['items.productVariant.product'])->where('user_id', Auth::id())->first();
-        return view('user.cart', compact('cart'));
+        return view('user.cart', compact('cart', 'logo'));
     }
     public function remove($id)
     {

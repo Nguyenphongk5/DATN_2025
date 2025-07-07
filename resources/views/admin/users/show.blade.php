@@ -30,51 +30,96 @@
                     <table class="w-full table-auto border-collapse shadow-xl rounded-2xl overflow-hidden text-base">
                         <thead class="bg-gradient-to-r from-indigo-100 via-sky-100 to-cyan-100 text-indigo-700">
                             <tr>
-                                <th class="px-6 py-3 text-left font-bold uppercase">ID</th>
-                                <th class="px-6 py-3 text-left font-bold uppercase">Tên</th>
-                                <th class="px-6 py-3 text-left font-bold uppercase">Email</th>
-                                <th class="px-6 py-3 text-left font-bold uppercase">Vai trò</th>
-                                <th class="px-6 py-3 text-left font-bold uppercase">Ảnh đại diện</th>
+                                <th class="px-6 py-4 text-left font-bold">Thuộc tính</th>
+                                <th class="px-6 py-4 text-left font-bold">Giá trị</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-indigo-100 text-center">
-                            <tr>
+                        <tbody class="divide-y divide-indigo-100">
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">ID</td>
                                 <td class="px-6 py-4 font-bold text-indigo-500">{{ $user->id }}</td>
-                                <td class="px-6 py-4 font-semibold flex items-center gap-2 justify-center">
+                            </tr>
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">Tên người dùng</td>
+                                <td class="px-6 py-4 font-semibold flex items-center gap-2">
                                     <i class="fas fa-user-circle text-sky-400"></i> {{ $user->name }}
                                 </td>
+                            </tr>
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">Email</td>
                                 <td class="px-6 py-4">{{ $user->email }}</td>
-                                <td class="px-6 py-4 capitalize">
+                            </tr>
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">Vai trò</td>
+                                <td class="px-6 py-4">
                                     @if ($user->role === 'user' || $user->role == 0)
                                         <span
-                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold shadow"><i
-                                                class="fas fa-user"></i> Người dùng</span>
+                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold shadow">
+                                            <i class="fas fa-user"></i> Người dùng
+                                        </span>
                                     @elseif ($user->role === 'staff' || $user->role == 1)
                                         <span
-                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-bold shadow"><i
-                                                class="fas fa-user-tie"></i> Nhân viên</span>
+                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-bold shadow">
+                                            <i class="fas fa-user-tie"></i> Nhân viên
+                                        </span>
                                     @else
                                         <span
-                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-100 text-red-700 font-bold shadow"><i
-                                                class="fas fa-user-shield"></i> Quản trị viên</span>
+                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-100 text-red-700 font-bold shadow">
+                                            <i class="fas fa-user-shield"></i> Quản trị viên
+                                        </span>
                                     @endif
                                 </td>
+                            </tr>
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">Ảnh đại diện</td>
                                 <td class="px-6 py-4">
                                     @if ($user->avatar)
                                         <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar"
-                                            class="w-14 h-14 rounded-full object-cover mx-auto ring-4 ring-sky-300 shadow-lg">
+                                            class="w-14 h-14 rounded-full object-cover ring-2 ring-sky-300 shadow-lg">
                                     @else
                                         <span class="text-gray-400 italic">Chưa có</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">Ngày tạo</td>
+                                <td class="px-6 py-4">
+                                    @if($user->created_at)
+                                        @if(is_string($user->created_at))
+                                            {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y H:i:s') }}
+                                        @else
+                                            {{ $user->created_at->format('d/m/Y H:i:s') }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-indigo-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-indigo-700">Ngày cập nhật</td>
+                                <td class="px-6 py-4">
+                                    @if($user->updated_at)
+                                        @if(is_string($user->updated_at))
+                                            {{ \Carbon\Carbon::parse($user->updated_at)->format('d/m/Y H:i:s') }}
+                                        @else
+                                            {{ $user->updated_at->format('d/m/Y H:i:s') }}
+                                        @endif
+                                    @else
+                                        N/A
                                     @endif
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-8 flex justify-center">
+                <div class="mt-8 flex gap-4 justify-center">
                     <a href="{{ route('admin.users.index') }}"
                         class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
                         <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                    </a>
+                    <a href="{{ route('admin.users.edit', $user->id) }}"
+                        class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
                     </a>
                 </div>
             </div>

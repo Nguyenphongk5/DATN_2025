@@ -23,19 +23,20 @@ class HomeController extends Controller
         // Lấy sản phẩm mới nhất (giả sử là 5 sản phẩm mới nhất)
         $latestProducts = DB::table('products')
             ->orderBy('created_at', 'desc')
-            ->take(5)
+            ->where('is_active',1)
+            ->take(8)
             ->get();
         // Product::orderBy('created_at', 'desc')->take(5)->get();
 
         // Lấy tất cả các danh mục để lọc
         $categories = DB::table('categories')->get();
-        $blogs = Blog::where('is_active', true)->latest()->take(3)->get();
+        $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
 
         // Lấy logos
-        $logos = Logo::all();
+        $logo = Logo::where('is_active', '1')->first();
 
         // Trả về view với các thông tin cần thiết
-        return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'logos'));
+        return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'logo'));
     }
 
 
@@ -145,7 +146,7 @@ class HomeController extends Controller
 
         // Lấy tất cả các danh mục để lọc
         $categories = DB::table('categories')->where('is_active', 1)->get();
-        
+
         // Lấy tất cả các thương hiệu để lọc
         $brands = DB::table('brands')->where('is_active', 1)->get();
 
@@ -153,8 +154,9 @@ class HomeController extends Controller
         $totalProducts = DB::table('products')->where('is_active', 1)->count();
         $totalCategories = DB::table('categories')->where('is_active', 1)->count();
         $totalBrands = DB::table('brands')->where('is_active', 1)->count();
+        $logo = Logo::where('is_active', '1')->first();
 
-        return view('user.all-products', compact('products', 'categories', 'brands', 'totalProducts', 'totalCategories', 'totalBrands'));
+        return view('user.all-products', compact('products', 'categories', 'brands', 'totalProducts', 'totalCategories', 'totalBrands', 'logo'));
     }
     public function show(string $id)
     {
@@ -167,20 +169,22 @@ class HomeController extends Controller
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->select('products.*', 'categories.name as category_name')
             ->where('products.id', $id)->first();
-            
+
         // Lấy ảnh gallery
         $galleryImages = DB::table('product_galleries')
             ->where('product_id', $id)
             ->where('is_active', 1)
             ->orderBy('sort_order', 'asc')
             ->get();
-            
+
         $products = DB::table('products')
             ->where('category_id', "=", $product->category_id)
+            ->where('is_active', 1)
             ->limit(8)
             ->get();
-            
-        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'galleryImages'));
+        $logo = Logo::where('is_active', '1')->first();
+
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'galleryImages', 'logo'));
     }
     public function edit(string $id)
     {

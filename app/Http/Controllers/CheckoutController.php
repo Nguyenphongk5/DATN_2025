@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Cart, Order, OrderDetail, ProductVariant, Voucher};
+use App\Models\{Cart, Logo, Order, OrderDetail, ProductVariant, Voucher};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Validator};
 use Illuminate\Support\Str;
@@ -36,8 +36,8 @@ class CheckoutController extends Controller
             /* Lưu lại ids để placeOrder() dùng */
             session(['selected_items' => $ids]);
         }
-
-        return view('user.order', compact('cart'));
+        $logo = Logo::where('is_active', 1)->first();
+        return view('user.order', compact('cart', 'logo'));
     }
 
     /* ================================================
@@ -143,18 +143,7 @@ class CheckoutController extends Controller
         //     ]);
 
         // /* ---------- Gửi mail ---------- */
-        $mailData = [
-            'name'           => $request->name,
-            'phone'          => $request->phone,
-            'address'        => $request->address,
-            'note'           => $request->note,
-            'total'          => $totalAmount,
-            'payment_method' => $request->payment_method,
-        ];
 
-
-        Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
-        Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
 
         // return redirect()->route('home')->with('success', '🎉 Đặt hàng thành công!');
 
@@ -259,7 +248,18 @@ class CheckoutController extends Controller
                 DB::commit();
 
                 session()->forget('buy_now');
+                $mailData = [
+                    'name'           => $request->name,
+                    'phone'          => $request->phone,
+                    'address'        => $request->address,
+                    'note'           => $request->note,
+                    'total'          => $totalAmount,
+                    'payment_method' => $request->payment_method,
+                ];
 
+
+                Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
+                Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
                 return redirect()->route('home')->with('success', 'Đặt hàng thành công (Mua ngay)!');
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -394,7 +394,18 @@ class CheckoutController extends Controller
                 }
 
                 session()->forget('selected_items');
+                $mailData = [
+                    'name'           => $request->name,
+                    'phone'          => $request->phone,
+                    'address'        => $request->address,
+                    'note'           => $request->note,
+                    'total'          => $totalAmount,
+                    'payment_method' => $request->payment_method,
+                ];
 
+
+                Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
+                Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
                 return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
             } catch (\Exception $e) {
                 DB::rollBack();

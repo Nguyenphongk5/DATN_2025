@@ -57,7 +57,10 @@ class Product_VariantController extends Controller
     public function show(string $id)
     {
         //
-        $productVariant = DB::table('product_variants')->where('id', $id)->first();
+        $productVariant = DB::table('product_variants')
+            ->join('products', 'product_variants.product_id', '=', 'products.id')
+            ->select('product_variants.*', 'products.name as product_name')
+            ->where('product_variants.id', $id)->first();
         if (!$productVariant) {
             return redirect()->route('admin.product_variants.index')->with('error', 'Product variant not found.');
         }

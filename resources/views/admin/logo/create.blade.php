@@ -34,13 +34,13 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="status" class="block text-sm font-bold mb-2 text-indigo-700">Trạng thái</label>
-                        <select name="status" id="status"
+                        <label for="is_active" class="block text-sm font-bold mb-2 text-indigo-700">Trạng thái</label>
+                        <select name="is_active" id="is_active"
                             class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
-                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Đang sử dụng</option>
-                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Ẩn</option>
+                            <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Đang sử dụng</option>
+                            <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Ẩn</option>
                         </select>
-                        @error('status')
+                        @error('is_active')
                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>

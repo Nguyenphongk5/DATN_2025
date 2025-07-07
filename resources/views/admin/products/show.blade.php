@@ -97,14 +97,32 @@
                             <div class="flex border-b pb-2">
                                 <span class="font-bold text-indigo-700 w-40 flex items-center gap-2"><i
                                         class="fas fa-calendar-plus"></i> Ngày tạo:</span>
-                                <span
-                                    class="text-gray-900">{{ $product->created_at ? \Carbon\Carbon::parse($product->created_at)->format('d/m/Y H:i:s') : 'N/A' }}</span>
+                                <span class="text-gray-900">
+                                    @if($product->created_at)
+                                        @if(is_string($product->created_at))
+                                            {{ \Carbon\Carbon::parse($product->created_at)->format('d/m/Y H:i:s') }}
+                                        @else
+                                            {{ $product->created_at->format('d/m/Y H:i:s') }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </span>
                             </div>
                             <div class="flex border-b pb-2">
                                 <span class="font-bold text-indigo-700 w-40 flex items-center gap-2"><i
                                         class="fas fa-calendar-check"></i> Cập nhật lần cuối:</span>
-                                <span
-                                    class="text-gray-900">{{ $product->updated_at ? \Carbon\Carbon::parse($product->updated_at)->format('d/m/Y H:i:s') : 'N/A' }}</span>
+                                <span class="text-gray-900">
+                                    @if($product->updated_at)
+                                        @if(is_string($product->updated_at))
+                                            {{ \Carbon\Carbon::parse($product->updated_at)->format('d/m/Y H:i:s') }}
+                                        @else
+                                            {{ $product->updated_at->format('d/m/Y H:i:s') }}
+                                        @endif
+                                    @else
+                                        N/A
+                                    @endif
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -120,7 +138,7 @@
                 @endif
 
                 <!-- Gallery Images -->
-                
+
                 @if($galleryImages->count() > 0)
                     <div class="mt-8">
                         <h3 class="text-lg font-bold text-indigo-700 mb-4 flex items-center gap-2"><i
@@ -128,8 +146,8 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                             @foreach($galleryImages as $gallery)
                                 <div class="relative group">
-                                    <img src="{{ asset('storage/product_galleries/' . $gallery->image) }}" 
-                                         alt="{{ $gallery->alt_text ?? $product->name }}" 
+                                    <img src="{{ asset('storage/product_galleries/' . $gallery->image) }}"
+                                         alt="{{ $gallery->alt_text ?? $product->name }}"
                                          class="w-full h-24 object-cover rounded-lg shadow-md group-hover:shadow-xl transition-all duration-300">
                                     <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-lg flex items-center justify-center">
                                         <div class="opacity-0 group-hover:opacity-100 transition-all duration-300 text-white text-xs text-center">
@@ -141,7 +159,7 @@
                             @endforeach
                         </div>
                         <div class="mt-4 text-center">
-                            <a href="{{ route('admin.products.galleries.index', $product->id) }}" 
+                            <a href="{{ route('admin.products.galleries.index', $product->id) }}"
                                class="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-pink-500 hover:to-purple-400 text-white px-4 py-2 rounded-lg font-bold shadow-md flex items-center gap-2 transition inline-flex">
                                 <i class="fas fa-images"></i> Quản lý gallery
                             </a>
@@ -154,7 +172,7 @@
                         <div class="bg-gradient-to-br from-gray-50 via-slate-50 to-white p-6 rounded-2xl shadow-inner text-center">
                             <i class="fas fa-images text-4xl text-gray-300 mb-4"></i>
                             <p class="text-gray-500 mb-4">Chưa có ảnh gallery nào</p>
-                            <a href="{{ route('admin.products.galleries.index', $product->id) }}" 
+                            <a href="{{ route('admin.products.galleries.index', $product->id) }}"
                                class="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-pink-500 hover:to-purple-400 text-white px-4 py-2 rounded-lg font-bold shadow-md flex items-center gap-2 transition inline-flex">
                                 <i class="fas fa-plus"></i> Thêm ảnh gallery
                             </a>

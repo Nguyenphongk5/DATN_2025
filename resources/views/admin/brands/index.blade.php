@@ -56,7 +56,7 @@
                                     <td class="px-6 py-4 font-bold text-indigo-500">{{ $key + 1 }}</td>
                                     <td class="px-6 py-4">
                                         @if ($brand->logo)
-                                            <img src="{{ asset(  $brand->logo) }}" alt="{{ $brand->name }}"
+                                            <img src="{{ asset(  'storage/'.$brand->logo) }}" alt="{{ $brand->name }}"
                                                 class="w-16 h-16 object-cover rounded-full mx-auto ring-4 ring-sky-300 shadow-lg">
                                         @else
                                             <div

@@ -19,7 +19,7 @@
                     @method('PUT')
                     <div>
                         <label for="name" class="block text-sm font-bold mb-2 text-indigo-700">Tên danh mục</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}" required
+                        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}"
                             class="w-full px-4 py-3 rounded-xl border border-indigo-200 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
                         @error('name')
                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>

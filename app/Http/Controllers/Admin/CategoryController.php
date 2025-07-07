@@ -22,7 +22,7 @@ class CategoryController extends Controller
         }
         $category = $query->latest('id')->paginate(10);
 
-        return view('admin.category.list', compact('category'));
+        return view('admin.category.index', compact('category'));
     }
 
     /**
