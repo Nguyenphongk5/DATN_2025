@@ -260,7 +260,7 @@ class CheckoutController extends Controller
 
                 Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
                 Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
-                return redirect()->route('home')->with('success', 'Đặt hàng thành công (Mua ngay)!');
+                return redirect()->route('orders.history')->with('success', 'Đặt hàng thành công (Mua ngay)!');
             } catch (\Exception $e) {
                 DB::rollBack();
                 return back()->with('error', 'Lỗi mua ngay: ' . $e->getMessage());
@@ -328,7 +328,7 @@ class CheckoutController extends Controller
                     'voucher_id' => $voucher?->id,
                     'discount_amount' => 0,
                     'total_amount' => $totalAmount,
-                    'status' => $isPaid ? 'comfirmed' : 'pending',
+                    'status' => $isPaid ? 'confirmed' : 'pending',
                     'payment_method' => $request->payment_method,
                     'payment_status' => $isPaid ? 'Paid' : 'Unpaid',
                     'shipping_fee' => 0,
@@ -406,7 +406,7 @@ class CheckoutController extends Controller
 
                 Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
                 Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
-                return redirect()->route('home')->with('success', 'Đặt hàng thành công!');
+                return redirect()->route('orders.history')->with('success', 'Đặt hàng thành công!');
             } catch (\Exception $e) {
                 DB::rollBack();
                 return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
@@ -438,6 +438,56 @@ class CheckoutController extends Controller
     //         'quantity' => $buyNow['quantity'],
     //     ]);
     // }
+    public function handlePayment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name'    => 'required|string',
+            'phone'   => 'required',
+            'address' => 'required',
+            'payment_method' => 'required|in:cod,vnpay',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        if ($request->payment_method === 'vnpay') {
+            // Lưu thông tin tạm trong session để dùng sau khi thanh toán
+            session([
+                'checkout_data' => $request->only(['name', 'phone', 'address', 'note', 'shipping_method']),
+                'checkout_total' => 100000 // ← Thay bằng giá trị thực tế từ giỏ hàng hoặc mua ngay
+            ]);
+
+            return redirect()->route('vnpay.payment');
+        }
+
+        // Nếu là COD thì xử lý đơn hàng luôn ở đây
+        // TODO: Code xử lý đơn hàng khi chọn COD
+        return redirect()->route('home')->with('success', 'Đặt hàng COD thành công!');
+    }
+
+    public function vnpayReturn(Request $request)
+    {
+        $vnp_ResponseCode = $request->input('vnp_ResponseCode');
+        $orderCode        = $request->input('vnp_TxnRef');
+
+        $order = Order::where('order_code', $orderCode)->first();
+
+        if (!$order) {
+            return redirect()->route('home')->with('error', 'Không tìm thấy đơn hàng.');
+        }
+
+        if ($vnp_ResponseCode === '00') {
+            $order->update([
+                'payment_status' => 'Paid',
+                'status'         => 'confirmed',
+            ]);
+
+            return redirect()->route('home')->with('success', '🎉 Thanh toán thành công!');
+        }
+
+        return redirect()->route('home')->with('error', '❌ Thanh toán thất bại.');
+    }
 
     public function placeBuyNowOrder(Request $request)
     {
@@ -543,54 +593,39 @@ class CheckoutController extends Controller
             return back()->with('error', 'Lỗi mua ngay: ' . $e->getMessage());
         }
     }
-    public function handlePayment(Request $request)
+
+    public function reorderCheckout()
     {
-        $validator = Validator::make($request->all(), [
-            'name'    => 'required|string',
-            'phone'   => 'required',
-            'address' => 'required',
-            'payment_method' => 'required|in:cod,vnpay',
+        $items = session('reorder_items');
+
+        if (!$items || empty($items)) {
+            return redirect()->route('home')->with('error', 'Không có sản phẩm để mua lại.');
+        }
+
+        // Lấy toàn bộ variant
+        $variants = [];
+        foreach ($items as $item) {
+            $variant = ProductVariant::where('product_id', $item['product_id'])
+                ->where('color_name', $item['color_name'])
+                ->where('size', $item['size'])
+                ->with('product')
+                ->first();
+
+            if ($variant) {
+                $variants[] = [
+                    'variant' => $variant,
+                    'quantity' => $item['quantity'],
+                ];
+            }
+        }
+
+        if (empty($variants)) {
+            return redirect()->route('home')->with('error', 'Không thể tìm thấy các sản phẩm để mua lại.');
+        }
+
+        return view('user.order', [
+            'variants' => $variants,
+
         ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        if ($request->payment_method === 'vnpay') {
-            // Lưu thông tin tạm trong session để dùng sau khi thanh toán
-            session([
-                'checkout_data' => $request->only(['name', 'phone', 'address', 'note', 'shipping_method']),
-                'checkout_total' => 100000 // ← Thay bằng giá trị thực tế từ giỏ hàng hoặc mua ngay
-            ]);
-
-            return redirect()->route('vnpay.payment');
-        }
-
-        // Nếu là COD thì xử lý đơn hàng luôn ở đây
-        // TODO: Code xử lý đơn hàng khi chọn COD
-        return redirect()->route('home')->with('success', 'Đặt hàng COD thành công!');
-    }
-
-    public function vnpayReturn(Request $request)
-    {
-        $vnp_ResponseCode = $request->input('vnp_ResponseCode');
-        $orderCode        = $request->input('vnp_TxnRef');
-
-        $order = Order::where('order_code', $orderCode)->first();
-
-        if (!$order) {
-            return redirect()->route('home')->with('error', 'Không tìm thấy đơn hàng.');
-        }
-
-        if ($vnp_ResponseCode === '00') {
-            $order->update([
-                'payment_status' => 'Paid',
-                'status'         => 'confirmed',
-            ]);
-
-            return redirect()->route('home')->with('success', '🎉 Thanh toán thành công!');
-        }
-
-        return redirect()->route('home')->with('error', '❌ Thanh toán thất bại.');
     }
 }

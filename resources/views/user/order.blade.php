@@ -2,14 +2,19 @@
 
 @section('content')
     <!-- Notification Messages -->
-    @if(session('success'))
-        <div id="success-notification" class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
-            <div class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-emerald-400/30 backdrop-blur-sm animate-pulse">
+    @if (session('success'))
+        <div id="success-notification"
+            class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
+            <div
+                class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-emerald-400/30 backdrop-blur-sm animate-pulse">
                 <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
+                        <div
+                            class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
                             <svg class="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                         </div>
                     </div>
@@ -17,28 +22,37 @@
                         <p class="font-semibold text-sm">{{ session('success') }}</p>
                         <p class="text-xs text-emerald-100">Đơn hàng đã được xử lý thành công!</p>
                     </div>
-                    <button onclick="closeNotification('success-notification')" class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
+                    <button onclick="closeNotification('success-notification')"
+                        class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                            </path>
                         </svg>
                     </button>
                 </div>
                 <!-- Progress bar -->
                 <div class="mt-3 w-full bg-white/20 rounded-full h-1">
-                    <div id="success-progress-bar" class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear" style="width: 100%"></div>
+                    <div id="success-progress-bar"
+                        class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear" style="width: 100%">
+                    </div>
                 </div>
             </div>
         </div>
     @endif
 
-    @if(session('error'))
-        <div id="error-notification" class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
-            <div class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-red-400/30 backdrop-blur-sm">
+    @if (session('error'))
+        <div id="error-notification"
+            class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
+            <div
+                class="bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-4 rounded-2xl shadow-2xl border border-red-400/30 backdrop-blur-sm">
                 <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
+                        <div
+                            class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
                             <svg class="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                         </div>
                     </div>
@@ -46,15 +60,18 @@
                         <p class="font-semibold text-sm">{{ session('error') }}</p>
                         <p class="text-xs text-red-100">Đã xảy ra lỗi, vui lòng thử lại!</p>
                     </div>
-                    <button onclick="closeNotification('error-notification')" class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
+                    <button onclick="closeNotification('error-notification')"
+                        class="flex-shrink-0 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 hover:bg-white/20 rounded-full p-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                            </path>
                         </svg>
                     </button>
                 </div>
                 <!-- Progress bar -->
                 <div class="mt-3 w-full bg-white/20 rounded-full h-1">
-                    <div id="error-progress-bar" class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear" style="width: 100%"></div>
+                    <div id="error-progress-bar" class="bg-white h-1 rounded-full transition-all duration-5000 ease-linear"
+                        style="width: 100%"></div>
                 </div>
             </div>
         </div>
@@ -109,12 +126,15 @@
                     <h4 class="text-xl font-semibold mb-6">Thông tin nhận hàng</h4>
 
                     @if ($errors->any())
-                        <div class="mb-6 bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-4 rounded-2xl shadow-xl border border-red-400/30">
+                        <div
+                            class="mb-6 bg-gradient-to-r from-red-500 to-pink-600 text-white px-6 py-4 rounded-2xl shadow-xl border border-red-400/30">
                             <div class="flex items-center space-x-3">
                                 <div class="flex-shrink-0">
                                     <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                         <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                                clip-rule="evenodd"></path>
                                         </svg>
                                     </div>
                                 </div>
@@ -130,7 +150,8 @@
                         </div>
                     @endif
 
-                    <form id="checkout-form" action="{{ route('checkout.placeOrder') }}" method="POST" class="space-y-5">
+                    <form id="checkout-form" action="{{ route('checkout.placeOrder') }}" method="POST"
+                        class="space-y-5">
                         @csrf
                         <input type="hidden" name="paid_confirmed" id="paid_confirmed" value="0">
 
@@ -198,69 +219,78 @@
                     <ul class="divide-y divide-gray-200 mb-6">
                         @php $total = 0; @endphp
                         @if (session('buy_now'))
-                            @php
-                                $data = session('buy_now');
-                                $var = \App\Models\ProductVariant::with('product')
-                                    ->where('product_id', $data['product_id'])
-                                    ->where('color_name', $data['color_name'])
-                                    ->where('size', $data['size'])
-                                    ->first();
-                                $quantity = $data['quantity'] ?? 1;
-                                $product = $var->product;
-                                $price = $var->price;
-                                $subtotal = $price * $quantity;
-                                $total += $subtotal;
-                            @endphp
-                            <li class="flex justify-between items-start py-4">
-                                <div>
-                                    <h6 class="font-semibold text-gray-800">{{ $product->name }}</h6>
-                                    <div class="text-sm text-gray-500">Size: {{ $var->size }}, Màu: {{ $var->color_name }}</div>
-                                    <div class="text-sm text-gray-500">Số lượng: {{ $quantity }}</div>
-                                </div>
-                                <span class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
-                            </li>
-                        @else
-                            @if (isset($variant))
                                 @php
-                                    $product = $variant->product;
-                                    $price = $variant->price;
+                                    $data = session('buy_now');
+                                    $var = \App\Models\ProductVariant::with('product')
+                                        ->where('product_id', $data['product_id'])
+                                        ->where('color_name', $data['color_name'])
+                                        ->where('size', $data['size'])
+                                        ->first();
+                                    $quantity = $data['quantity'] ?? 1;
+                                    $product = $var->product;
+                                    $price = $var->price;
                                     $subtotal = $price * $quantity;
                                     $total += $subtotal;
                                 @endphp
                                 <li class="flex justify-between items-start py-4">
                                     <div>
                                         <h6 class="font-semibold text-gray-800">{{ $product->name }}</h6>
-                                        <div class="text-sm text-gray-500">Size: {{ $variant->size }}, Màu:
-                                            {{ $variant->color_name }}</div>
+                                        <div class="text-sm text-gray-500">Size: {{ $var->size }}, Màu:
+                                            {{ $var->color_name }}</div>
                                         <div class="text-sm text-gray-500">Số lượng: {{ $quantity }}</div>
                                     </div>
-                                    <span class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
+                                        VNĐ</span>
                                 </li>
-                            @elseif (!empty($cart?->items))
-                                @php $selectedIds = session('selected_items', []); @endphp
-                                @foreach ($cart->items as $item)
-                                    @if (empty($selectedIds) || in_array($item->id, $selectedIds))
-                                        @php
-                                            $variant = $item->productVariant;
-                                            $product = $variant?->product ?? $item->product;
-                                            $price = $variant?->price ?? ($product?->price ?? 0);
-                                            $subtotal = $price * $item->quantity;
-                                            $total += $subtotal;
-                                        @endphp
-                                        <li class="flex justify-between items-start py-4">
-                                            <div>
-                                                <h6 class="font-semibold text-gray-800">{{ $product->name ?? 'Sản phẩm' }}</h6>
-                                                @if ($variant)
-                                                    <div class="text-sm text-gray-500">Size: {{ $variant->size }}, Màu:
-                                                        {{ $variant->color_name }}</div>
-                                                @endif
-                                                <div class="text-sm text-gray-500">Số lượng: {{ $item->quantity }}</div>
-                                            </div>
-                                            <span class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }} VNĐ</span>
-                                        </li>
-                                    @endif
-                                @endforeach
-                            @endif
+                            @else
+                                @if (isset($variant))
+                                    @php
+                                        $product = $variant->product;
+                                        $price = $variant->price;
+                                        $subtotal = $price * $quantity;
+                                        $total += $subtotal;
+                                    @endphp
+                                    <li class="flex justify-between items-start py-4">
+                                        <div>
+                                            <h6 class="font-semibold text-gray-800">{{ $product->name }}</h6>
+                                            <div class="text-sm text-gray-500">Size: {{ $variant->size }}, Màu:
+                                                {{ $variant->color_name }}</div>
+                                            <div class="text-sm text-gray-500">Số lượng: {{ $quantity }}</div>
+                                        </div>
+                                        <span
+                                            class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
+                                            VNĐ</span>
+                                    </li>
+                                @elseif (!empty($cart?->items))
+                                    @php $selectedIds = session('selected_items', []); @endphp
+                                    @foreach ($cart->items as $item)
+                                        @if (empty($selectedIds) || in_array($item->id, $selectedIds))
+                                            @php
+                                                $variant = $item->productVariant;
+                                                $product = $variant?->product ?? $item->product;
+                                                $price = $variant?->price ?? ($product?->price ?? 0);
+                                                $subtotal = $price * $item->quantity;
+                                                $total += $subtotal;
+                                            @endphp
+                                            <li class="flex justify-between items-start py-4">
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">
+                                                        {{ $product->name ?? 'Sản phẩm' }}</h6>
+                                                    @if ($variant)
+                                                        <div class="text-sm text-gray-500">Size: {{ $variant->size }},
+                                                            Màu:
+                                                            {{ $variant->color_name }}</div>
+                                                    @endif
+                                                    <div class="text-sm text-gray-500">Số lượng: {{ $item->quantity }}
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
+                                                    VNĐ</span>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                @endif
                         @endif
                         <li class="flex justify-between items-center py-4 border-t border-gray-200">
                             <span class="font-bold text-lg">Tổng cộng</span>
@@ -274,7 +304,7 @@
     </section>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             // Initialize notifications
             initializeNotifications();
 
@@ -289,12 +319,13 @@
 
             let isSubmitted = false;
 
-            select.addEventListener('change', function () {
+            select.addEventListener('change', function() {
                 if (this.value === 'online') {
                     qrBox.classList.remove('hidden');
                     const amount = {{ $total ?? 100000 }};
                     const orderInfo = encodeURIComponent("THANHTOAN");
-                    const qrUrl = `https://img.vietqr.io/image/970422-000000000001-qr_only.png?amount=${amount}&addInfo=${orderInfo}`;
+                    const qrUrl =
+                        `https://img.vietqr.io/image/970422-000000000001-qr_only.png?amount=${amount}&addInfo=${orderInfo}`;
                     qrImg.src = qrUrl;
                     qrImg.classList.remove('hidden');
                     confirmBtn.classList.remove('hidden');
@@ -306,20 +337,20 @@
                 }
             });
 
-            confirmBtn.addEventListener('click', function () {
+            confirmBtn.addEventListener('click', function() {
                 if (isSubmitted) return;
                 isSubmitted = true;
                 paidInput.value = 1;
                 qrImg.classList.add('hidden');
                 confirmBtn.classList.add('hidden');
                 paidMessage.classList.remove('hidden');
-                setTimeout(function () {
+                setTimeout(function() {
                     form.submit();
                 }, 2000);
             });
 
             if (submitBtn) {
-                submitBtn.addEventListener('click', function (event) {
+                submitBtn.addEventListener('click', function(event) {
                     if (isSubmitted) {
                         event.preventDefault();
                         return;

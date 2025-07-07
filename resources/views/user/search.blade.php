@@ -4,19 +4,17 @@
     <section class="py-12 bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-center text-3xl md:text-4xl font-extrabold mb-12 tracking-tight">
-                Kết quả tìm kiếm cho: <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{{ $keywords }}</span>
+                @if($keywords)
+                    Kết quả tìm kiếm cho: <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{{ $keywords }}</span>
+                @elseif(request('category'))
+                    Sản phẩm thuộc danh mục: <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        {{ optional($categories->where('id', request('category'))->first())->name ?? 'Không xác định' }}
+                    </span>
+                @else
+                    Tất cả sản phẩm
+                @endif
             </h2>
-            @if ($keywords == '')
-                <div class="flex flex-col items-center justify-center py-24 animate-fade-in">
-                    <div class="w-24 h-24 flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6 shadow-lg">
-                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
-                        </svg>
-                    </div>
-                    <div class="text-2xl font-bold text-gray-700 mb-2">Hãy nhập từ khóa để tìm kiếm sản phẩm!</div>
-                    <div class="text-gray-500">Bạn có thể tìm theo tên, loại, màu sắc, ...</div>
-                </div>
-            @elseif (count($products) == 0)
+            @if (count($products) == 0)
                 <div class="flex flex-col items-center justify-center py-24 animate-fade-in">
                     <div class="w-24 h-24 flex items-center justify-center bg-gradient-to-r from-yellow-400 to-red-400 rounded-full mb-6 shadow-lg">
                         <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

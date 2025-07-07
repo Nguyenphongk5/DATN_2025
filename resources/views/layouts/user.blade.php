@@ -1,5 +1,5 @@
 <?php
-$logos = \App\Models\Logo::all();
+$logo = \App\Models\Logo::where('is_active',1)->first();
 ?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -404,6 +404,9 @@ $logos = \App\Models\Logo::all();
                                     @endif
                                     <a href="{{ route('profile.edit') }}"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Xem hồ sơ</a>
+                                    <div class="border-t border-gray-200"></div>
+                                    <a href="{{ route('orders.history') }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử đơn hàng</a>
                                     <div class="border-t border-gray-200"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf

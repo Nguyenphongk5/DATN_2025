@@ -18,6 +18,41 @@ class CartController extends Controller
 
     public function handleAction(Request $request)
     {
+        // kiểm tra trc khi validate ko sẽ bị lặp
+        if (session('reorder_items')) {
+            $items = session('reorder_items');
+            $user = Auth::user();
+            $cart = Cart::firstOrCreate(['user_id' => $user->id]);
+            foreach ($items as $item) {
+                $variant = ProductVariant::where('product_id', $item['product_id'])
+                    ->where('color_name', $item['color_name'])
+                    ->where('size', $item['size'])
+                    ->first();
+
+                if (!$variant) {
+                    continue;
+                }
+
+                $cartItem = CartItem::where('cart_id', $cart->id)
+                    ->where('product_variant_id', $variant->id)
+                    ->first();
+
+                if ($cartItem) {
+                    $cartItem->quantity += $item['quantity'];
+                    $cartItem->save();
+                } else {
+                    CartItem::create([
+                        'cart_id' => $cart->id,
+                        'product_id' => $variant->product_id,
+                        'product_variant_id' => $variant->id,
+                        'quantity' => $item['quantity'],
+                    ]);
+                }
+            }
+            session()->forget('reorder_items');
+            // trả về 1 route thay vì back bới khi redirect về lại trang form nó lại tự động submit tiếp
+            return redirect()->route('orders.history')->with('success', 'Sản phẩm đã được thêm vào giỏ hàng!');
+        }
         $action = $request->input('action');
 
         $request->validate([

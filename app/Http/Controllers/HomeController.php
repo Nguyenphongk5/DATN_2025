@@ -32,11 +32,9 @@ class HomeController extends Controller
         $categories = DB::table('categories')->get();
         $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
 
-        // Lấy logos
-        $logo = Logo::where('is_active', '1')->first();
 
         // Trả về view với các thông tin cần thiết
-        return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'logo'));
+        return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs'));
     }
 
 
@@ -88,9 +86,8 @@ class HomeController extends Controller
 
         // Lấy tất cả các danh mục để lọc
         $categories = Category::all();
-        $logo = Logo::where('is_active', '1')->first();
         // Trả về kết quả tìm kiếm
-        return view('user.search', compact('products', 'categories', 'keywords', 'logo'));  // Trả về kết quả tìm kiếm
+        return view('user.search', compact('products', 'categories', 'keywords'));  // Trả về kết quả tìm kiếm
     }
 
     public function allProducts(Request $request)
@@ -154,9 +151,8 @@ class HomeController extends Controller
         $totalProducts = DB::table('products')->where('is_active', 1)->count();
         $totalCategories = DB::table('categories')->where('is_active', 1)->count();
         $totalBrands = DB::table('brands')->where('is_active', 1)->count();
-        $logo = Logo::where('is_active', '1')->first();
 
-        return view('user.all-products', compact('products', 'categories', 'brands', 'totalProducts', 'totalCategories', 'totalBrands', 'logo'));
+        return view('user.all-products', compact('products', 'categories', 'brands', 'totalProducts', 'totalCategories', 'totalBrands'));
     }
     public function show(string $id)
     {
@@ -182,9 +178,8 @@ class HomeController extends Controller
             ->where('is_active', 1)
             ->limit(8)
             ->get();
-        $logo = Logo::where('is_active', '1')->first();
 
-        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'galleryImages', 'logo'));
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'galleryImages'));
     }
     public function edit(string $id)
     {

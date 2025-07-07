@@ -1,0 +1,205 @@
+@extends('layouts.user')
+
+@section('content')
+    <section class="py-8 mb-8 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 shadow-inner">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1
+                    class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-2 drop-shadow-lg">
+                    Chi tiết đơn hàng</h1>
+                <p class="text-lg text-gray-700">Mã đơn hàng: <strong
+                        class="text-indigo-600">{{ $order->order_code }}</strong></p>
+            </div>
+            <a href="{{ route('orders.history') }}"
+                class="inline-flex items-center px-5 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-semibold text-base shadow-md hover:from-pink-400 hover:to-indigo-400 transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Quay lại
+            </a>
+        </div>
+    </section>
+
+    <section class="py-6">
+        <div class="container mx-auto px-4 flex flex-col gap-8">
+            <!-- Sản phẩm -->
+            <div class="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+                <h5 class="mb-6 text-2xl font-bold text-indigo-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-pink-400" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+                    </svg>
+                    Danh sách sản phẩm
+                </h5>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-base text-gray-700">
+                        <thead>
+                            <tr
+                                class="bg-gradient-to-r from-indigo-100 to-pink-100 text-xs uppercase tracking-wider text-gray-600">
+                                <th class="py-3 px-2 text-center">Ảnh</th>
+                                <th class="py-3 px-2 text-left">Sản phẩm</th>
+                                <th class="py-3 px-2 text-center">Size</th>
+                                <th class="py-3 px-2 text-center">Màu</th>
+                                <th class="py-3 px-2 text-center">Số lượng</th>
+                                <th class="py-3 px-2 text-right">Đơn giá</th>
+                                <th class="py-3 px-2 text-right">Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($order->orderDetails as $item)
+                                @php
+                                    $variant = $item->productVariant;
+                                    $product = $variant?->product;
+                                    $image = $variant?->image ?? $product?->img_thumb ?? 'images/no-image.png';
+                                @endphp
+                                <tr class="hover:bg-pink-50 transition">
+                                    <td class="py-3 px-2 text-center">
+                                        <img src="{{ asset('storage/' . $image) }}" alt="ảnh sản phẩm"
+                                            class="w-20 h-20 object-cover rounded-2xl border-2 border-pink-100 shadow-md mx-auto">
+                                    </td>
+                                    <td class="py-3 px-2">
+                                        <div class="font-bold text-gray-900 text-lg md:text-xl leading-snug max-w-xs break-words line-clamp-2 transition-colors duration-200 hover:text-pink-600 hover:bg-pink-50 px-2 py-1 rounded cursor-pointer shadow-sm border border-transparent hover:border-pink-200"
+                                            title="{{ $item->product_name }}">
+                                            {{ $item->product_name }}
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-2 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded bg-pink-100 text-pink-700 font-medium">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+                                                viewBox="0 0 24 24">
+                                                <circle cx="12" cy="12" r="3" />
+                                                <path
+                                                    d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.364-7.364l-1.414 1.414M6.05 17.95l-1.414 1.414m12.728 0l-1.414-1.414M6.05 6.05L4.636 4.636" />
+                                            </svg>
+                                            {{ $item->size_name }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-2 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 font-medium">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+                                                viewBox="0 0 24 24">
+                                                <path d="M12 20l9-5-9-5-9 5 9 5z" />
+                                                <path d="M12 12V4" />
+                                            </svg>
+                                            {{ $item->color_name }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-2 text-center">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-medium">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" stroke-width="2"
+                                                viewBox="0 0 24 24">
+                                                <path
+                                                    d="M17 9V7a5 5 0 00-10 0v2a2 2 0 00-2 2v7a2 2 0 002 2h10a2 2 0 002-2v-7a2 2 0 00-2-2z" />
+                                            </svg>
+                                            x{{ $item->quantity }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-2 text-right text-indigo-600 font-semibold">
+                                        {{ number_format($item->price, 0, ',', '.') }} <span
+                                            class="text-xs text-gray-400">VNĐ</span>
+                                    </td>
+                                    <td
+                                        class="py-3 px-2 text-right font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">
+                                        {{ number_format($item->price * $item->quantity, 0, ',', '.') }} <span
+                                            class="text-xs text-gray-400">VNĐ</span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Thông tin đơn hàng -->
+            <div class="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 flex flex-col gap-4">
+                <h5 class="mb-4 text-2xl font-bold text-pink-600 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-indigo-400" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Thông tin đơn hàng
+                </h5>
+                <div class="space-y-3 text-gray-700 text-base">
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804" />
+                            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Người nhận:</span> {{ $order->user_name }}
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                            <path d="M16 3v4a1 1 0 001 1h4" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">SĐT:</span> {{ $order->user_phone }}
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243" />
+                            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Địa chỉ:</span> {{ $order->user_address }}
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M9 17v-2a4 4 0 014-4h4" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Trạng thái:</span> <span
+                            class="capitalize px-2 py-1 rounded bg-gradient-to-r from-indigo-200 to-pink-200 text-indigo-700 font-semibold">{{ ucfirst($order->status) }}</span>
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 16v-4m8-4h-4m-8 0H4" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Thanh toán:</span> {{ $order->payment_status }}
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 20l9-5-9-5-9 5 9 5z" />
+                            <path d="M12 12V4" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Ghi chú:</span> {{ $order->note ?? 'Không có' }}
+                    </p>
+                </div>
+                <hr class="my-4 border-t-2 border-pink-100">
+                <div
+                    class="bg-gradient-to-r from-indigo-100 to-pink-100 rounded-2xl px-6 py-4 shadow-inner text-lg font-bold text-indigo-700 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pink-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 16v-4m8-4h-4m-8 0H4" />
+                    </svg>
+                    Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
+                        VNĐ</span>
+                </div>
+                @if (in_array($order->status, ['pending', 'confirmed']))
+                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
+                        @csrf
+                        @method('PUT')
+                        <button
+                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2"
+                            onclick="return confirm('Bạn chắc chắn muốn hủy đơn này?')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Hủy đơn hàng
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </section>
+@endsection
