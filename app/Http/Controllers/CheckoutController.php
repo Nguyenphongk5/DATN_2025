@@ -328,7 +328,7 @@ class CheckoutController extends Controller
                     'voucher_id' => $voucher?->id,
                     'discount_amount' => 0,
                     'total_amount' => $totalAmount,
-                    'status' => 'pending',
+                    'status' => $isPaid ? 'comfirmed' : 'pending',
                     'payment_method' => $request->payment_method,
                     'payment_status' => $isPaid ? 'Paid' : 'Unpaid',
                     'shipping_fee' => 0,

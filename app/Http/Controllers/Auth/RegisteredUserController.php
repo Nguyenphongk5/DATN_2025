@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Logo;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -20,8 +21,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
+        $logo = Logo::where('is_active', 1)->first();
         $categories = DB::table('categories')->get();
-        return view('auth.register', compact('categories'));
+        return view('auth.register', compact('categories', 'logo'));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Logo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +20,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-
+        $logo = Logo::where('is_active', 1)->first();
         $categories = DB::table('categories')->get();
         $user = $request->user();
-        return view('profile.edit', compact('user', 'categories'));
+        return view('profile.edit', compact('user', 'categories', 'logo'));
     }
 
     /**

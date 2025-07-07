@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Logo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        $logo = Logo::where('is_active', 1)->first();
         $categories = DB::table('categories')->get();
-        return view('auth.login', compact('categories'));
+        return view('auth.login', compact('categories', 'logo'));
     }
 
     /**
@@ -51,7 +53,11 @@ class AuthenticatedSessionController extends Controller
             return redirect($returnUrl)->with('add_to_cart', 'Sản phẩm đã được thêm vào giỏ hàng!');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        if (Auth::user()->role === 'admin' || Auth::user()->role === 'staff') {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        } else {
+            return redirect()->intended(route('home.index', absolute: false));
+        }
     }
 
     private function addPendingItemToCart($pendingItem)

@@ -487,55 +487,10 @@ $logos = \App\Models\Logo::all();
                                 <a href="#accessories" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
                                     kiện</a>
                             </li>
-                            <li class="relative group">
-                                <button class="text-gray-700 hover:text-blue-600 transition-colors flex items-center">
-                                    Trang
-                                    <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </button>
-                                <div
-                                    class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                    <div class="py-2">
-                                        <a href="about.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Giới
-                                            thiệu <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="shop.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Cửa hàng
-                                            <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="single-product.html"
-                                            class="block px-4 py-2 text-sm hover:bg-gray-800">Sản phẩm đơn lẻ <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="cart.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Giỏ hàng
-                                            <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="checkout.html"
-                                            class="block px-4 py-2 text-sm hover:bg-gray-800">Thanh toán <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="blog.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Bài viết
-                                            <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="single-post.html"
-                                            class="block px-4 py-2 text-sm hover:bg-gray-800">Bài viết đơn lẻ <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="styles.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Phong
-                                            cách <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="contact.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Liên
-                                            hệ <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="thank-you.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Cảm
-                                            ơn <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="account.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Tài
-                                            khoản <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                        <a href="404.html" class="block px-4 py-2 text-sm hover:bg-gray-800">Lỗi 404
-                                            <span
-                                                class="bg-yellow-500 text-black text-xs px-2 py-1 rounded ml-2">PRO</span></a>
-                                    </div>
+                             <li>
+                                <a href="#pages" class="text-gray-700 hover:text-blue-600 transition-colors">Trang</a>
+                            </li>
+                                <div class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 </div>
                             </li>
                             <li>

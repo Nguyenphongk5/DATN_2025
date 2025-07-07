@@ -88,9 +88,9 @@ class HomeController extends Controller
 
         // Lấy tất cả các danh mục để lọc
         $categories = Category::all();
-
+        $logo = Logo::where('is_active', '1')->first();
         // Trả về kết quả tìm kiếm
-        return view('user.search', compact('products', 'categories', 'keywords'));  // Trả về kết quả tìm kiếm
+        return view('user.search', compact('products', 'categories', 'keywords', 'logo'));  // Trả về kết quả tìm kiếm
     }
 
     public function allProducts(Request $request)

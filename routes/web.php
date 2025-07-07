@@ -62,9 +62,8 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.index');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('dashboard',[DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('dashboard');
     Route::resource('categories', CategoryController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
@@ -73,7 +72,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
-    
+
     // Product Gallery routes
     Route::prefix('products/{product}/galleries')->name('products.galleries.')->group(function () {
         Route::get('/', [ProductGalleryController::class, 'index'])->name('index');
