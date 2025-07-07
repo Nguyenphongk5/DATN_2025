@@ -116,18 +116,10 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+   public function show(string $id)
     {
-        //
-        $product = DB::table('products')
-            ->join('categories', 'products.category_id', '=', 'categories.id')
-            ->join('brands', 'products.brand_id', '=', 'brands.id')
-            ->select('products.*', 'categories.name as category_name', 'categories.is_active as cate_is_active', 'brands.name as brand_name', 'brands.is_active as brand_is_active')
-            ->where('products.id', $id)
-            ->first();
-        if (!$product) {
-            return redirect()->route('admin.products.index')->with('error', 'Product not found.');
-        }
+        $product = Product::with(['category', 'brand', 'galleries'])->findOrFail($id);
+
         return view('admin.products.show', compact('product'));
     }
 

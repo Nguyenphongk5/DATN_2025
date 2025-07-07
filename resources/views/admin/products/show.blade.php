@@ -6,7 +6,8 @@
     </x-slot>
 
     <div class="py-12">
-        <h1 class="font-semibold text-gray-800 leading-tight" style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
+        <h1 class="font-semibold text-gray-800 leading-tight"
+            style="text-align: center; margin: 0 0 2rem 0; font-size: 2rem;">
             {{ __('Chi tiết sản phẩm') }}
         </h1>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -16,11 +17,47 @@
                         <!-- Hình ảnh sản phẩm -->
                         <div class="space-y-4">
                             <h3 class="text-lg font-semibold text-gray-800 mb-4">Hình ảnh sản phẩm</h3>
-                            @if ($product->img_thumb)
-                                <div class="border rounded-lg overflow-hidden">
-                                    <img src="{{ asset('storage/' . $product->img_thumb) }}"
-                                         alt="{{ $product->name }}"
-                                         class="w-full h-64 object-cover">
+
+                            @php
+                                // Gộp ảnh thumbnail và các ảnh gallery vào một mảng duy nhất
+                                $allImages = [];
+                                if ($product->img_thumb) {
+                                    $allImages[] = $product->img_thumb;
+                                }
+                                foreach ($product->galleries as $gallery) {
+                                    $allImages[] = $gallery->image;
+                                }
+                            @endphp
+
+                            @if (!empty($allImages))
+                                <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff"
+                                    class="swiper mySwiper2 relative group">
+                                    <div class="swiper-wrapper">
+                                        @foreach ($allImages as $imagePath)
+                                            <div class="swiper-slide border rounded-lg overflow-hidden">
+                                                <img src="{{ asset('storage/' . $imagePath) }}"
+                                                    class="w-full h-96 object-contain bg-gray-100" />
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div
+                                        class="swiper-button-next opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl">
+                                    </div>
+                                    <div
+                                        class="swiper-button-prev opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl">
+                                    </div>
+                                </div>
+
+                                <div thumbsSlider="" class="swiper mySwiper mt-4">
+                                    <div class="swiper-wrapper">
+                                        @foreach ($allImages as $imagePath)
+                                            <div
+                                                class="swiper-slide border rounded-lg overflow-hidden h-24 w-24 cursor-pointer">
+                                                <img src="{{ asset('storage/' . $imagePath) }}"
+                                                    class="w-full h-full object-cover" />
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @else
                                 <div class="border rounded-lg h-64 bg-gray-100 flex items-center justify-center">
@@ -55,26 +92,32 @@
                                 <!-- Danh mục -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Danh mục:</span>
-                                    <span class="text-gray-900">{{ $product->category_name ?? 'N/A' }}</span>
+                                    {{-- ✅ Truy cập qua relationship --}}
+                                    <span class="text-gray-900">{{ $product->category->name ?? 'N/A' }}</span>
                                 </div>
 
                                 <!-- Thương hiệu -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Thương hiệu:</span>
-                                    <span class="text-gray-900">{{ $product->brand_name ?? 'N/A' }}</span>
+                                    {{-- ✅ Truy cập qua relationship --}}
+                                    <span class="text-gray-900">{{ $product->brand->name ?? 'N/A' }}</span>
                                 </div>
 
                                 <!-- Giá gốc -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Giá gốc:</span>
-                                    <span class="text-gray-900 font-semibold">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                    <span
+                                        class="text-gray-900 font-semibold">{{ number_format($product->price, 0, ',', '.') }}
+                                        VNĐ</span>
                                 </div>
 
                                 <!-- Giá khuyến mãi -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Giá khuyến mãi:</span>
                                     @if ($product->price_sale)
-                                        <span class="text-red-600 font-semibold">{{ number_format($product->price_sale, 0, ',', '.') }} VNĐ</span>
+                                        <span
+                                            class="text-red-600 font-semibold">{{ number_format($product->price_sale, 0, ',', '.') }}
+                                            VNĐ</span>
                                     @else
                                         <span class="text-gray-400 italic">Không có</span>
                                     @endif
@@ -99,13 +142,14 @@
                                 <!-- Ngày tạo -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Ngày tạo:</span>
-                                    <span class="text-gray-900">{{ $product->created_at ? $product->created_at->format('d/m/Y H:i:s', $product->created_at) : 'N/A' }}</span>
+                                    <span
+                                        class="text-gray-900">{{ optional($product->created_at)->format('d/m/Y H:i:s') ?? 'N/A' }}</span>
                                 </div>
 
-                                <!-- Ngày cập nhật -->
                                 <div class="flex border-b pb-2">
                                     <span class="font-medium text-gray-700 w-32">Cập nhật lần cuối:</span>
-                                    <span class="text-gray-900">{{ $product->updated_at ? $product->updated_at->format('d/m/Y H:i:s') : 'N/A' }}</span>
+                                    <span
+                                        class="text-gray-900">{{ optional($product->updated_at)->format('d/m/Y H:i:s') ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -137,3 +181,25 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var swiperThumbs = new Swiper(".mySwiper", {
+            spaceBetween: 10,
+            slidesPerView: 4,
+            freeMode: true,
+            watchSlidesProgress: true,
+        });
+        var swiperMain = new Swiper(".mySwiper2", {
+            spaceBetween: 10,
+            loop: true, // ✅ Enable infinite loop
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            thumbs: {
+                swiper: swiperThumbs,
+            },
+        });
+    });
+</script>

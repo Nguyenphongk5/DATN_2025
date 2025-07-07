@@ -17,6 +17,9 @@
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 
         <script>
             tailwind.config = {
@@ -76,9 +79,10 @@
                             class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.products-galleries.*') ? 'bg-gray-700 font-semibold' : '' }}">
                             Product Galleries
                         </a>
-                        {{-- <a href="{{ route('orders.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
-                🧾 Đơn hàng
-            </a> --}}
+                        {{-- <a href="{{ route('orders.index') }}"
+                            class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('orders.*') ? 'bg-gray-700 font-semibold' : '' }}">
+                            🧾 Đơn hàng
+                        </a> --}}
                         <a href="{{ route('admin.users.index') }}"
                             class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.users.*') ? 'bg-gray-700 font-semibold' : '' }}">
                             Users
@@ -103,8 +107,7 @@
                             class="block px-4 py-2 rounded hover:bg-gray-700 transition {{ request()->routeIs('admin.logos.*') ? 'bg-gray-700 font-semibold' : '' }}">
                             Logos
                         </a>
-                        <a href="{{ route('profile.edit') }}"
-                            class="block px-4 py-2 rounded hover:bg-gray-700 transition">
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 rounded hover:bg-gray-700 transition">
                             ⚙️ Hồ sơ
                         </a>
                     </nav>
