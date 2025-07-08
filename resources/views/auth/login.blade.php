@@ -80,7 +80,11 @@
                         class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-opacity-50">Log
                         In</button>
                 </div>
+                <a href="{{ route('auth.google') }}">
+    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Đăng nhập Google">
+</a>
             </form>
+
 
             <div class="text-center mt-6">
                 <span class="text-gray-500">Don't have an account?</span>

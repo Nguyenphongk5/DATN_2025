@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GoogleController;
 use App\Models\Logo;
 
 // <<<<<<< UI-Improved-Profile
@@ -126,5 +127,8 @@ Route::post('/checkout/vnpay/create', [VnPayController::class, 'createPayment'])
 Route::get('/checkout/vnpay/return', [VnPayController::class, 'vnpayReturn'])->name('vnpay.return');
 Route::get('/vnpay/return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
 Route::patch('/admin/orders/{order}/payment', [OrderController::class, 'updatePayment'])->name('orders.updatePayment');
+
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 require __DIR__ . '/auth.php';

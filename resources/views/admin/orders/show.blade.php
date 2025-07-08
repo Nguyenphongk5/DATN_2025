@@ -5,13 +5,40 @@
             <h2 class="font-extrabold text-2xl text-white tracking-wide drop-shadow-lg">Chi tiết đơn hàng</h2>
         </div>
     </x-slot>
+
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
+
                 <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 drop-shadow-lg flex items-center gap-2 mb-8">
                     <i class="fas fa-clipboard-list animate-bounce text-indigo-400"></i>
                     Chi tiết đơn hàng #{{ $order->order_code }}
                 </h1>
+
+                {{-- QR Code chứa toàn bộ thông tin --}}
+                <div class="flex justify-center mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100">
+                        <div class="text-center mb-2 font-semibold text-indigo-600">Quét mã để xem nhanh thông tin đơn hàng</div>
+                        @php
+                            $qrText = "Mã đơn: {$order->order_code}\n";
+                            $qrText .= "Tên KH: {$order->user_name}\n";
+                            $qrText .= "SĐT: {$order->user_phone}\n";
+                            $qrText .= "Email: {$order->user_email}\n";
+                            $qrText .= "Địa chỉ: {$order->user_address}\n";
+                            $qrText .= "Trạng thái: {$order->status}\n";
+                            $qrText .= "Thanh toán: {$order->payment_status}\n";
+                            $qrText .= "Tổng tiền: " . number_format($order->total_amount, 0, ',', '.') . " VNĐ\n";
+                            $qrText .= "Sản phẩm:\n";
+                            foreach ($order->orderDetails as $item) {
+                                $qrText .= "- {$item->product_name} ({$item->quantity} x " . number_format($item->price, 0, ',', '.') . ")\n";
+                            }
+                        @endphp
+                {!! QrCode::encoding('UTF-8')->size(180)->generate($qrText) !!}
+
+                        <div class="mt-2 text-sm text-gray-500 text-center">Mã: <span class="font-mono">{{ $order->order_code }}</span></div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div>
                         <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin khách hàng</div>
@@ -23,6 +50,7 @@
                             <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}</div>
                         @endif
                     </div>
+
                     <div>
                         <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin đơn hàng</div>
                         <div class="mb-1"><span class="font-semibold">Mã đơn:</span> <span class="font-mono text-indigo-600">{{ $order->order_code }}</span></div>
@@ -56,6 +84,7 @@
                         <div class="mb-1"><span class="font-semibold">Tổng cộng:</span> <span class="text-2xl text-red-600 font-extrabold">{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</span></div>
                     </div>
                 </div>
+
                 <div class="mb-8">
                     <div class="mb-2 text-lg font-bold text-indigo-700">Danh sách sản phẩm</div>
                     <div class="overflow-x-auto custom-scrollbar rounded-2xl">
@@ -83,6 +112,7 @@
                         </table>
                     </div>
                 </div>
+
                 <div class="mt-8 flex gap-4 justify-center">
                     <a href="{{ route('admin.orders.index') }}" class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
                         <i class="fas fa-arrow-left"></i> Quay lại danh sách
