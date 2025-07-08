@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\CartController;
@@ -38,6 +39,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::resource('home', HomeController::class);
+Route::post('/comments', [HomeController::class, 'storeComment'])->name('comments.store');
+Route::put('/comments/{id}', [HomeController::class, 'updateComment'])->name('comments.update');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -58,27 +61,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
     Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
 
-Route::put('/order-history/{id}/cancel', [OrderHistoryController::class, 'cancel'])->name('orders.cancel');
+    Route::put('/order-history/{id}/cancel', [OrderHistoryController::class, 'cancel'])->name('orders.cancel');
 
-     
+
     Route::get('/order/{id}', [OrderHistoryController::class, 'show'])->name('orders.show');
-   Route::get('/order-history', [OrderHistoryController::class, 'history'])->name('orders.history');
-Route::get('/order-history/filter', [OrderHistoryController::class, 'filter']);
+    Route::get('/order-history', [OrderHistoryController::class, 'history'])->name('orders.history');
+    Route::get('/order-history/filter', [OrderHistoryController::class, 'filter']);
 
-Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
+    Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
 
-Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
-
-
-
+    Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
 });
 
 
 
 // Admin routes
 Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('dashboard',[DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'verified'])->name('dashboard');
     Route::resource('categories', CategoryController::class);
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
@@ -87,7 +87,9 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
-
+    Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
     // Product Gallery routes
     Route::prefix('products/{product}/galleries')->name('products.galleries.')->group(function () {
         Route::get('/', [ProductGalleryController::class, 'index'])->name('index');

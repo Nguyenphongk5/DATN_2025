@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
         if (! Hash::check($request->input('password'), $user->password)) {
             RateLimiter::hit($request->throttleKey());
 
-            return back()->with('error','Mật khẩu không chính xác.');
+            return back()->withInput($request->only('email', 'remember'))->with('error','Mật khẩu không chính xác.');
         }
         Auth::login($user, $request->boolean('remember'));
         // RateLimiter::clear($request->throttleKey());

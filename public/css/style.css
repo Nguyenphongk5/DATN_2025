@@ -947,3 +947,31 @@ h1,h2,h3,h4,h5,h6 {
     border-radius: 50%;
     cursor: pointer;
   }
+    .rating-stars {
+        direction: rtl;
+        display: inline-flex;
+        gap: 4px;
+    }
+
+    .rating-stars input {
+        display: none;
+    }
+
+    .rating-stars label {
+        font-size: 1.8rem;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .rating-stars input:checked ~ label,
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label {
+        color: #ffc107;
+    }
+    textarea.form-control {
+    width: 100% !important;
+    max-width: 100%;
+}
+
+

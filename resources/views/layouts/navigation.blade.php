@@ -42,6 +42,9 @@
             <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.orders.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
                 <i class="fas fa-receipt text-lime-200 drop-shadow-lg"></i> Orders
             </a>
+            <a href="{{ route('admin.comments.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.comments.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
+                <i class="fas fa-receipt text-lime-200 drop-shadow-lg"></i> Comments
+            </a>
             <a href="{{ route('home.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60">
                 <i class="fas fa-user-cog text-white drop-shadow-lg"></i> Home
             </a>

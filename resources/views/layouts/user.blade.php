@@ -471,7 +471,7 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                         </button>
                     </div>
 
-                    <!-- Desktop Menu -->
+                            <!-- Desktop Menu -->
                     <div class="hidden lg:flex justify-center">
                         <ul class="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wide">
                             <li>
@@ -529,11 +529,42 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                 <li><a href="#blog" class="block py-2 text-gray-700 hover:text-blue-600">Blog</a>
                                 </li>
                             </ul>
+
+                            </div>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const hash = window.location.hash;
+
+                if (hash) {
+                    const tabTrigger = document.querySelector(`[data-bs-target="${hash}"]`);
+                    if (tabTrigger) {
+                        const tab = new bootstrap.Tab(tabTrigger);
+                        tab.show();
+
+                        // Nếu là reviews thì scroll tới phần review
+                        if (hash === "#v-pills-reviews") {
+                            setTimeout(() => {
+                                document.querySelector("#v-pills-reviews")?.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                            }, 300);
+                        }
+                    }
+                }
+                const tabTriggers = document.querySelectorAll('[data-bs-toggle="pill"]');
+                tabTriggers.forEach(trigger => {
+                    trigger.addEventListener('shown.bs.tab', function(e) {
+                        const newHash = e.target.getAttribute('data-bs-target');
+                        history.replaceState(null, null, newHash);
+                    });
+                });
+            });
+        </script>
 
     </header>
 

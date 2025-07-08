@@ -47,4 +47,8 @@ class User extends Authenticatable
             self::ROLE_STAFF,
         ];
     }
+    public function getIsAdminAttribute()
+{
+    return $this->role === ' admin ';
+}
 }
