@@ -16,31 +16,6 @@ use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index()
-    // {
-    //     // Lấy các banner đang hoạt động
-    //     $banners = DB::table('banners')->get();
-
-    //     // Lấy sản phẩm mới nhất (giả sử là 5 sản phẩm mới nhất)
-    //     $latestProducts = DB::table('products')
-    //         ->orderBy('created_at', 'desc')
-    //         ->where('is_active', 1)
-    //         ->take(8)
-    //         ->get();
-    //     // Product::orderBy('created_at', 'desc')->take(5)->get();
-
-    //     // Lấy tất cả các danh mục để lọc
-    //     $categories = DB::table('categories')->get();
-    //     $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
-
-
-    //     // Trả về view với các thông tin cần thiết
-    //     return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs'));
-    // }
-
     public function index()
     {
         $userId = Auth::id(); // null nếu chưa đăng nhập
