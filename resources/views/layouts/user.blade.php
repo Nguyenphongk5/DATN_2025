@@ -1,5 +1,5 @@
 <?php
-$logo = \App\Models\Logo::where('is_active',1)->first();
+$logo = \App\Models\Logo::where('is_active', 1)->first();
 ?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -8,6 +8,7 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -337,7 +338,8 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                 <div class="flex justify-center lg:justify-start mb-4 lg:mb-0">
                     <div class="main-logo">
                         <a href="{{ route('home.index') }}" class="block">
-                            <img src="{{ asset('storage/' . $logo->image) }}" alt="logo" class="h-12">
+                            <img src="{{ asset('storage/' . optional($logo)->image) }}" alt="logo"
+                                class="h-12">
                         </a>
                     </div>
                 </div>
@@ -406,7 +408,8 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Xem hồ sơ</a>
                                     <div class="border-t border-gray-200"></div>
                                     <a href="{{ route('orders.history') }}"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử đơn hàng</a>
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử đơn
+                                        hàng</a>
                                     <div class="border-t border-gray-200"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -426,7 +429,8 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                         </div>
 
                         <!-- Heart Icon -->
-                        <a href="#" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
+                        <a href="{{ route('favorites.index') }}"
+                            class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
                             <svg width="24" height="24" viewBox="0 0 24 24" class="text-gray-700">
                                 <use xlink:href="#heart"></use>
                             </svg>
@@ -471,7 +475,7 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                         </button>
                     </div>
 
-                            <!-- Desktop Menu -->
+                    <!-- Desktop Menu -->
                     <div class="hidden lg:flex justify-center">
                         <ul class="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wide">
                             <li>
@@ -490,11 +494,13 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                 <a href="#accessories" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
                                     kiện</a>
                             </li>
-                             <li>
-                                <a href="#pages" class="text-gray-700 hover:text-blue-600 transition-colors">Trang</a>
+                            <li>
+                                <a href="#pages"
+                                    class="text-gray-700 hover:text-blue-600 transition-colors">Trang</a>
                             </li>
-                                <div class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                </div>
+                            <div
+                                class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            </div>
                             </li>
                             <li>
                                 <a href="#brand" class="text-gray-700 hover:text-blue-600 transition-colors">Thương
@@ -530,11 +536,11 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                 </li>
                             </ul>
 
-                            </div>
                         </div>
                     </div>
-                </nav>
             </div>
+            </nav>
+        </div>
         </div>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -577,8 +583,9 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                 <div class="lg:col-span-1">
                     <div class="mb-6">
                         <a href="{{ route('home.index') }}" class="block">
-                            <img src="{{ asset('storage/' . $logo->image) }}" alt="logo"
+                            <img src="{{ asset('storage/' . ($logo->image ?? 'default-logo.png')) }}" alt="logo"
                                 class="h-12 brightness-0 invert filter hover:brightness-100 hover:invert-0 transition-all duration-300 cursor-pointer">
+
                         </a>
                     </div>
                     <div class="flex space-x-3">

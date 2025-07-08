@@ -19,27 +19,63 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index()
+    // {
+    //     // Lấy các banner đang hoạt động
+    //     $banners = DB::table('banners')->get();
+
+    //     // Lấy sản phẩm mới nhất (giả sử là 5 sản phẩm mới nhất)
+    //     $latestProducts = DB::table('products')
+    //         ->orderBy('created_at', 'desc')
+    //         ->where('is_active', 1)
+    //         ->take(8)
+    //         ->get();
+    //     // Product::orderBy('created_at', 'desc')->take(5)->get();
+
+    //     // Lấy tất cả các danh mục để lọc
+    //     $categories = DB::table('categories')->get();
+    //     $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
+
+
+    //     // Trả về view với các thông tin cần thiết
+    //     return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs'));
+    // }
+
     public function index()
     {
+        $userId = Auth::id(); // null nếu chưa đăng nhập
+
         // Lấy các banner đang hoạt động
         $banners = DB::table('banners')->get();
 
-        // Lấy sản phẩm mới nhất (giả sử là 5 sản phẩm mới nhất)
-        $latestProducts = DB::table('products')
-            ->orderBy('created_at', 'desc')
-            ->where('is_active', 1)
+        // Lấy sản phẩm mới nhất và thêm thuộc tính is_favorited
+        $latestProducts = Product::where('is_active', 1)
+            ->latest()
             ->take(8)
-            ->get();
-        // Product::orderBy('created_at', 'desc')->take(5)->get();
+            ->get()
+            ->map(function ($product) use ($userId) {
+                $product->is_favorited = false;
 
-        // Lấy tất cả các danh mục để lọc
+                if ($userId) {
+                    $product->is_favorited = DB::table('favorites')
+                        ->where('user_id', $userId)
+                        ->where('product_id', $product->id)
+                        ->exists();
+                }
+
+                return $product;
+            });
+
+        // Lấy tất cả danh mục để lọc
         $categories = DB::table('categories')->get();
+
+        // Bài viết mới
         $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
 
-
-        // Trả về view với các thông tin cần thiết
+        // Trả về view
         return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs'));
     }
+
 
 
     /**
