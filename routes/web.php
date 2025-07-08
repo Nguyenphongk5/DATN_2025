@@ -16,10 +16,12 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
 use App\Http\Controllers\Admin\LogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Models\Logo;
+use App\Http\Controllers\ChatController;
 
 // <<<<<<< UI-Improved-Profile
 // Route này đã được thay thế bằng HomeController::index
@@ -35,9 +37,6 @@ use App\Models\Logo;
 
 Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
 Route::get('home/products', [HomeController::class, 'allProducts'])->name('home.products');
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::resource('home', HomeController::class);
 Route::middleware('auth')->get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
@@ -91,6 +90,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
     // Product Gallery routes
@@ -104,6 +104,10 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
         Route::post('/update-order', [ProductGalleryController::class, 'updateOrder'])->name('updateOrder');
         Route::post('/{gallery}/toggle-active', [ProductGalleryController::class, 'toggleActive'])->name('toggleActive');
     });
+    // Chat Box
+    Route::get('/chat', [AdminChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/messages/{user}', [AdminChatController::class, 'messages'])->name('chat.messages');
+    Route::post('/chat/messages', [AdminChatController::class, 'store'])->name('chat.store');
 });
 // routes/web.php
 
@@ -129,5 +133,9 @@ Route::post('/checkout/vnpay/create', [VnPayController::class, 'createPayment'])
 Route::get('/checkout/vnpay/return', [VnPayController::class, 'vnpayReturn'])->name('vnpay.return');
 Route::get('/vnpay/return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
 Route::patch('/admin/orders/{order}/payment', [OrderController::class, 'updatePayment'])->name('orders.updatePayment');
+
+
+Route::get('/chat/messages', [ChatController::class, 'index'])->name('chat.messages');
+Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.messages.store');
 
 require __DIR__ . '/auth.php';
