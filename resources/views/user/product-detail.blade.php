@@ -1,7 +1,7 @@
 @extends('layouts.user')
 @section('content')
     <!-- Notification Messages -->
-    @if(session('add_to_cart'))
+    @if (session('add_to_cart'))
         <div id="success-notification"
             class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
             <div
@@ -38,7 +38,7 @@
         </div>
     @endif
 
-    @if(session('error'))
+    @if (session('error'))
         <div id="error-notification"
             class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
             <div
@@ -136,7 +136,7 @@
                     </div>
 
                     <!-- Ảnh gallery (tối đa 6 ảnh) -->
-                    @if($galleryImages->count() > 0)
+                    @if ($galleryImages->count() > 0)
                         <div class="bg-white rounded-2xl shadow-lg p-4">
                             <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
                                 <i class="fas fa-palette text-indigo-500"></i>
@@ -176,22 +176,24 @@
                                 </div>
 
                                 <!-- Ảnh gallery -->
-                                @foreach($galleryImages->take(5) as $gallery)
+                                @foreach ($galleryImages->take(5) as $gallery)
                                     <div
                                         class="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer gallery-image border-2 border-transparent">
                                         <img src="{{ asset('storage/product_galleries/' . $gallery->image) }}"
-                                            alt="{{ $gallery->alt_text ?? $product->name }}" class="w-full h-20 object-cover">
+                                            alt="{{ $gallery->alt_text ?? $product->name }}"
+                                            class="w-full h-20 object-cover">
 
                                         <!-- Overlay với click icon -->
                                         <div
                                             class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
                                             <div class="opacity-0 group-hover:opacity-100 transition-all duration-300">
                                                 <div class="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
-                                                    <svg class="w-4 h-4 text-gray-800" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    <svg class="w-4 h-4 text-gray-800" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
                                                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
                                                         </path>
                                                     </svg>
@@ -203,18 +205,21 @@
                             </div>
 
                             <!-- Thông báo nếu có nhiều hơn 5 ảnh gallery -->
-                            @if($galleryImages->count() > 5)
+                            @if ($galleryImages->count() > 5)
                                 <div class="mt-3 text-center">
                                     <p class="text-sm text-gray-500">
                                         <i class="fas fa-info-circle text-indigo-400"></i>
-                                        Hiển thị {{ 1 + min(5, $galleryImages->count()) }}/{{ 1 + $galleryImages->count() }} màu sắc
+                                        Hiển thị
+                                        {{ 1 + min(5, $galleryImages->count()) }}/{{ 1 + $galleryImages->count() }} màu
+                                        sắc
                                     </p>
                                 </div>
                             @endif
 
                             <!-- Test button -->
                             <div class="mt-3 text-center">
-                                <button onclick="testGallery()" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm">
+                                <button onclick="testGallery()"
+                                    class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm">
                                     Test Gallery
                                 </button>
                             </div>
@@ -244,8 +249,8 @@
                         <h1 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">{{ $product->name }}</h1>
                         <div class="flex items-center gap-2 mb-4">
                             @for ($i = 1; $i <= 5; $i++)
-                                <svg class="w-6 h-6 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor"
-                                    viewBox="0 0 20 20">
+                                <svg class="w-6 h-6 {{ $i <= 4 ? 'text-yellow-400' : 'text-gray-300' }}"
+                                    fill="currentColor" viewBox="0 0 20 20">
                                     <path
                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
                                     </path>
@@ -254,7 +259,8 @@
                             <span class="ml-2 text-sm text-gray-500">(4.5)</span>
                         </div>
                         <div class="flex items-center gap-4 mb-6">
-                            <span class="text-3xl font-bold text-gray-900">{{ number_format($product->price, 0, '', '.') }}
+                            <span
+                                class="text-3xl font-bold text-gray-900">{{ number_format($product->price, 0, '', '.') }}
                                 <span class="text-base">VNĐ</span></span>
                             <del class="text-lg text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }}
                                 VNĐ</del>
@@ -270,8 +276,9 @@
                                     @php $colors = $productVariants->pluck('color_name')->unique(); @endphp
                                     @foreach ($colors as $index => $color)
                                         <div>
-                                            <input type="radio" class="hidden peer" name="color_name" id="color-{{ $index }}"
-                                                value="{{ $color }}" {{ $loop->first ? 'checked' : '' }}>
+                                            <input type="radio" class="hidden peer" name="color_name"
+                                                id="color-{{ $index }}" value="{{ $color }}"
+                                                {{ $loop->first ? 'checked' : '' }}>
                                             <label
                                                 class="inline-flex items-center cursor-pointer px-3 py-1 border-2 border-gray-300 rounded-full transition
                                                                                                                                                                         peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
@@ -292,8 +299,9 @@
                                     @php $sizes = $productVariants->pluck('size')->unique(); @endphp
                                     @foreach ($sizes as $index => $size)
                                         <div>
-                                            <input type="radio" class="hidden peer" name="size" id="size-{{ $index }}"
-                                                value="{{ $size }}" {{ $loop->first ? 'checked' : '' }}>
+                                            <input type="radio" class="hidden peer" name="size"
+                                                id="size-{{ $index }}" value="{{ $size }}"
+                                                {{ $loop->first ? 'checked' : '' }}>
                                             <label
                                                 class="inline-flex items-center cursor-pointer px-4 py-2 border-2 border-gray-300 rounded-full transition
                                                                                                                                                                         peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
@@ -339,15 +347,18 @@
                 <div x-data="{ tab: 'desc' }" class="flex flex-col md:flex-row gap-8">
                     <div class="flex flex-row md:flex-col gap-2 md:w-1/4 mb-4 md:mb-0">
                         <button @click="tab = 'desc'"
-                            :class="tab === 'desc' ? 'bg-blue-200 text-blue-800 font-bold' : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
+                            :class="tab === 'desc' ? 'bg-blue-200 text-blue-800 font-bold' :
+                                'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
                             class="tab-btn px-6 py-3 rounded-xl font-semibold text-left focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 transition">Mô
                             tả</button>
                         <button @click="tab = 'add'"
-                            :class="tab === 'add' ? 'bg-blue-200 text-blue-800 font-bold' : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
+                            :class="tab === 'add' ? 'bg-blue-200 text-blue-800 font-bold' :
+                                'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
                             class="tab-btn px-6 py-3 rounded-xl font-semibold text-left focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 transition">Thông
                             tin thêm</button>
                         <button @click="tab = 'review'"
-                            :class="tab === 'review' ? 'bg-blue-200 text-blue-800 font-bold' : 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
+                            :class="tab === 'review' ? 'bg-blue-200 text-blue-800 font-bold' :
+                                'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
                             class="tab-btn px-6 py-3 rounded-xl font-semibold text-left focus:outline-none focus:ring-2 focus:ring-blue-400 transition">Đánh
                             giá</button>
                     </div>
@@ -374,49 +385,67 @@
                         <!-- Reviews Tab -->
                         <div x-show="tab === 'review'" class="tab-content" x-transition>
                             @if (session('success'))
-                                <div class="mb-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow">{{ session('success') }}</div>
+                                <div
+                                    class="mb-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow">
+                                    {{ session('success') }}</div>
                             @endif
                             <div class="max-h-80 md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar space-y-8">
                                 @forelse ($comments as $comment)
-                                    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-5 border border-gray-100" x-data="{ showEdit: false, showReply: false }">
+                                    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-5 border border-gray-100"
+                                        x-data="{ showEdit: false, showReply: false }">
                                         <div class="flex-shrink-0 flex flex-col items-center">
-                                            <img src="{{ asset('storage/' . $comment->user->avatar) }}" alt="user" class="w-14 h-14 rounded-full object-cover border-2 border-purple-200">
+                                            <img src="{{ asset('storage/' . $comment->user->avatar) }}" alt="user"
+                                                class="w-14 h-14 rounded-full object-cover border-2 border-purple-200">
                                         </div>
                                         <div class="flex-1">
-                                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-1">
+                                            <div
+                                                class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-1">
                                                 <span class="font-bold text-gray-900">{{ $comment->user->name }}</span>
-                                                <span class="text-xs text-gray-400">{{ $comment->created_at->format('d/m/Y') }}</span>
+                                                <span
+                                                    class="text-xs text-gray-400">{{ $comment->created_at->format('d/m/Y') }}</span>
                                             </div>
                                             <div class="flex items-center gap-1 mb-2">
                                                 @php $rating = (int) $comment->rating; @endphp
                                                 @for ($i = 1; $i <= 5; $i++)
-                                                    <svg class="w-5 h-5 {{ $i <= $rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    <svg class="w-5 h-5 {{ $i <= $rating ? 'text-yellow-400' : 'text-gray-300' }}"
+                                                        fill="currentColor" viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                     </svg>
                                                 @endfor
                                             </div>
                                             @if ($comment->content)
-                                                <p class="text-gray-700 mb-2 whitespace-pre-line">{{ $comment->content }}</p>
+                                                <p class="text-gray-700 mb-2 whitespace-pre-line">{{ $comment->content }}
+                                                </p>
                                             @endif
                                             @if ($comment->image)
-                                                <img src="{{ asset('storage/' . $comment->image) }}" alt="Ảnh bình luận" class="rounded-lg mt-2 max-w-[150px] border border-gray-200">
+                                                <img src="{{ asset('storage/' . $comment->image) }}" alt="Ảnh bình luận"
+                                                    class="rounded-lg mt-2 max-w-[150px] border border-gray-200">
                                             @endif
                                             @if ($comment->replies && $comment->replies->count())
                                                 <div class="mt-4 pl-4 border-l-4 border-purple-100 space-y-4">
                                                     @foreach ($comment->replies as $reply)
                                                         <div class="flex gap-3 items-start">
-                                                            <img src="{{ asset('images/default-avatar.png') }}" alt="user" class="w-10 h-10 rounded-full object-cover border border-purple-100">
+                                                            <img src="{{ asset('images/default-avatar.png') }}"
+                                                                alt="user"
+                                                                class="w-10 h-10 rounded-full object-cover border border-purple-100">
                                                             <div class="flex-1">
                                                                 <div class="flex items-center gap-2 mb-1">
-                                                                    <span class="font-semibold text-gray-800">{{ $reply->user->name }}</span>
-                                                                    <span class="text-xs text-gray-400">{{ $reply->created_at->format('d/m/Y H:i') }}</span>
+                                                                    <span
+                                                                        class="font-semibold text-gray-800">{{ $reply->user->name }}</span>
+                                                                    <span
+                                                                        class="text-xs text-gray-400">{{ $reply->created_at->format('d/m/Y H:i') }}</span>
                                                                     @if ($reply->user->role === 'admin')
-                                                                        <span class="ml-2 px-2 py-0.5 rounded bg-red-500 text-white text-xs font-bold">Admin</span>
+                                                                        <span
+                                                                            class="ml-2 px-2 py-0.5 rounded bg-red-500 text-white text-xs font-bold">Admin</span>
                                                                     @endif
                                                                 </div>
-                                                                <p class="text-gray-700 mb-1 whitespace-pre-line">{{ $reply->content }}</p>
+                                                                <p class="text-gray-700 mb-1 whitespace-pre-line">
+                                                                    {{ $reply->content }}</p>
                                                                 @if ($reply->image)
-                                                                    <img src="{{ asset('storage/' . $reply->image) }}" alt="Ảnh phản hồi" class="rounded mt-1 max-w-[120px] border border-gray-200">
+                                                                    <img src="{{ asset('storage/' . $reply->image) }}"
+                                                                        alt="Ảnh phản hồi"
+                                                                        class="rounded mt-1 max-w-[120px] border border-gray-200">
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -425,53 +454,73 @@
                                             @endif
                                             <div class="flex gap-2 mt-3 flex-wrap">
                                                 @if (auth()->check() && auth()->id() === $comment->user_id)
-                                                    <button @click="showEdit = !showEdit" type="button" class="px-3 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200 text-xs font-semibold transition">Sửa</button>
+                                                    <button @click="showEdit = !showEdit" type="button"
+                                                        class="px-3 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200 text-xs font-semibold transition">Sửa</button>
                                                 @endif
                                                 @auth
-                                                    <button @click="showReply = !showReply" type="button" class="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-semibold transition">Trả lời</button>
+                                                    <button @click="showReply = !showReply" type="button"
+                                                        class="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-semibold transition">Trả
+                                                        lời</button>
                                                 @endauth
                                             </div>
                                             @if (auth()->check() && auth()->id() === $comment->user_id)
                                                 <div x-show="showEdit" class="mt-3" x-transition>
-                                                    <form action="{{ route('comments.update', $comment->id) }}#v-pills-reviews" method="POST" enctype="multipart/form-data" class="space-y-3">
+                                                    <form
+                                                        action="{{ route('comments.update', $comment->id) }}#v-pills-reviews"
+                                                        method="POST" enctype="multipart/form-data" class="space-y-3">
                                                         @csrf
                                                         @method('PUT')
                                                         <div>
                                                             <label class="block mb-1 text-sm font-medium">Nội dung</label>
-                                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="3">{{ $comment->content }}</textarea>
+                                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400"
+                                                                rows="3">{{ $comment->content }}</textarea>
                                                         </div>
                                                         <div>
-                                                            <label class="block mb-1 text-sm font-medium">Ảnh mới (nếu thay)</label>
-                                                            <input type="file" name="image" class="w-full border rounded-lg px-3 py-2">
+                                                            <label class="block mb-1 text-sm font-medium">Ảnh mới (nếu
+                                                                thay)</label>
+                                                            <input type="file" name="image"
+                                                                class="w-full border rounded-lg px-3 py-2">
                                                         </div>
-                                                        <button type="submit" class="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600 transition">Cập nhật</button>
+                                                        <button type="submit"
+                                                            class="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600 transition">Cập
+                                                            nhật</button>
                                                     </form>
                                                 </div>
                                             @endif
-                                            @auth
-                                                <div x-show="showReply" class="mt-3" x-transition>
-                                                    <form action="{{ route('comments.store') }}#v-pills-reviews" method="POST" class="space-y-3">
-                                                        @csrf
-                                                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                                                        <div>
-                                                            <label class="block mb-1 text-sm font-medium">Trả lời:</label>
-                                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="2" placeholder="Trả lời bình luận..."></textarea>
-                                                        </div>
-                                                        <button type="submit" class="px-4 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-800 transition">Gửi phản hồi</button>
-                                                    </form>
-                                                </div>
-                                            @endauth
+                                            @if (auth()->id() !== $comment->user_id)
+                                                @auth
+                                                    <div x-show="showReply" class="mt-3" x-transition>
+                                                        <form action="{{ route('comments.store') }}#v-pills-reviews"
+                                                            method="POST" class="space-y-3">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id"
+                                                                value="{{ $product->id }}">
+                                                            <input type="hidden" name="parent_id"
+                                                                value="{{ $comment->id }}">
+                                                            <div>
+                                                                <label class="block mb-1 text-sm font-medium">Trả lời:</label>
+                                                                <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="2"
+                                                                    placeholder="Trả lời bình luận..."></textarea>
+                                                            </div>
+                                                            <button type="submit"
+                                                                class="px-4 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-800 transition">Gửi
+                                                                phản hồi</button>
+                                                        </form>
+                                                    </div>
+                                                @endauth
+                                            @endif
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="text-center text-gray-400 py-8">Chưa có bình luận nào cho sản phẩm này.</div>
+                                    <div class="text-center text-gray-400 py-8">Chưa có bình luận nào cho sản phẩm này.
+                                    </div>
                                 @endforelse
                             </div>
                             <div class="add-review mt-10 bg-white rounded-2xl shadow-lg p-8">
                                 <h5 class="mb-4 text-xl font-bold text-gray-900">Gửi bình luận của bạn</h5>
                                 @if ($canComment)
-                                    <form action="{{ route('comments.store') }}#v-pills-reviews" method="POST" enctype="multipart/form-data" class="space-y-6" x-data="{ rating: 0, hover: 0 }">
+                                    <form action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
+                                        enctype="multipart/form-data" class="space-y-6" x-data="{ rating: 0, hover: 0 }">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         <div>
@@ -479,9 +528,16 @@
                                             <div class="flex items-center gap-1">
                                                 <template x-for="i in [1,2,3,4,5]" :key="i">
                                                     <label :for="'rating' + i" class="cursor-pointer">
-                                                        <input type="radio" :id="'rating' + i" name="rating" :value="i" class="hidden" x-model="rating">
-                                                        <svg @mouseenter="hover = i" @mouseleave="hover = 0" @click="rating = i" :class="(hover ? hover : rating) >= i ? 'text-yellow-400' : 'text-gray-300'" class="w-7 h-7 transition-colors duration-200 fill-current hover:text-yellow-300" viewBox="0 0 20 20">
-                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                        <input type="radio" :id="'rating' + i" name="rating"
+                                                            :value="i" class="hidden" x-model="rating">
+                                                        <svg @mouseenter="hover = i" @mouseleave="hover = 0"
+                                                            @click="rating = i"
+                                                            :class="(hover ? hover : rating) >= i ? 'text-yellow-400' :
+                                                                'text-gray-300'"
+                                                            class="w-7 h-7 transition-colors duration-200 fill-current hover:text-yellow-300"
+                                                            viewBox="0 0 20 20">
+                                                            <path
+                                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                         </svg>
                                                     </label>
                                                 </template>
@@ -489,16 +545,22 @@
                                         </div>
                                         <div>
                                             <label class="block mb-1 text-sm font-medium">Ảnh (nếu có)</label>
-                                            <input type="file" name="image" class="w-full border rounded-lg px-3 py-2">
+                                            <input type="file" name="image"
+                                                class="w-full border rounded-lg px-3 py-2">
                                         </div>
                                         <div>
                                             <label class="block mb-1 text-sm font-medium">Nội dung bình luận</label>
-                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="5" placeholder="Nhập bình luận của bạn..."></textarea>
+                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="5"
+                                                placeholder="Nhập bình luận của bạn..."></textarea>
                                         </div>
-                                        <button type="submit" class="px-8 py-2 rounded bg-purple-600 text-white font-bold hover:bg-purple-700 transition">Gửi bình luận</button>
+                                        <button type="submit"
+                                            class="px-8 py-2 rounded bg-purple-600 text-white font-bold hover:bg-purple-700 transition">Gửi
+                                            bình luận</button>
                                     </form>
                                 @else
-                                    <div class="p-4 rounded bg-yellow-100 text-yellow-800 border border-yellow-300 text-center">Chỉ người đã mua sản phẩm mới có thể bình luận.</div>
+                                    <div
+                                        class="p-4 rounded bg-yellow-100 text-yellow-800 border border-yellow-300 text-center">
+                                        Chỉ người đã mua sản phẩm mới có thể bình luận.</div>
                                 @endif
                             </div>
                         </div>
@@ -526,11 +588,13 @@
                                     <div
                                         class="bg-white rounded-3xl shadow-2xl border-2 border-transparent group-hover:border-purple-400 transition-all duration-300 overflow-hidden">
                                         <div class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                                            <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}"
+                                            <img src="{{ asset('storage/' . $product->img_thumb) }}"
+                                                alt="{{ $product->name }}"
                                                 class="w-full h-60 object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-500">
                                             <span
                                                 class="absolute top-4 left-4 flex items-center gap-1 bg-gradient-to-r from-pink-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M12 8v4l3 3"></path>
                                                 </svg>
@@ -565,7 +629,8 @@
                                             <a href="{{ route('home.show', $product->id) }}"
                                                 class="mt-auto w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg">
                                                 <span>Xem chi tiết</span>
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 5l7 7-7 7"></path>
                                                 </svg>
@@ -583,7 +648,7 @@
         </div>
     </section>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing gallery...'); // Debug log
 
             new Swiper('.related-swiper', {
@@ -594,10 +659,18 @@
                     prevEl: '.related-prev',
                 },
                 breakpoints: {
-                    1024: { slidesPerView: 4 },
-                    768: { slidesPerView: 3 },
-                    640: { slidesPerView: 2 },
-                    0: { slidesPerView: 1 }
+                    1024: {
+                        slidesPerView: 4
+                    },
+                    768: {
+                        slidesPerView: 3
+                    },
+                    640: {
+                        slidesPerView: 2
+                    },
+                    0: {
+                        slidesPerView: 1
+                    }
                 }
             });
 
@@ -609,7 +682,7 @@
             console.log('Found gallery images:', galleryImages.length); // Debug log
 
             galleryImages.forEach((img, index) => {
-                img.addEventListener('click', function (e) {
+                img.addEventListener('click', function(e) {
                     console.log('Gallery image clicked:', index); // Debug log
                     const imgElement = this.querySelector('img');
                     if (imgElement) {
@@ -805,7 +878,8 @@
                 const badgeContainer = clickedElement.querySelector('.absolute.top-1.left-1');
                 if (badgeContainer) {
                     const newBadge = document.createElement('span');
-                    newBadge.className = 'bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg';
+                    newBadge.className =
+                        'bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg';
                     newBadge.textContent = 'Chính';
                     badgeContainer.appendChild(newBadge);
                 }
@@ -847,7 +921,8 @@
         function showImageChangeNotification() {
             // Create notification element
             const notification = document.createElement('div');
-            notification.className = 'fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full';
+            notification.className =
+                'fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full';
             notification.innerHTML = `
                         <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 rounded-xl shadow-lg border border-blue-400/30 backdrop-blur-sm">
                             <div class="flex items-center space-x-2">
@@ -890,10 +965,12 @@
             background: #f3f4f6;
             border-radius: 8px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #c4b5fd;
             border-radius: 8px;
         }
+
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #c4b5fd #f3f4f6;

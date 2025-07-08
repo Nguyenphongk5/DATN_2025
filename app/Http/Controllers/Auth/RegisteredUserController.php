@@ -21,9 +21,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $logo = Logo::where('is_active', 1)->first();
         $categories = DB::table('categories')->get();
-        return view('auth.register', compact('categories', 'logo'));
+        return view('auth.register', compact('categories'));
     }
 
     /**
@@ -33,12 +32,27 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
+        // $request->validate([
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        //     'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        // ]);
+        if (strlen($request->name) < 3) {
+            return back()->withInput($request->only('name', 'email'))
+                ->with('error', 'Tên người dùng phải có ít nhất 3 ký tự.');
+        }
+        if (User::where('email', $request->email)->exists()) {
+            return back()->withInput($request->only('name', 'email'))
+                ->with('error', 'Email đã tồn tại trong hệ thống.');
+        }
+        if (strlen($request->password) < 8) {
+            return back()->withInput($request->only('name', 'email'))
+                ->with('error', 'Mật khẩu phải có ít nhất 8 ký tự.');
+        }
+        if ($request->password_confirmation !== $request->password) {
+            return back()->withInput($request->only('name', 'email'))
+                ->with('error', 'Mật khẩu xác nhận không khớp.');
+        }
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -49,6 +63,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home.index', absolute: false));
+        return redirect(route('home.index', absolute: false))->with(
+            'success',
+            'Đăng ký thành công! Bạn đã được đăng nhập.'
+        );
     }
 }

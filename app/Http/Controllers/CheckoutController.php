@@ -54,6 +54,19 @@ class CheckoutController extends Controller
             'shipping_method' => 'required|in:standard,express',
             'voucher_code'    => 'nullable|string',
         ]);
+        if (strlen($request->name) < 3) {
+            return back()->withInput($request->only('name', 'phone', 'address', 'note', 'payment_method', 'shipping_method'))
+                ->with('error', 'Tên người nhận phải có ít nhất 3 ký tự.');
+        }
+        if (strlen($request->phone) < 10 || strlen($request->phone) > 10) {
+            return back()->withInput($request->only('name', 'phone', 'address', 'note', 'payment_method', 'shipping_method'))
+                ->with('error', 'Số điện thoại không hợp lệ.');
+        }
+        if (strlen($request->address) < 5) {
+            return back()->withInput($request->only('name', 'phone', 'address', 'note', 'payment_method', 'shipping_method'))
+                ->with('error', 'Địa chỉ nhận hàng phải có ít nhất 5 ký tự.');
+        }
+        
         $user = Auth::user();
         // 1) tổng tiền (đã gửi từ form) ─ nếu =0 sẽ tự tính lại
         $totalAmount = (float) $request->input('total_amount', 0);
