@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FavoriteController;
 use App\Models\Logo;
 
 // <<<<<<< UI-Improved-Profile
@@ -39,6 +40,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::resource('home', HomeController::class);
+Route::middleware('auth')->get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 Route::post('/comments', [HomeController::class, 'storeComment'])->name('comments.store');
 Route::put('/comments/{id}', [HomeController::class, 'updateComment'])->name('comments.update');
 Route::middleware('auth')->group(function () {
