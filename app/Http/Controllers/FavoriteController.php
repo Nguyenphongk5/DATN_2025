@@ -10,18 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
-    //
     public function index()
     {
         $userId = Auth::id();
 
-        // Lấy danh sách sản phẩm đã được người dùng yêu thích
         $favorites = Product::join('favorites', 'products.id', '=', 'favorites.product_id')
             ->where('favorites.user_id', $userId)
             ->select('products.*')
             ->get();
 
-        // Trả về view hoặc JSON tuỳ nhu cầu
         return view('user.favorites', compact('favorites'));
     }
 
