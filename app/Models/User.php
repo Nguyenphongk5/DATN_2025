@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', 
+        'role',
         'avatar',
     ];
 
@@ -48,7 +48,15 @@ class User extends Authenticatable
         ];
     }
     public function getIsAdminAttribute()
-{
-    return $this->role === ' admin ';
-}
+    {
+        return $this->role === ' admin ';
+    }
+
+    /**
+     * Quan hệ messages cho chat
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

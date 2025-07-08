@@ -1,5 +1,8 @@
 <?php
-$logo = \App\Models\Logo::where('is_active',1)->first();
+$logo = \App\Models\Logo::where('is_active', 1)->first();
+if (request()->query('error') === 'admin_cannot_chat') {
+    session()->flash('error', 'Tài khoản admin không được sử dụng chat người dùng!');
+}
 ?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -406,7 +409,8 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Xem hồ sơ</a>
                                     <div class="border-t border-gray-200"></div>
                                     <a href="{{ route('orders.history') }}"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử đơn hàng</a>
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử đơn
+                                        hàng</a>
                                     <div class="border-t border-gray-200"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -471,7 +475,7 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                         </button>
                     </div>
 
-                            <!-- Desktop Menu -->
+                    <!-- Desktop Menu -->
                     <div class="hidden lg:flex justify-center">
                         <ul class="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wide">
                             <li>
@@ -490,11 +494,13 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                 <a href="#accessories" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
                                     kiện</a>
                             </li>
-                             <li>
-                                <a href="#pages" class="text-gray-700 hover:text-blue-600 transition-colors">Trang</a>
+                            <li>
+                                <a href="#pages"
+                                    class="text-gray-700 hover:text-blue-600 transition-colors">Trang</a>
                             </li>
-                                <div class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                </div>
+                            <div
+                                class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            </div>
                             </li>
                             <li>
                                 <a href="#brand" class="text-gray-700 hover:text-blue-600 transition-colors">Thương
@@ -530,11 +536,11 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
                                 </li>
                             </ul>
 
-                            </div>
                         </div>
                     </div>
-                </nav>
             </div>
+            </nav>
+        </div>
         </div>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -693,128 +699,320 @@ $logo = \App\Models\Logo::where('is_active',1)->first();
         transition: width 5s linear;
     }
 </style>
+<!-- Chatbox Styles -->
+<style>
+    #chatbox-user {
+        animation: fadeInUp 0.4s;
+        backdrop-filter: blur(12px) saturate(120%);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 8px 32px 0 rgba(132, 94, 194, 0.18);
+        border-radius: 2rem;
+        border: 1.5px solid #ff5f6d33;
+    }
 
-<!-- Floating Chat Icon -->
-<div id="chat-toggle-btn" onclick="toggleChat()"
-    class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center cursor-pointer transition-all duration-300 z-40 hover:scale-110">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chat-header-glass {
+        background: linear-gradient(90deg, #ff5f6d 0%, #845ec2 100%);
+        backdrop-filter: blur(8px);
+        border-top-left-radius: 2rem;
+        border-top-right-radius: 2rem;
+        box-shadow: 0 2px 8px 0 #845ec233;
+    }
+
+    .chat-bubble {
+        position: relative;
+        border-radius: 1.5rem;
+        box-shadow: 0 2px 8px 0 #845ec233;
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 0.5rem;
+        max-width: 75%;
+        word-break: break-word;
+        animation: bubbleIn 0.3s;
+        transition: background 0.2s;
+    }
+
+    @keyframes bubbleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .chat-bubble.user {
+        background: linear-gradient(180deg, #ff5f6d 0%, #845ec2 100%);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 0.3rem;
+    }
+
+    .chat-bubble.admin {
+        background: #f3eaff;
+        color: #222;
+        align-self: flex-start;
+        border-bottom-left-radius: 0.3rem;
+    }
+
+    .chat-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 1px 4px #845ec233;
+        margin-right: 0.5rem;
+        margin-left: 0.5rem;
+        border: 2px solid #ff5f6d;
+    }
+
+    .chat-meta {
+        font-size: 0.75rem;
+        color: #b39ddb;
+        margin-top: 0.2rem;
+        text-align: right;
+    }
+
+    .chat-meta.admin {
+        text-align: left;
+    }
+
+    #chat-send-btn {
+        background: linear-gradient(135deg, #ff5f6d 0%, #845ec2 100%);
+        transition: background 0.2s, transform 0.1s;
+        box-shadow: 0 2px 8px 0 #ff5f6d33;
+    }
+
+    #chat-send-btn:hover {
+        background: linear-gradient(135deg, #845ec2 0%, #ff5f6d 100%);
+        transform: scale(1.1);
+    }
+
+    #chat-input::placeholder {
+        color: #b39ddb;
+        font-style: italic;
+    }
+
+    .emoji-btn {
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        margin-right: 0.3rem;
+        filter: drop-shadow(0 1px 2px #ff5f6d33);
+    }
+
+    .emoji-btn:hover {
+        transform: scale(1.2);
+        filter: drop-shadow(0 2px 4px #845ec2aa);
+    }
+
+    @media (max-width: 600px) {
+        #chatbox-user {
+            right: 0.5rem !important;
+            width: 98vw !important;
+            min-width: unset !important;
+        }
+    }
+
+    #chat-toggle-btn {
+        background: linear-gradient(135deg, #ff5f6d 0%, #845ec2 100%) !important;
+        box-shadow: 0 4px 16px 0 #845ec233;
+        border: 4px solid #fff;
+    }
+</style>
+<div id="chat-toggle-btn" onclick="toggleChatBox()"
+    class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-green-400 text-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer transition-all duration-300 z-50 hover:scale-110 border-4 border-white">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
         </path>
     </svg>
 </div>
-
-<!-- Chat Box -->
-<div id="chat-box-wrapper"
-    class="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 hidden z-50">
-    <!-- Header -->
-    <div id="chat-header" class="bg-blue-600 text-white px-4 py-3 rounded-t-lg flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span class="font-medium">Hỗ trợ trực tuyến</span>
-        </div>
-        <button onclick="toggleChat()" class="text-white hover:text-gray-200 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                </path>
-            </svg>
-        </button>
-    </div>
-
-    <!-- Chat Messages -->
-    <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
-
-    <!-- Footer -->
-    <div id="chat-footer" class="p-4 border-t border-gray-200 bg-white rounded-b-lg">
-        @auth
-            <input type="hidden" id="chat_name" value="{{ auth()->user()->name }}">
-        @else
-            <input type="text" id="chat_name" placeholder="Tên của bạn..."
-                class="w-full px-3 py-2 mb-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
-        @endauth
-        <div class="flex items-center space-x-2">
-            <input type="text" id="chat_message" placeholder="Nhập tin nhắn..."
-                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
-            <button id="send-btn" onclick="sendMessage()"
-                class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+{{-- CHATBOX USER START --}}
+@if (auth()->check())
+    <div id="chatbox-user" class="fixed bottom-28 right-8 w-96 bg-white z-50 hidden flex flex-col"
+        style="min-height:420px; max-height:520px; min-width:340px;">
+        <div class="chat-header-glass text-white px-6 py-4 flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=4f8cff&color=fff" class="chat-avatar"
+                    alt="Admin">
+                <span class="font-semibold text-lg drop-shadow">Hỗ trợ trực tuyến <span
+                        class="ml-2 inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse align-middle"></span></span>
+            </div>
+            <button onclick="toggleChatBox()" class="text-white hover:text-gray-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
                 </svg>
             </button>
         </div>
-    </div>
-</div>
-
-<script>
-    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    function toggleChat() {
-        const chatBox = document.getElementById('chat-box-wrapper');
-        chatBox.classList.toggle('hidden');
-    }
-
-    function loadMessages() {
-        fetch('/chat/messages')
-            .then(res => res.json())
-            .then(data => {
-                const chatBox = document.getElementById('chat-box');
-                chatBox.innerHTML = '';
-                data.forEach(msg => {
-                    const isAdmin = msg.is_admin;
-                    const messageClass = isAdmin ?
-                        'bg-gray-200 text-gray-800 ml-8' :
-                        'bg-blue-600 text-white mr-8';
-                    const containerClass = isAdmin ?
-                        'flex justify-start' :
-                        'flex justify-end';
-
-                    chatBox.innerHTML += `
-          <div class="${containerClass}">
-            <div class="${messageClass} px-4 py-2 rounded-lg max-w-xs break-words">
-              <div class="font-semibold text-xs mb-1">${msg.sender_name}</div>
-              <div>${msg.message}</div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2 bg-gray-50"
+            style="min-height:260px; max-height:320px;"></div>
+        <div class="p-4 border-t border-gray-100 bg-white rounded-b-3xl">
+            <div class="flex items-center space-x-2">
+                <button class="emoji-btn" onclick="toggleEmojiPicker()">😊</button>
+                <input type="text" id="chat-input" placeholder="Nhập nội dung cần hỗ trợ..."
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent text-base shadow-sm">
+                <button id="chat-send-btn"
+                    class="bg-gradient-to-br from-blue-500 to-green-400 hover:from-blue-700 hover:to-green-500 text-white p-3 rounded-full shadow-lg transition-all flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
             </div>
-          </div>
-        `;
-                });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-    }
+            <div id="emoji-picker"
+                class="hidden mt-2 bg-white border border-gray-200 rounded-xl shadow-lg p-2 flex flex-wrap gap-1 max-w-xs">
+                <span class="emoji-btn" onclick="addEmoji('😀')">😀</span>
+                <span class="emoji-btn" onclick="addEmoji('😂')">😂</span>
+                <span class="emoji-btn" onclick="addEmoji('😍')">😍</span>
+                <span class="emoji-btn" onclick="addEmoji('👍')">👍</span>
+                <span class="emoji-btn" onclick="addEmoji('🙏')">🙏</span>
+                <span class="emoji-btn" onclick="addEmoji('😢')">😢</span>
+                <span class="emoji-btn" onclick="addEmoji('🎉')">🎉</span>
+                <span class="emoji-btn" onclick="addEmoji('❤️')">❤️</span>
+                <span class="emoji-btn" onclick="addEmoji('😎')">😎</span>
+                <span class="emoji-btn" onclick="addEmoji('🤔')">🤔</span>
+                <span class="emoji-btn" onclick="addEmoji('🥰')">🥰</span>
+                <span class="emoji-btn" onclick="addEmoji('😇')">😇</span>
+            </div>
+        </div>
+    </div>
+@endif
+<script>
+    const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+    const userRole = "{{ auth()->user()->role ?? '' }}";
 
-    function sendMessage() {
-        const nameEl = document.getElementById('chat_name');
-        const message = document.getElementById('chat_message').value;
-        const name = nameEl ? nameEl.value : '';
-        if (!name || !message) return;
-
-        fetch('/chat/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token
-            },
-            body: JSON.stringify({
-                sender_name: name,
-                message,
-                is_admin: false
-            })
-        }).then(() => {
-            document.getElementById('chat_message').value = '';
-            loadMessages();
-        });
-    }
-
-    // Enter key to send message
-    document.getElementById('chat_message').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
+    function toggleChatBox() {
+        const box = document.getElementById('chatbox-user');
+        if (!isLoggedIn) {
+            window.location.href = "{{ route('login') }}?error=login_required";
+            return;
         }
-    });
 
-    setInterval(loadMessages, 3000);
-    loadMessages();
+        if (userRole == 'admin') {
+            window.location.href = "{{ url()->current() }}?error=admin_cannot_chat";
+            return;
+        }
 
+        if (box) {
+            if (box.style.display === 'flex') {
+                box.style.display = 'none';
+            } else {
+                box.style.display = 'flex';
+            }
+        }
+    }
+
+    function toggleEmojiPicker() {
+        const picker = document.getElementById('emoji-picker');
+        picker.classList.toggle('hidden');
+    }
+
+    function addEmoji(emoji) {
+        const input = document.getElementById('chat-input');
+        input.value += emoji;
+        input.focus();
+    }
+    @if (auth()->check())
+        const chatUserId = {{ auth()->id() }};
+
+        function formatTime(ts) {
+            const d = new Date(ts);
+            return d.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function loadUserMessages() {
+            fetch('/chat/messages?user_id=' + chatUserId)
+                .then(res => res.json())
+                .then(data => {
+                    const box = document.getElementById('chat-messages');
+                    box.innerHTML = '';
+                    let html = '';
+                    data.forEach(msg => {
+                        if (msg.is_admin) {
+                            // Admin bên trái, có avatar
+                            html += `
+                            <div class="mb-2 flex justify-start">
+                                <div class="flex items-end gap-2">
+                                    <img src="https://ui-avatars.com/api/?name=Admin&background=845ec2&color=fff" class="w-7 h-7 rounded-full shadow-sm" alt="avatar">
+                                    <div>
+                                        <div class="chat-bubble admin bg-purple-50 text-gray-900 px-3 py-1.5 rounded-2xl font-medium shadow-sm" style="border-bottom-left-radius: 0.4rem; font-size: 15px; min-width: 80px; max-width: 220px;">
+                                            <div class="font-bold text-xs text-purple-700 mb-0.5" style="font-size: 12px;">Admin <span class="ml-2 text-[10px] text-purple-400">${msg.created_at ? formatTime(msg.created_at) : ''}</span></div>
+                                            ${msg.message}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        } else {
+                            // User bên phải, KHÔNG avatar, KHÔNG gap, sát phải
+                            html += `
+                            <div class="mb-2 flex justify-end">
+                                <div class="max-w-[60%]">
+                                    <div class="chat-bubble user bg-gradient-to-br from-pink-400 to-purple-400 text-white px-3 py-1.5 rounded-2xl font-medium shadow-sm text-right" style="border-bottom-right-radius: 0.4rem; font-size: 15px; min-width: 80px; max-width: 220px;">
+                                        <div class="font-bold text-xs text-white mb-0.5 text-right" style="font-size: 12px;">Bạn <span class="ml-2 text-[10px] text-pink-200">${msg.created_at ? formatTime(msg.created_at) : ''}</span></div>
+                                        ${msg.message}
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }
+                    });
+                    box.innerHTML = html;
+                    setTimeout(() => {
+                        box.scrollTop = box.scrollHeight;
+                    }, 100);
+                });
+        }
+        document.getElementById('chat-send-btn').onclick = function() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            fetch('/chat/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                        'content')
+                },
+                body: JSON.stringify({
+                    user_id: chatUserId,
+                    message: message,
+                    is_admin: false
+                })
+            }).then(() => {
+                input.value = '';
+                loadUserMessages();
+            });
+        };
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('chat-send-btn').click();
+            }
+        });
+        setInterval(loadUserMessages, 3000);
+        loadUserMessages();
+    @endif
+</script>
+<script>
     // User dropdown functionality
     document.getElementById('userDropdown')?.addEventListener('click', function() {
         document.getElementById('userDropdownMenu').classList.toggle('hidden');

@@ -51,6 +51,24 @@ class CommentController extends Controller
             'filter' => $request->only(['user_id', 'product_id', 'is_active', 'content'])
         ]);
     }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'content' => 'required|string|max:1000',
+            'product_id' => 'required|exists:products,id',
+            'parent_id' => 'required|exists:comments,id',
+        ]);
+
+        Comment::create([
+            'user_id' => auth()->id(),
+            'product_id' => $request->product_id,
+            'parent_id' => $request->parent_id,
+            'content' => $request->content,
+            'is_active' => true, // Mặc định bình luận mới là hoạt động
+        ]);
+
+        return back()->with('success', 'Đã trả lời bình luận thành công!.');
+    }
 
     public function toggle($id)
     {

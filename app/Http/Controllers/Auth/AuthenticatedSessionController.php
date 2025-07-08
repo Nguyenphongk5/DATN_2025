@@ -19,11 +19,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        $logo = Logo::where('is_active', 1)->first();
+        if ($request->query('error') === 'login_required') {
+            session()->flash('error', 'Bạn cần đăng nhập để sử dụng chat!');
+        }
         $categories = DB::table('categories')->get();
-        return view('auth.login', compact('categories', 'logo'));
+        return view('auth.login', compact('categories'));
     }
 
     /**

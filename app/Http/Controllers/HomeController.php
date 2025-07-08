@@ -19,7 +19,7 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Lấy các banner đang hoạt động
         $banners = DB::table('banners')->get();

@@ -140,12 +140,12 @@
                                 <div x-show="open" x-transition class="mt-3 space-y-4">
                                     @forelse ($comment->replies as $reply)
                                         <div class="ml-8 border-l-4 border-blue-400 bg-blue-50 rounded-xl p-5 flex gap-4">
-                                            <img src="{{ $reply->image ? asset('storage/' . $reply->image) : asset('images/default-avatar.png') }}"
-                                                alt="Ảnh" class="w-12 h-12 rounded-full object-cover border-2 border-blue-200">
+                                            {{-- <img src="{{ $reply->image ? asset('storage/' . $reply->image) : asset('images/default-avatar.png') }}"
+                                                alt="Ảnh" class="w-12 h-12 rounded-full object-cover border-2 border-blue-200"> --}}
                                             <div class="flex-1">
                                                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                                                     <span
-                                                        class="font-semibold text-blue-800">{{ $reply->user->name ?? 'N/A' }}</span>
+                                                        class="font-semibold text-blue-800">Admin: {{ $reply->user->name ?? 'N/A' }}</span>
                                                     <span
                                                         class="text-xs text-gray-400">{{ $reply->created_at->format('d/m/Y H:i') }}</span>
                                                 </div>
@@ -222,7 +222,7 @@
                                             class="text-blue-500 hover:underline text-sm font-semibold">Trả lời bình luận
                                             này</button>
                                         <form x-show="replyOpen" x-transition method="POST"
-                                            action="{{ route('admin.comments.index') }}" class="mt-2 space-y-2">
+                                            action="{{ route('admin.comments.store') }}" class="mt-2 space-y-2">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $comment->product_id }}">
                                             <input type="hidden" name="parent_id" value="{{ $comment->id }}">
