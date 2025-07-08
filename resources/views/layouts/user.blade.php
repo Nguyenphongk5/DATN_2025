@@ -12,6 +12,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -340,7 +341,8 @@ if (request()->query('error') === 'admin_cannot_chat') {
                 <div class="flex justify-center lg:justify-start mb-4 lg:mb-0">
                     <div class="main-logo">
                         <a href="{{ route('home.index') }}" class="block">
-                            <img src="{{ asset('storage/' . $logo->image) }}" alt="logo" class="h-12">
+                            <img src="{{ asset('storage/' . optional($logo)->image) }}" alt="logo"
+                                class="h-12">
                         </a>
                     </div>
                 </div>
@@ -430,7 +432,8 @@ if (request()->query('error') === 'admin_cannot_chat') {
                         </div>
 
                         <!-- Heart Icon -->
-                        <a href="#" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
+                        <a href="{{ route('favorites.index') }}"
+                            class="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
                             <svg width="24" height="24" viewBox="0 0 24 24" class="text-gray-700">
                                 <use xlink:href="#heart"></use>
                             </svg>
@@ -583,8 +586,9 @@ if (request()->query('error') === 'admin_cannot_chat') {
                 <div class="lg:col-span-1">
                     <div class="mb-6">
                         <a href="{{ route('home.index') }}" class="block">
-                            <img src="{{ asset('storage/' . $logo->image) }}" alt="logo"
+                            <img src="{{ asset('storage/' . ($logo->image ?? 'default-logo.png')) }}" alt="logo"
                                 class="h-12 brightness-0 invert filter hover:brightness-100 hover:invert-0 transition-all duration-300 cursor-pointer">
+
                         </a>
                     </div>
                     <div class="flex space-x-3">
