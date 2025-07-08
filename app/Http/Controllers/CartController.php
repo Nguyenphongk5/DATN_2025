@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Logo;
 use App\Models\ProductVariant;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -196,12 +197,7 @@ class CartController extends Controller
         return redirect()->back()->with('add_to_cart', 'Sản phẩm đã được thêm vào giỏ hàng!');
     }
 
-    public function index()
-    {
-        $logo = Logo::where('is_active', '1')->first();
-        $cart = Cart::with(['items.productVariant.product'])->where('user_id', Auth::id())->first();
-        return view('user.cart', compact('cart', 'logo'));
-    }
+
     public function remove($id)
     {
         $item = CartItem::findOrFail($id);
@@ -244,4 +240,11 @@ class CartController extends Controller
     //     // Chuyển hướng sang trang checkout mua ngay
     //     return redirect()->route('checkout.buyNow');
     // }
+
+    public function index()
+    {
+        $logo = Logo::where('is_active', '1')->first();
+        $cart = Cart::with(['items.productVariant.product'])->where('user_id', Auth::id())->first();
+        return view('user.cart', compact('cart', 'logo'));
+    }
 }
