@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Logo;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -28,23 +31,29 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        // Xác thực rate limit
+        $request->ensureIsNotRateLimited();
 
+        $user = User::where('email', $request->input('email'))->first();
+
+        if (! $user) {
+            RateLimiter::hit($request->throttleKey());
+            return back()->withInput($request->only('email', 'remember'))->with('error', 'Email không tồn tại trong hệ thống.');
+        }
+        if (! Hash::check($request->input('password'), $user->password)) {
+            RateLimiter::hit($request->throttleKey());
+
+            return back()->with('error','Mật khẩu không chính xác.');
+        }
+        Auth::login($user, $request->boolean('remember'));
+        // RateLimiter::clear($request->throttleKey());
         $request->session()->regenerate();
-        // if (Auth::user()->role == 'admin' || Auth::user()->role == 'staff') {
-        //     return redirect()->intended(route('dashboard', absolute: false));
-        // } else {
-        //     return redirect()->intended(route('home.index', absolute: false));
-        // }
-
         session(['login_at' => now()]);
 
         // Xử lý thêm sản phẩm vào giỏ hàng sau khi đăng nhập
         if (session('pending_cart_item')) {
             $pendingItem = session('pending_cart_item');
             $returnUrl = $pendingItem['return_url'] ?? route('home.index');
-
-            // Xóa session pending
             session()->forget('pending_cart_item');
 
             // Thêm sản phẩm vào giỏ hàng
@@ -54,9 +63,9 @@ class AuthenticatedSessionController extends Controller
         }
 
         if (Auth::user()->role === 'admin' || Auth::user()->role === 'staff') {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
+            return redirect()->intended(route('admin.dashboard', absolute: false))->with('success', 'Đăng nhập thành công!');
         } else {
-            return redirect()->intended(route('home.index', absolute: false));
+            return redirect()->intended(route('home.index', absolute: false))->with('success', 'Đăng nhập thành công!');
         }
     }
 
