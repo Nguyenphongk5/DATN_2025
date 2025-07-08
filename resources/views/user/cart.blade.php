@@ -171,6 +171,56 @@
         </div>
     </section>
 
+    {{-- XÓA HOẶC COMMENT PHẦN HIỂN THỊ BEST SELLER PRODUCTS Ở ĐÂY --}}
+    {{--
+    @if(isset($bestSalerProducts) && count($bestSalerProducts) > 0)
+        <section class="py-20 bg-gradient-to-br from-yellow-50 via-white to-orange-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-500 via-orange-400 to-red-500 bg-clip-text text-transparent mb-4">
+                        Best Seller Products
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Những sản phẩm bán chạy nhất của chúng tôi
+                    </p>
+                    <div class="w-24 h-1 bg-gradient-to-r from-yellow-500 to-red-500 mx-auto mt-6 rounded-full"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+                    @foreach ($bestSalerProducts as $product)
+                        <div class="group relative animate-fade-in-up">
+                            <div class="bg-white rounded-3xl shadow-2xl border-2 border-transparent group-hover:border-yellow-400 transition-all duration-300 overflow-hidden">
+                                <div class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 group"
+                                    data-id="{{ $product->id }}">
+                                    <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}"
+                                        class="w-full h-60 object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-500">
+                                    <span class="absolute top-4 left-4 bg-yellow-400 text-white px-3 py-1 rounded-full text-xs font-bold">Best Seller</span>
+                                </div>
+                                <div class="p-6 flex flex-col h-full">
+                                    <h3 class="text-lg font-extrabold text-gray-900 mb-2 line-clamp-2 group-hover:text-yellow-600 transition-colors duration-200">
+                                        <a href="{{ route('home.show', $product->id) }}" class="hover:underline">{{ $product->name }}</a>
+                                    </h3>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-2xl font-bold text-red-600">{{ number_format($product->price, 0, '', '.') }} VNĐ</span>
+                                        <del class="text-base text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }} VNĐ</del>
+                                    </div>
+                                    <a href="{{ route('home.show', $product->id) }}"
+                                        class="mt-auto w-full bg-gradient-to-r from-yellow-500 to-red-500 text-white font-bold py-3 px-4 rounded-xl hover:from-yellow-600 hover:to-red-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg">
+                                        <span>Xem chi tiết</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+    --}}
+
     <script>
         const checkboxes = document.querySelectorAll('.item-checkbox');
         const selectAll = document.getElementById('select-all');
