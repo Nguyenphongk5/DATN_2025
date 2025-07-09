@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $userId = Auth::id(); // null nếu chưa đăng nhập
@@ -49,22 +52,22 @@ class HomeController extends Controller
 
         // Lấy sản phẩm bán chạy nhất
         $bestSalerProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
-            ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-            ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-            ->groupBy('products.id')
-            ->orderByDesc('total_sold')
-            ->take(8)
-            ->get()
-            ->map(function ($product) use ($userId) {
-                $product->is_favorited = false;
-                if ($userId) {
-                    $product->is_favorited = DB::table('favorites')
-                        ->where('user_id', $userId)
-                        ->where('product_id', $product->id)
-                        ->exists();
-                }
-                return $product;
-            });
+    ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+    ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
+    ->groupBy('products.id')
+    ->orderByDesc('total_sold')
+    ->take(8)
+    ->get()
+    ->map(function ($product) use ($userId) {
+        $product->is_favorited = false;
+        if ($userId) {
+            $product->is_favorited = DB::table('favorites')
+                ->where('user_id', $userId)
+                ->where('product_id', $product->id)
+                ->exists();
+        }
+        return $product;
+    });
 
         // Trả về view
         return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'bestSalerProducts'));
