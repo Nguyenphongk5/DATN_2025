@@ -48,16 +48,6 @@
             <a href="{{ route('admin.chat.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60 {{ request()->routeIs('admin.chat.*') ? 'bg-gradient-to-r from-indigo-500 to-sky-400 text-white font-extrabold ring-2 ring-sky-300/60 shadow-xl' : '' }}">
                 <i class="fas fa-receipt text-lime-200 drop-shadow-lg"></i> Chats
             </a>
-            <a href="{{ route('home.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/0 hover:bg-gradient-to-r hover:from-indigo-500 hover:to-sky-400 hover:text-white transition shadow-md border border-transparent hover:border-sky-300/60">
-                <i class="fas fa-user-cog text-white drop-shadow-lg"></i> Home
-            </a>
-        </nav>
-        <form method="POST" action="{{ route('logout') }}" class="mt-auto mb-6 px-4">
-            @csrf
-            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-500 hover:to-pink-500 transition text-white font-semibold shadow-lg ring-2 ring-pink-200/40">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-        </form>
     </aside>
     <!-- Overlay for mobile -->
     <div x-show="sidebarOpen" class="fixed inset-0 bg-black bg-opacity-40 z-20 md:hidden" @click="sidebarOpen = false"></div>

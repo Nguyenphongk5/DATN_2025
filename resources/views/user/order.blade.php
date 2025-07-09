@@ -158,31 +158,31 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Họ tên</label>
                             <input type="text" name="name"
-                                class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
                                 value="{{ old('name', auth()->user()->name ?? '') }}" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
                             <input type="text" name="phone"
-                                class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
                                 value="{{ old('phone') }}" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
                             <input type="text" name="address"
-                                class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
                                 value="{{ old('address') }}" required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
                             <textarea name="note"
-                                class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
                                 rows="3">{{ old('note') }}</textarea>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Phương thức giao hàng</label>
                             <select name="shipping_method"
-                                class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
                                 required>
                                 <option value="standard">Giao hàng tiêu chuẩn</option>
                                 <option value="express">Giao hàng nhanh</option>
@@ -191,7 +191,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Phương thức thanh toán</label>
                             <select name="payment_method"
-                                class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
                                 required id="payment_method">
                                 <option value="cod">Thanh toán khi nhận hàng</option>
                                 <option value="online">Thanh toán VNPay</option>
@@ -349,14 +349,54 @@
                 }, 2000);
             });
 
-            if (submitBtn) {
-                submitBtn.addEventListener('click', function(event) {
-                    if (isSubmitted) {
-                        event.preventDefault();
-                        return;
+          submitBtn.addEventListener('click', function(event) {
+                event.preventDefault(); // Ngừng gửi form
+
+                const hasError = validateForm();
+                if (hasError) {
+                    alert('Vui lòng điền đầy đủ thông tin!');
+                } else {
+                    form.submit(); // Chỉ gửi form khi không có lỗi
+                }
+            });
+
+            // Hàm validate form: Kiểm tra nếu các trường trống hoặc không hợp lệ
+            function validateForm() {
+                let hasError = false;
+                const inputs = form.querySelectorAll('input, select, textarea'); // Chọn tất cả các ô nhập liệu
+
+                inputs.forEach(input => {
+                    // Bỏ qua trường "Ghi chú", không kiểm tra nếu trống
+                    if (input.name !== 'note' && !input.value.trim()) {
+                        input.classList.add('border-red-500'); // Thêm viền đỏ
+                        hasError = true;
+                        showErrorMessage(input, "Trường này không được để trống!");
+                    } else {
+                        input.classList.remove('border-red-500'); // Loại bỏ viền đỏ nếu có giá trị hợp lệ
+                        removeErrorMessage(input); // Xóa thông báo lỗi khi đã nhập đầy đủ
                     }
-                    isSubmitted = true;
                 });
+
+                return hasError; // Nếu có lỗi trả về true, nếu không có lỗi trả về false
+            }
+
+            // Hiển thị thông báo lỗi cho trường nào đó
+            function showErrorMessage(input, message) {
+                const errorMessage = document.createElement('div');
+                errorMessage.classList.add('text-red-500', 'text-sm', 'mt-1');
+                errorMessage.textContent = message;
+
+                if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('error-message')) {
+                    input.insertAdjacentElement('afterend', errorMessage);
+                    errorMessage.classList.add('error-message');
+                }
+            }
+
+            // Xóa thông báo lỗi nếu trường hợp hợp lệ
+            function removeErrorMessage(input) {
+                if (input.nextElementSibling && input.nextElementSibling.classList.contains('error-message')) {
+                    input.nextElementSibling.remove();
+                }
             }
 
             if (select.value === 'online') {

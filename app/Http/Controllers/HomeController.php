@@ -49,22 +49,22 @@ class HomeController extends Controller
 
         // Lấy sản phẩm bán chạy nhất
         $bestSalerProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
-    ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-    ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-    ->groupBy('products.id')
-    ->orderByDesc('total_sold')
-    ->take(8)
-    ->get()
-    ->map(function ($product) use ($userId) {
-        $product->is_favorited = false;
-        if ($userId) {
-            $product->is_favorited = DB::table('favorites')
-                ->where('user_id', $userId)
-                ->where('product_id', $product->id)
-                ->exists();
-        }
-        return $product;
-    });
+            ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+            ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
+            ->groupBy('products.id')
+            ->orderByDesc('total_sold')
+            ->take(8)
+            ->get()
+            ->map(function ($product) use ($userId) {
+                $product->is_favorited = false;
+                if ($userId) {
+                    $product->is_favorited = DB::table('favorites')
+                        ->where('user_id', $userId)
+                        ->where('product_id', $product->id)
+                        ->exists();
+                }
+                return $product;
+            });
 
         // Trả về view
         return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'bestSalerProducts'));
@@ -144,14 +144,14 @@ class HomeController extends Controller
         }
 
         // Lọc theo giá nếu có
-        if ($request->has('min_price') && $request->min_price != '') {
-            $query->where('products.price', '>=', $request->min_price);
+        if ($request->has('price_range') && $request->price_range != '') {
+            $priceRange = explode('-', $request->price_range);
+            if (count($priceRange) == 2) {
+                $query->whereBetween('products.price', [$priceRange[0], $priceRange[1]]);
+            } else {
+                $query->where('products.price', '>=', $priceRange[0]);
+            }
         }
-
-        if ($request->has('max_price') && $request->max_price != '') {
-            $query->where('products.price', '<=', $request->max_price);
-        }
-
         // Sắp xếp
         $sort = $request->get('sort', 'latest');
         switch ($sort) {

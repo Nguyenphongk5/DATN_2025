@@ -33,6 +33,7 @@ return array(
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\DashboardController' => $baseDir . '/app/Http/Controllers/DashboardController.php',
     'App\\Http\\Controllers\\FavoriteController' => $baseDir . '/app/Http/Controllers/FavoriteController.php',
+    'App\\Http\\Controllers\\GoogleController' => $baseDir . '/app/Http/Controllers/GoogleController.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Http\\Controllers\\OrderHistoryController' => $baseDir . '/app/Http/Controllers/OrderHistoryController.php',
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',

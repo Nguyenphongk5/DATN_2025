@@ -524,9 +524,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div class="p-8">
                     <h2 class="text-4xl font-bold mb-4">
-                        Get <span class="text-red-600">25% Discount</span> on your first purchase
+                        Nhận <span class="text-red-600">giảm giá 25% </span> cho lần mua hàng đầu tiên của bạn
                     </h2>
-                    <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    <p class="text-gray-700">Đăng kí ngay </p>
                 </div>
                 <div class="p-8 bg-white rounded-2xl shadow-lg">
                     @if (session('success'))
@@ -549,7 +549,7 @@
                         </div>
                         <div class="flex items-center space-x-2">
                             <input class="rounded border-gray-300" type="checkbox" id="subscribe" value="subscribe">
-                            <label class="text-gray-600" for="subscribe">Subscribe to the newsletter</label>
+                            <label class="text-gray-600" for="subscribe">Đăng kí nhận bản tin</label>
                         </div>
                         <button type="submit"
                             class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all">Submit</button>
@@ -562,9 +562,9 @@
     <section id="latest-blog" class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
-                <h2 class="text-3xl font-bold mb-4 md:mb-0">Our Recent Blog</h2>
+                <h2 class="text-3xl font-bold mb-4 md:mb-0">Blog</h2>
                 <a href="#" class="inline-flex items-center text-blue-600 font-semibold hover:underline">
-                    Read All Articles
+                    Xem tất cả bài viết
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
@@ -616,8 +616,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h5 class="text-lg font-bold mb-1">Free delivery</h5>
-                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <h5 class="text-lg font-bold mb-1">Miễn phí giao hàng:</h5>
+                        <p class="text-gray-600 text-sm">Dịch vụ giao hàng nhanh chóng, không tính phí.</p>
                     </div>
                 </div>
                 <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
@@ -629,8 +629,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h5 class="text-lg font-bold mb-1">100% secure payment</h5>
-                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <h5 class="text-lg font-bold mb-1">Thanh toán 100% an toàn</h5>
+                        <p class="text-gray-600 text-sm">Chúng tôi sử dụng các phương thức thanh toán bảo mật nhất.</p>
                     </div>
                 </div>
                 <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
@@ -642,8 +642,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h5 class="text-lg font-bold mb-1">Quality guarantee</h5>
-                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <h5 class="text-lg font-bold mb-1">Cam kết chất lượng</h5>
+                        <p class="text-gray-600 text-sm">Sản phẩm được kiểm tra kỹ lưỡng và đảm bảo chất lượng.</p>
                     </div>
                 </div>
                 <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
@@ -655,8 +655,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h5 class="text-lg font-bold mb-1">Guaranteed savings</h5>
-                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <h5 class="text-lg font-bold mb-1">Tiết kiệm đảm bảo</h5>
+                        <p class="text-gray-600 text-sm">Chúng tôi cam kết giá cả hợp lý và tiết kiệm cho bạn.</p>
                     </div>
                 </div>
                 <div class="flex items-start space-x-4 bg-white rounded-xl shadow p-6">
@@ -668,8 +668,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h5 class="text-lg font-bold mb-1">Daily offers</h5>
-                        <p class="text-gray-600 text-sm">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <h5 class="text-lg font-bold mb-1">Ưu đãi hàng ngày</h5>
+                        <p class="text-gray-600 text-sm">Mua sắm mỗi ngày với các ưu đãi đặc biệt.</p>
                     </div>
                 </div>
             </div>

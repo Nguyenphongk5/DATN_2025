@@ -51,7 +51,8 @@
         <div class="flex-1 flex flex-col h-screen overflow-hidden">
             <!-- Top Navbar for Admin -->
             @php
-                $isAdminOrStaff = auth()->user() && (auth()->user()->role === 'admin' || auth()->user()->role === 'staff');
+                $isAdminOrStaff =
+                    auth()->user() && (auth()->user()->role === 'admin' || auth()->user()->role === 'staff');
             @endphp
             @if ($isAdminOrStaff)
                 <nav
@@ -69,18 +70,38 @@
                                 class="text-2xl font-extrabold text-white tracking-wide drop-shadow-lg bg-gradient-to-r from-yellow-200 via-white to-cyan-100 bg-clip-text text-transparent">
                                 Admin Dashboard</h1>
                         </div>
-                        <!-- User menu -->
-                        <div class="flex items-center space-x-4">
-                            <div class="relative group">
-                                <button class="flex items-center space-x-2 focus:outline-none">
-                                    <div
-                                        class="w-10 h-10 bg-gradient-to-br from-pink-400 via-indigo-500 to-sky-400 rounded-full flex items-center justify-center text-white font-bold shadow-lg border-2 border-white/70 group-hover:ring-4 group-hover:ring-cyan-200 transition-all duration-200">
-                                        {{ substr(auth()->user()->name, 0, 1) }}
-                                    </div>
-                                    <span
-                                        class="hidden md:block font-semibold text-white drop-shadow-lg">{{ auth()->user()->name }}</span>
-                                    <i class="fas fa-chevron-down text-white/80 text-sm"></i>
-                                </button>
+                        <div class="dropdown-container" x-data="{ dropdownOpen: false }">
+                            <button @click="dropdownOpen = !dropdownOpen"
+                                class="flex items-center space-x-2 focus:outline-none group">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-pink-400 via-indigo-500 to-sky-400 rounded-full flex items-center justify-center text-white font-bold shadow-lg border-2 border-white/70 group-hover:ring-4 group-hover:ring-cyan-200 transition-all duration-200">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                                <span
+                                    class="hidden md:block font-semibold text-white drop-shadow-lg">{{ auth()->user()->name }}</span>
+                                <i :class="dropdownOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"
+                                    class="text-white/80 text-sm transition-transform duration-200"></i>
+                            </button>
+                            <div x-show="dropdownOpen" @click.away="dropdownOpen = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 transform scale-95"
+                                x-transition:enter-end="opacity-100 transform scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 transform scale-100"
+                                x-transition:leave-end="opacity-0 transform scale-95" x-cloak
+                                class="absolute top-full right-0 z-[9999] min-w-[200px] bg-white rounded-xl shadow-xl py-2 mt-2">
+
+                                <a href="{{ route('home.index') }}"
+                                    class="flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-xl bg-gradient-to-r from-indigo-500 to-sky-400 text-white hover:from-indigo-600 hover:to-sky-500 transition shadow-md mx-2 my-1">
+                                    <i class="fas fa-home text-white"></i> Home
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}" class="px-2 pt-2">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-xl bg-gradient-to-r from-pink-500 to-red-500 hover:from-red-600 hover:to-pink-600 transition text-white font-semibold shadow-lg">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -90,60 +111,99 @@
             <!-- Notifications -->
             <div class="fixed top-8 right-8 z-50 space-y-4">
                 @if (session('success'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => { show = false }, 4000)" x-show="show" x-transition:enter="transition ease-out duration-400" x-transition:enter-start="opacity-0 translate-y-4 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="flex items-center gap-4 bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 text-white px-6 py-4 rounded-2xl shadow-xl border border-indigo-100/60 min-w-[320px] max-w-xs font-inter">
+                    <div x-data="{ show: true }" x-init="setTimeout(() => { show = false }, 4000)" x-show="show"
+                        x-transition:enter="transition ease-out duration-400"
+                        x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                        class="flex items-center gap-4 bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 text-white px-6 py-4 rounded-2xl shadow-xl border border-indigo-100/60 min-w-[320px] max-w-xs font-inter">
                         <div class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full shadow">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity=".18" stroke-width="3"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12l2 2 4-4" stroke="#fff" stroke-width="3"/>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity=".18"
+                                    stroke-width="3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12l2 2 4-4" stroke="#fff"
+                                    stroke-width="3" />
                             </svg>
                         </div>
                         <div class="flex-1">
                             <p class="font-semibold text-base leading-snug">{{ session('success') }}</p>
                         </div>
-                        <button @click="show = false" class="text-white/80 hover:text-white transition p-1 rounded-full focus:outline-none">
+                        <button @click="show = false"
+                            class="text-white/80 hover:text-white transition p-1 rounded-full focus:outline-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
-                        <div x-show="show" class="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl" :style="'width: ' + (show ? '100%' : '0') + '; transition: width 4s linear;'" style="min-width: 100%;"></div>
+                        <div x-show="show" class="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl"
+                            :style="'width: ' + (show ? '100%' : '0') + '; transition: width 4s linear;'"
+                            style="min-width: 100%;"></div>
                     </div>
                 @endif
                 @if (session('error'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => { show = false }, 4000)" x-show="show" x-transition:enter="transition ease-out duration-400" x-transition:enter-start="opacity-0 translate-y-4 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="flex items-center gap-4 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-indigo-400 text-white px-6 py-4 rounded-2xl shadow-xl border border-pink-100/60 min-w-[320px] max-w-xs font-inter">
+                    <div x-data="{ show: true }" x-init="setTimeout(() => { show = false }, 4000)" x-show="show"
+                        x-transition:enter="transition ease-out duration-400"
+                        x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                        class="flex items-center gap-4 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-indigo-400 text-white px-6 py-4 rounded-2xl shadow-xl border border-pink-100/60 min-w-[320px] max-w-xs font-inter">
                         <div class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full shadow">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity=".18" stroke-width="3"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01" stroke="#fff" stroke-width="3"/>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-opacity=".18" stroke-width="3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"
+                                    stroke="#fff" stroke-width="3" />
                             </svg>
                         </div>
                         <div class="flex-1">
                             <p class="font-semibold text-base leading-snug">{{ session('error') }}</p>
                         </div>
-                        <button @click="show = false" class="text-white/80 hover:text-white transition p-1 rounded-full focus:outline-none">
+                        <button @click="show = false"
+                            class="text-white/80 hover:text-white transition p-1 rounded-full focus:outline-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
-                        <div x-show="show" class="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl" :style="'width: ' + (show ? '100%' : '0') + '; transition: width 4s linear;'" style="min-width: 100%;"></div>
+                        <div x-show="show" class="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl"
+                            :style="'width: ' + (show ? '100%' : '0') + '; transition: width 4s linear;'"
+                            style="min-width: 100%;"></div>
                     </div>
                 @endif
                 @if (session('warning'))
-                    <div x-data="{ show: true }" x-init="setTimeout(() => { show = false }, 4000)" x-show="show" x-transition:enter="transition ease-out duration-400" x-transition:enter-start="opacity-0 translate-y-4 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="flex items-center gap-4 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 text-white px-6 py-4 rounded-2xl shadow-xl border border-yellow-100/60 min-w-[320px] max-w-xs font-inter">
+                    <div x-data="{ show: true }" x-init="setTimeout(() => { show = false }, 4000)" x-show="show"
+                        x-transition:enter="transition ease-out duration-400"
+                        x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                        class="flex items-center gap-4 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 text-white px-6 py-4 rounded-2xl shadow-xl border border-yellow-100/60 min-w-[320px] max-w-xs font-inter">
                         <div class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full shadow">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity=".18" stroke-width="3"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01" stroke="#fff" stroke-width="3"/>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-opacity=".18" stroke-width="3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"
+                                    stroke="#fff" stroke-width="3" />
                             </svg>
                         </div>
                         <div class="flex-1">
                             <p class="font-semibold text-base leading-snug">{{ session('warning') }}</p>
                         </div>
-                        <button @click="show = false" class="text-white/80 hover:text-white transition p-1 rounded-full focus:outline-none">
+                        <button @click="show = false"
+                            class="text-white/80 hover:text-white transition p-1 rounded-full focus:outline-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
-                        <div x-show="show" class="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl" :style="'width: ' + (show ? '100%' : '0') + '; transition: width 4s linear;'" style="min-width: 100%;"></div>
+                        <div x-show="show" class="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-2xl"
+                            :style="'width: ' + (show ? '100%' : '0') + '; transition: width 4s linear;'"
+                            style="min-width: 100%;"></div>
                     </div>
                 @endif
             </div>
