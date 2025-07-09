@@ -74,14 +74,14 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-indigo-100 text-center text-lg">
-                        {{-- @foreach ($stockData as $item)
+                        @foreach ($stockData as $item)
                         <tr>
                             <td class="px-6 py-3">{{ $item->product_name }}</td>
                             <td class="px-6 py-3">{{ $item->color_name }}</td>
                             <td class="px-6 py-3">{{ $item->size }}</td>
                             <td class="px-6 py-3">{{ $item->quantity }}</td>
                         </tr>
-                        @endforeach --}}
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -93,9 +93,9 @@
                 class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-6 flex items-center gap-2">
                 <i class="fas fa-percentage"></i> Các lệnh đã giao / huỷ / hoàn (%)</h3>
             <ul class="space-y-2 text-base">
-                {{-- @foreach ($percentStatus as $status => $percent)
+                @foreach ($percentStatus as $status => $percent)
                 <li>{{ ucfirst($status) }}: <strong>{{ $percent }}%</strong></li>
-                @endforeach --}}
+                @endforeach
             </ul>
         </div>
     </div>
@@ -105,7 +105,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             new Chart(document.getElementById('revenueChart'), {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: {!! json_encode($months ?? []) !!},
                     datasets: [{
