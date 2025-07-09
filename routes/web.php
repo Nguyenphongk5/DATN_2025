@@ -22,6 +22,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Models\Logo;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GoogleController;
 
 // <<<<<<< UI-Improved-Profile
 // Route này đã được thay thế bằng HomeController::index
@@ -138,4 +139,6 @@ Route::patch('/admin/orders/{order}/payment', [OrderController::class, 'updatePa
 Route::get('/chat/messages', [ChatController::class, 'index'])->name('chat.messages');
 Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.messages.store');
 
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 require __DIR__ . '/auth.php';
