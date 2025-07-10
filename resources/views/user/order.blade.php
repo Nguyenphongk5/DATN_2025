@@ -2,6 +2,9 @@
 
 @section('content')
     <!-- Notification Messages -->
+    {{-- @php
+        dd(session('selected_items'));
+    @endphp --}}
     @if (session('success'))
         <div id="success-notification"
             class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
@@ -196,17 +199,6 @@
                                 <option value="cod">Thanh toán khi nhận hàng</option>
                                 <option value="online">Thanh toán VNPay</option>
                             </select>
-                            <div id="vnpay-qr-box" class="mt-3 hidden">
-                                <p class="font-semibold mb-2">Quét mã QR để thanh toán VNPay:</p>
-                                <img id="vnpay-qr-img" src="" alt="QR VNPay"
-                                    class="mb-2 max-w-xs rounded-xl border border-gray-200">
-                                <button type="button" id="confirm-paid"
-                                    class="mt-2 w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-xl shadow hover:bg-green-600 transition-all">Tôi
-                                    đã thanh toán</button>
-                                <div id="paid-message" class="mt-2 text-green-600 font-bold hidden">
-                                    ✅ Đã thanh toán thành công!
-                                </div>
-                            </div>
                         </div>
                         <button type="submit" id="btn-submit"
                             class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200">Đặt
@@ -219,78 +211,77 @@
                     <ul class="divide-y divide-gray-200 mb-6">
                         @php $total = 0; @endphp
                         @if (session('buy_now'))
+                            @php
+                                $data = session('buy_now');
+                                $var = \App\Models\ProductVariant::with('product')
+                                    ->where('product_id', $data['product_id'])
+                                    ->where('color_name', $data['color_name'])
+                                    ->where('size', $data['size'])
+                                    ->first();
+                                $quantity = $data['quantity'] ?? 1;
+                                $product = $var->product;
+                                $price = $var->price;
+                                $subtotal = $price * $quantity;
+                                $total += $subtotal;
+                            @endphp
+                            <li class="flex justify-between items-start py-4">
+                                <div>
+                                    <h6 class="font-semibold text-gray-800">{{ $product->name }}</h6>
+                                    <div class="text-sm text-gray-500">Size: {{ $var->size }}, Màu:
+                                        {{ $var->color_name }}</div>
+                                    <div class="text-sm text-gray-500">Số lượng: {{ $quantity }}</div>
+                                </div>
+                                <span class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
+                                    VNĐ</span>
+                            </li>
+                        @else
+                            @if (isset($variant))
                                 @php
-                                    $data = session('buy_now');
-                                    $var = \App\Models\ProductVariant::with('product')
-                                        ->where('product_id', $data['product_id'])
-                                        ->where('color_name', $data['color_name'])
-                                        ->where('size', $data['size'])
-                                        ->first();
-                                    $quantity = $data['quantity'] ?? 1;
-                                    $product = $var->product;
-                                    $price = $var->price;
+                                    $product = $variant->product;
+                                    $price = $variant->price;
                                     $subtotal = $price * $quantity;
                                     $total += $subtotal;
                                 @endphp
                                 <li class="flex justify-between items-start py-4">
                                     <div>
                                         <h6 class="font-semibold text-gray-800">{{ $product->name }}</h6>
-                                        <div class="text-sm text-gray-500">Size: {{ $var->size }}, Màu:
-                                            {{ $var->color_name }}</div>
+                                        <div class="text-sm text-gray-500">Size: {{ $variant->size }}, Màu:
+                                            {{ $variant->color_name }}</div>
                                         <div class="text-sm text-gray-500">Số lượng: {{ $quantity }}</div>
                                     </div>
                                     <span class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
                                         VNĐ</span>
                                 </li>
-                            @else
-                                @if (isset($variant))
-                                    @php
-                                        $product = $variant->product;
-                                        $price = $variant->price;
-                                        $subtotal = $price * $quantity;
-                                        $total += $subtotal;
-                                    @endphp
-                                    <li class="flex justify-between items-start py-4">
-                                        <div>
-                                            <h6 class="font-semibold text-gray-800">{{ $product->name }}</h6>
-                                            <div class="text-sm text-gray-500">Size: {{ $variant->size }}, Màu:
-                                                {{ $variant->color_name }}</div>
-                                            <div class="text-sm text-gray-500">Số lượng: {{ $quantity }}</div>
-                                        </div>
-                                        <span
-                                            class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
-                                            VNĐ</span>
-                                    </li>
-                                @elseif (!empty($cart?->items))
-                                    @php $selectedIds = session('selected_items', []); @endphp
-                                    @foreach ($cart->items as $item)
-                                        @if (empty($selectedIds) || in_array($item->id, $selectedIds))
-                                            @php
-                                                $variant = $item->productVariant;
-                                                $product = $variant?->product ?? $item->product;
-                                                $price = $variant?->price ?? ($product?->price ?? 0);
-                                                $subtotal = $price * $item->quantity;
-                                                $total += $subtotal;
-                                            @endphp
-                                            <li class="flex justify-between items-start py-4">
-                                                <div>
-                                                    <h6 class="font-semibold text-gray-800">
-                                                        {{ $product->name ?? 'Sản phẩm' }}</h6>
-                                                    @if ($variant)
-                                                        <div class="text-sm text-gray-500">Size: {{ $variant->size }},
-                                                            Màu:
-                                                            {{ $variant->color_name }}</div>
-                                                    @endif
-                                                    <div class="text-sm text-gray-500">Số lượng: {{ $item->quantity }}
-                                                    </div>
+                            @elseif (!empty($cart?->items))
+                                @php $selectedIds = session('selected_items', []); @endphp
+                                @foreach ($cart->items as $item)
+                                    @if (empty($selectedIds) || in_array($item->id, $selectedIds))
+                                        @php
+                                            $variant = $item->productVariant;
+                                            $product = $variant?->product ?? $item->product;
+                                            $price = $variant?->price ?? ($product?->price ?? 0);
+                                            $subtotal = $price * $item->quantity;
+                                            $total += $subtotal;
+                                        @endphp
+                                        <li class="flex justify-between items-start py-4">
+                                            <div>
+                                                <h6 class="font-semibold text-gray-800">
+                                                    {{ $product->name ?? 'Sản phẩm' }}</h6>
+                                                @if ($variant)
+                                                    <div class="text-sm text-gray-500">Size: {{ $variant->size }},
+                                                        Màu:
+                                                        {{ $variant->color_name }}</div>
+                                                @endif
+                                                <div class="text-sm text-gray-500">Số lượng: {{ $item->quantity }}
                                                 </div>
-                                                <span
-                                                    class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
-                                                    VNĐ</span>
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                @endif
+                                            </div>
+                                            <span
+                                                class="text-gray-700 font-semibold">{{ number_format($subtotal, 0, ',', '.') }}
+                                                VNĐ</span>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            @endif
                         @endif
                         <li class="flex justify-between items-center py-4 border-t border-gray-200">
                             <span class="font-bold text-lg">Tổng cộng</span>
@@ -307,101 +298,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Initialize notifications
             initializeNotifications();
-
-            const select = document.getElementById('payment_method');
-            const qrBox = document.getElementById('vnpay-qr-box');
-            const qrImg = document.getElementById('vnpay-qr-img');
-            const confirmBtn = document.getElementById('confirm-paid');
-            const paidMessage = document.getElementById('paid-message');
-            const paidInput = document.getElementById('paid_confirmed');
-            const submitBtn = document.getElementById('btn-submit');
-            const form = document.getElementById('checkout-form');
-
-            let isSubmitted = false;
-
-            select.addEventListener('change', function() {
-                if (this.value === 'online') {
-                    qrBox.classList.remove('hidden');
-                    const amount = {{ $total ?? 100000 }};
-                    const orderInfo = encodeURIComponent("THANHTOAN");
-                    const qrUrl =
-                        `https://img.vietqr.io/image/970422-000000000001-qr_only.png?amount=${amount}&addInfo=${orderInfo}`;
-                    qrImg.src = qrUrl;
-                    qrImg.classList.remove('hidden');
-                    confirmBtn.classList.remove('hidden');
-                    paidMessage.classList.add('hidden');
-                    if (submitBtn) submitBtn.classList.add('hidden');
-                } else {
-                    qrBox.classList.add('hidden');
-                    if (submitBtn) submitBtn.classList.remove('hidden');
-                }
-            });
-
-            confirmBtn.addEventListener('click', function() {
-                if (isSubmitted) return;
-                isSubmitted = true;
-                paidInput.value = 1;
-                qrImg.classList.add('hidden');
-                confirmBtn.classList.add('hidden');
-                paidMessage.classList.remove('hidden');
-                setTimeout(function() {
-                    form.submit();
-                }, 2000);
-            });
-
-          submitBtn.addEventListener('click', function(event) {
-                event.preventDefault(); // Ngừng gửi form
-
-                const hasError = validateForm();
-                if (hasError) {
-                    alert('Vui lòng điền đầy đủ thông tin!');
-                } else {
-                    form.submit(); // Chỉ gửi form khi không có lỗi
-                }
-            });
-
-            // Hàm validate form: Kiểm tra nếu các trường trống hoặc không hợp lệ
-            function validateForm() {
-                let hasError = false;
-                const inputs = form.querySelectorAll('input, select, textarea'); // Chọn tất cả các ô nhập liệu
-
-                inputs.forEach(input => {
-                    // Bỏ qua trường "Ghi chú", không kiểm tra nếu trống
-                    if (input.name !== 'note' && !input.value.trim()) {
-                        input.classList.add('border-red-500'); // Thêm viền đỏ
-                        hasError = true;
-                        showErrorMessage(input, "Trường này không được để trống!");
-                    } else {
-                        input.classList.remove('border-red-500'); // Loại bỏ viền đỏ nếu có giá trị hợp lệ
-                        removeErrorMessage(input); // Xóa thông báo lỗi khi đã nhập đầy đủ
-                    }
-                });
-
-                return hasError; // Nếu có lỗi trả về true, nếu không có lỗi trả về false
-            }
-
-            // Hiển thị thông báo lỗi cho trường nào đó
-            function showErrorMessage(input, message) {
-                const errorMessage = document.createElement('div');
-                errorMessage.classList.add('text-red-500', 'text-sm', 'mt-1');
-                errorMessage.textContent = message;
-
-                if (!input.nextElementSibling || !input.nextElementSibling.classList.contains('error-message')) {
-                    input.insertAdjacentElement('afterend', errorMessage);
-                    errorMessage.classList.add('error-message');
-                }
-            }
-
-            // Xóa thông báo lỗi nếu trường hợp hợp lệ
-            function removeErrorMessage(input) {
-                if (input.nextElementSibling && input.nextElementSibling.classList.contains('error-message')) {
-                    input.nextElementSibling.remove();
-                }
-            }
-
-            if (select.value === 'online') {
-                select.dispatchEvent(new Event('change'));
-            }
         });
 
         // Notification functions

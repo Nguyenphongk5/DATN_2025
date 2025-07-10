@@ -66,7 +66,7 @@ class CheckoutController extends Controller
             return back()->withInput($request->only('name', 'phone', 'address', 'note', 'payment_method', 'shipping_method'))
                 ->with('error', 'Địa chỉ nhận hàng phải có ít nhất 5 ký tự.');
         }
-        
+
         $user = Auth::user();
         // 1) tổng tiền (đã gửi từ form) ─ nếu =0 sẽ tự tính lại
         $totalAmount = (float) $request->input('total_amount', 0);
@@ -259,7 +259,12 @@ class CheckoutController extends Controller
                 }
 
                 DB::commit();
+                if ($request->payment_method === 'online') {
+                    $amount = $totalAmount; // VNPay yêu cầu số tiền tính bằng đồng
+                    session()->forget('buy_now');
 
+                    return app(\App\Http\Controllers\VnPayController::class)->createPayment($request, $amount, $order);
+                }
                 session()->forget('buy_now');
                 $mailData = [
                     'name'           => $request->name,
@@ -389,7 +394,26 @@ class CheckoutController extends Controller
                 }
 
                 DB::commit();
+                if ($request->payment_method === 'online') {
+                    $selectedIds = session('selected_items', []);
+                    if (!empty($selectedIds)) {
+                        // Xóa chỉ những items đã chọn
+                        $cart->items()->whereIn('id', $selectedIds)->delete();
 
+                        // Kiểm tra nếu cart còn items thì giữ lại cart, không thì xóa
+                        if ($cart->items()->count() == 0) {
+                            $cart->delete();
+                        }
+                    } else {
+                        // Nếu không có selected_items (chọn tất cả) thì xóa toàn bộ cart
+                        $cart->items()->delete();
+                        $cart->delete();
+                    }
+                    session()->forget('selected_items');
+
+                    $amount = $totalAmount; // VNPay yêu cầu số tiền tính bằng đồng
+                    return app(\App\Http\Controllers\VnPayController::class)->createPayment($request, $amount, $order);
+                }
                 // Chỉ xóa những sản phẩm đã được chọn
                 $selectedIds = session('selected_items', []);
                 if (!empty($selectedIds)) {
