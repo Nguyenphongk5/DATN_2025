@@ -32,13 +32,17 @@
                                 <option value="">Tất cả</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ xác
                                     nhận</option>
-                                <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Đã xác
+                                <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Đã
+                                    xác
                                     nhận</option>
-                                <option value="shipping" {{ request('status') == 'shipping' ? 'selected' : '' }}>Đang giao
+                                <option value="shipping" {{ request('status') == 'shipping' ? 'selected' : '' }}>Đang
+                                    giao
                                 </option>
-                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Đã giao
+                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Đã
+                                    giao
                                 </option>
-                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã huỷ
+                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Đã
+                                    huỷ
                                 </option>
                             </select>
                         </div>
@@ -48,11 +52,14 @@
                             <select name="payment_status" id="payment_status"
                                 class="border border-indigo-200 rounded-xl px-4 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-sky-400 shadow">
                                 <option value="">Tất cả</option>
-                                <option value="Unpaid" {{ request('payment_status') == 'Unpaid' ? 'selected' : '' }}>Chưa
+                                <option value="Unpaid" {{ request('payment_status') == 'Unpaid' ? 'selected' : '' }}>
+                                    Chưa
                                     thanh toán</option>
-                                <option value="Paid" {{ request('payment_status') == 'Paid' ? 'selected' : '' }}>Đã thanh
+                                <option value="Paid" {{ request('payment_status') == 'Paid' ? 'selected' : '' }}>Đã
+                                    thanh
                                     toán</option>
-                                <option value="Refunded" {{ request('payment_status') == 'Refunded' ? 'selected' : '' }}>
+                                <option value="Refunded"
+                                    {{ request('payment_status') == 'Refunded' ? 'selected' : '' }}>
                                     Hoàn tiền</option>
                             </select>
                         </div>
@@ -74,7 +81,6 @@
                                 <th class="px-6 py-3 text-center text-base font-bold uppercase">STT</th>
                                 <th class="px-6 py-3 text-center text-base font-bold uppercase">Mã đơn</th>
                                 <th class="px-6 py-3 text-center text-base font-bold uppercase">Tên khách</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Email</th>
                                 <th class="px-6 py-3 text-center text-base font-bold uppercase">SĐT</th>
                                 <th class="px-6 py-3 text-center text-base font-bold uppercase">Tổng tiền</th>
                                 <th class="px-6 py-3 text-center text-base font-bold uppercase">Trạng thái</th>
@@ -88,7 +94,6 @@
                                     <td class="px-6 py-4 font-bold">{{ $key + 1 }}</td>
                                     <td class="px-6 py-4 font-mono text-indigo-600">{{ $order->order_code }}</td>
                                     <td class="px-6 py-4 font-semibold">{{ $order->user_name }}</td>
-                                    <td class="px-6 py-4">{{ $order->user_email }}</td>
                                     <td class="px-6 py-4">{{ $order->user_phone }}</td>
                                     <td class="px-6 py-4 text-right font-bold text-cyan-600">
                                         {{ number_format($order->total_amount, 0, ',', '.') }} VNĐ
@@ -107,14 +112,15 @@
                                         <form action="{{ route('admin.orders.update', $order->id) }}" method="POST">
                                             @csrf
                                             @method('PATCH')
-                                            <span class="inline-block px-2 py-1 rounded-full bg-gradient-to-r {{ $statusMap[$status][1] ?? 'from-gray-400 to-gray-600' }} shadow">
-                                                <select name="status" onchange="this.form.submit()"
-                                                    class="bg-transparent text-white font-bold text-sm px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-sky-400 appearance-none cursor-pointer"
-                                                    style="min-width: 120px;">
-                                                    @foreach ($statusMap as $key => $item)
-                                                        <option value="{{ $key }}" {{ $order->status === $key ? 'selected' : '' }} class="text-gray-900 bg-white">{{ $item[0] }}</option>
-                                                    @endforeach
-                                                </select>
+                                            <span
+                                                class="inline-block px-4 py-1 rounded-xl font-bold text-base shadow-sm border
+                                                    {{ $status === 'pending' ? 'bg-yellow-50 border-yellow-400 text-yellow-700' : '' }}
+                                                    {{ $status === 'confirmed' ? 'bg-blue-50 border-blue-400 text-blue-700' : '' }}
+                                                    {{ $status === 'shipping' ? 'bg-cyan-50 border-cyan-400 text-cyan-700' : '' }}
+                                                    {{ $status === 'completed' ? 'bg-green-50 border-green-400 text-green-700' : '' }}
+                                                    {{ $status === 'cancelled' ? 'bg-gray-100 border-gray-400 text-gray-600' : '' }}"
+                                                style="min-width: 120px; text-align: center;">
+                                                {{ $statusMap[$status][0] ?? 'Không xác định' }}
                                             </span>
                                         </form>
                                     </td>

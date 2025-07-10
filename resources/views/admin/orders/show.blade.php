@@ -17,36 +17,6 @@
                     Chi tiết đơn hàng #{{ $order->order_code }}
                 </h1>
 
-                {{-- QR Code chứa toàn bộ thông tin --}}
-                <div class="flex justify-center mb-8">
-                    <div class="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100">
-                        <div class="text-center mb-2 font-semibold text-indigo-600">Quét mã để xem nhanh thông tin đơn
-                            hàng</div>
-
-                        <div style=" margin-left: 20%;">@php
-                            $qrText = "Mã đơn: {$order->order_code}\n";
-                            $qrText .= "Tên KH: {$order->user_name}\n";
-                            $qrText .= "SĐT: {$order->user_phone}\n";
-                            $qrText .= "Email: {$order->user_email}\n";
-                            $qrText .= "Địa chỉ: {$order->user_address}\n";
-                            $qrText .= "Trạng thái: {$order->status}\n";
-                            $qrText .= "Thanh toán: {$order->payment_status}\n";
-                            $qrText .= 'Tổng tiền: ' . number_format($order->total_amount, 0, ',', '.') . " VNĐ\n";
-                            $qrText .= "Sản phẩm:\n";
-                            foreach ($order->orderDetails as $item) {
-                                $qrText .=
-                                    "- {$item->product_name} ({$item->quantity} x " .
-                                    number_format($item->price, 0, ',', '.') .
-                                    ")\n";
-                            }
-                        @endphp
-                            {!! QrCode::encoding('UTF-8')->size(180)->generate($qrText) !!}
-                        </div>
-                        <div class="mt-2 text-sm text-</div>gray-500 text-center">Mã: <span
-                                class="font-mono">{{ $order->order_code }}</span></div>
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div>
                         <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin khách hàng</div>
@@ -76,10 +46,31 @@
                                 ];
                                 $status = $order->status;
                             @endphp
-                            <span
-                                class="inline-block px-4 py-1 rounded-full bg-gradient-to-r {{ $statusMap[$status][1] ?? 'from-gray-400 to-gray-600' }} text-white font-bold shadow text-sm">
-                                {{ $statusMap[$status][0] ?? 'Không xác định' }}
-                            </span>
+                            <form action="{{ route('admin.orders.update', $order->id) }}" method="POST"
+                                class="inline-block">
+                                @csrf
+                                @method('PATCH')
+                                <span
+                                    class="inline-block px-3 py-0.5 rounded-xl font-semibold text-sm shadow border transition-all duration-200
+                                        {{ $status === 'pending' ? 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-500 text-white' : '' }}
+                                        {{ $status === 'confirmed' ? 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 border-blue-500 text-white' : '' }}
+                                        {{ $status === 'shipping' ? 'bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 border-cyan-500 text-white' : '' }}
+                                        {{ $status === 'completed' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 border-green-500 text-white' : '' }}
+                                        {{ $status === 'cancelled' ? 'bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 border-gray-500 text-white' : '' }}"
+                                    style="min-width: 90px; text-align: center;">
+                                    <select name="status" onchange="this.form.submit()"
+                                        class="w-24 bg-transparent border-none pl-2 pr-3 py-0.5 appearance-none text-sm font-semibold rounded-xl focus:outline-none cursor-pointer text-center focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all duration-150"
+                                        style="background: transparent; color: inherit;">
+                                        @foreach ($statusMap as $key => $item)
+                                            <option value="{{ $key }}"
+                                                {{ $status === $key ? 'selected' : '' }}
+                                                class="text-gray-900 bg-white">
+                                                {{ $item[0] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </span>
+                            </form>
                         </div>
                         <div class="mb-1"><span class="font-semibold">Thanh toán:</span>
                             @if ($order->payment_status === 'Paid')
@@ -144,6 +135,10 @@
                     <a href="{{ route('admin.orders.index') }}"
                         class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
                         <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                    </a>
+                    <a href="{{ route('admin.orders.exportQr', $order->id) }}"
+                        class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg flex items-center gap-2 transition">
+                        <i class="fas fa-arrow-left"></i> Xuất QRCODE
                     </a>
                 </div>
             </div>

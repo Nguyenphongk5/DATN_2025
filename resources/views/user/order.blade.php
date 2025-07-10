@@ -4,6 +4,7 @@
     <!-- Notification Messages -->
     {{-- @php
         dd(session('selected_items'));
+        dd(session('buy_now'));
     @endphp --}}
     @if (session('success'))
         <div id="success-notification"

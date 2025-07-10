@@ -183,13 +183,12 @@
                     Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
                         VNĐ</span>
                 </div>
-                @if (in_array($order->status, ['pending', 'confirmed']))
+                @if (!in_array($order->status, ['cancelled']))
                     <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
                         @csrf
                         @method('PUT')
                         <button
-                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2"
-                            onclick="return confirm('Bạn chắc chắn muốn hủy đơn này?')">
+                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
