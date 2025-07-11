@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Logo;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -221,17 +222,21 @@ class HomeController extends Controller
             ->whereNull('parent_id')
             ->orderByDesc('created_at')
             ->get();
+        $canComment = Order::where('user_id', Auth::id())
+            ->where('status', 'completed')
+            ->Where('payment_status', 'paid')
+            ->first();
 
-        $canComment = false;
-        if (Auth::check()) {
-            $canComment = DB::table('orders')
-                ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-                ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
-                ->where('orders.user_id', Auth::id())
-                ->whereIn('orders.status', ['completed', 'paid'])
-                ->where('product_variants.product_id', $id)
-                ->exists();
-        }
+        // $canComment = false;
+        // if (Auth::check()) {
+        //     $canComment = DB::table('orders')
+        //         ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+        //         ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
+        //         ->where('orders.user_id', Auth::id())
+        //         ->whereIn('orders.status', ['completed', 'paid'])
+        //         ->where('product_variants.product_id', $id)
+        //         ->exists();
+        // }
 
         return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'comments', 'canComment', 'galleryImages'));
     }
@@ -259,7 +264,6 @@ class HomeController extends Controller
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('comments', 'public');
         }
-
         Comment::create([
             'user_id' => Auth::id(),
             'product_id' => $request->product_id,
