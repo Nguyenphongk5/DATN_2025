@@ -15,7 +15,6 @@ class Order extends Model
         'user_email',
         'user_phone',
         'user_address',
-        'voucher_id',
         'discount_amount',
         'total_amount',
         'status',
@@ -34,10 +33,7 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function voucher()
-    {
-        return $this->belongsTo(Voucher::class);
-    }
+
 
     public function orderDetails()
     {

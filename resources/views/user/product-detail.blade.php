@@ -266,6 +266,20 @@
                                 VNĐ</del>
                         </div>
                         <p class="text-gray-700 mb-6">{{ $product->description }}</p>
+                        
+                        <!-- Stock Information -->
+                        <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+                            <h6 class="font-semibold text-gray-800 flex items-center mb-2">
+                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                </svg>
+                                Kho: <span id="stock-quantity" class="text-green-600 font-semibold">...</span> sản phẩm
+                            </h6>
+                            <p class="text-xs text-gray-600" id="stock-description">
+                                Đang tải thông tin kho...
+                            </p>
+                        </div>
+                        
                         <form action="{{ route('cart.add') }}" method="POST" class="space-y-4">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -275,18 +289,29 @@
                                 <div class="flex flex-wrap gap-2">
                                     @php $colors = $productVariants->pluck('color_name')->unique(); @endphp
                                     @foreach ($colors as $index => $color)
+                                        @php 
+                                            $variantsWithColor = $productVariants->where('color_name', $color);
+                                            $totalQuantity = $variantsWithColor->sum('quantity');
+                                            $isAvailable = $totalQuantity > 0;
+                                        @endphp
                                         <div>
                                             <input type="radio" class="hidden peer" name="color_name"
                                                 id="color-{{ $index }}" value="{{ $color }}"
-                                                {{ $loop->first ? 'checked' : '' }}>
+                                                {{ $loop->first ? 'checked' : '' }}
+                                                {{ !$isAvailable ? 'disabled' : '' }}>
                                             <label
                                                 class="inline-flex items-center cursor-pointer px-3 py-1 border-2 border-gray-300 rounded-full transition
                                                                                                                                                                         peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
-                                                                                                                                                                        bg-white text-gray-700"
+                                                                                                                                                                        bg-white text-gray-700 {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                 for="color-{{ $index }}">
                                                 <span class="rounded-full inline-block mr-2 border"
                                                     style="width: 16px; height: 16px; background-color: {{ optional($productVariants->firstWhere('color_name', $color))->hex_code ?? '#ccc' }};"></span>
                                                 {{ $color }}
+                                                @if($isAvailable)
+                                                    <span class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
+                                                @else
+                                                    <span class="ml-1 text-xs text-red-600 font-medium">(Hết hàng)</span>
+                                                @endif
                                             </label>
                                         </div>
                                     @endforeach
@@ -298,19 +323,36 @@
                                 <div class="flex flex-wrap gap-2">
                                     @php $sizes = $productVariants->pluck('size')->unique(); @endphp
                                     @foreach ($sizes as $index => $size)
+                                        @php 
+                                            $variantsWithSize = $productVariants->where('size', $size);
+                                            $totalQuantity = $variantsWithSize->sum('quantity');
+                                            $isAvailable = $totalQuantity > 0;
+                                        @endphp
                                         <div>
-                                            <input type="radio" class="hidden peer" name="size"
+                                            <input type="radio" class="hidden peer size-radio" name="size"
                                                 id="size-{{ $index }}" value="{{ $size }}"
-                                                {{ $loop->first ? 'checked' : '' }}>
+                                                {{ $loop->first ? 'checked' : '' }}
+                                                {{ !$isAvailable ? 'disabled' : '' }}>
                                             <label
                                                 class="inline-flex items-center cursor-pointer px-4 py-2 border-2 border-gray-300 rounded-full transition
                                                                                                                                                                         peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
-                                                                                                                                                                        bg-white text-gray-700 font-semibold"
+                                                                                                                                                                        bg-white text-gray-700 font-semibold {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                 for="size-{{ $index }}">
                                                 {{ $size }}
+                                                @if($isAvailable)
+                                                    <span class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
+                                                @else
+                                                    <span class="ml-1 text-xs text-red-600 font-medium">(Hết hàng)</span>
+                                                @endif
                                             </label>
                                         </div>
                                     @endforeach
+                                </div>
+                                <div id="no-size-message" class="hidden mt-2 text-sm text-red-600">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    Không có size nào khả dụng cho màu này
                                 </div>
                             </div>
                             <!-- Quantity -->
@@ -958,6 +1000,217 @@
                 }, 500);
             }, 2000);
         }
+
+        // Product variants data for stock calculation
+        const productVariants = @json($productVariants);
+        
+        // Function to update size options based on selected color
+        function updateSizeOptions() {
+            const selectedColor = document.querySelector('input[name="color_name"]:checked')?.value;
+            const sizeInputs = document.querySelectorAll('input[name="size"]');
+            let firstEnabled = null;
+            let foundChecked = false;
+            let enabledCount = 0;
+
+            console.log('Updating size options for color:', selectedColor);
+
+            sizeInputs.forEach(input => {
+                const sizeValue = input.value;
+                const sizeLabel = input.parentElement;
+                
+                if (selectedColor) {
+                    // Kiểm tra có biến thể với color và size này không
+                    const exists = productVariants.some(variant =>
+                        variant.color_name === selectedColor && variant.size.toString() === sizeValue.toString()
+                    );
+                    
+                    console.log('Size', sizeValue, 'exists for color', selectedColor, ':', exists);
+                    
+                    if (exists) {
+                        input.disabled = false;
+                        sizeLabel.style.display = '';
+                        sizeLabel.classList.remove('opacity-50', 'cursor-not-allowed');
+                        if (!firstEnabled) firstEnabled = input;
+                        if (input.checked) foundChecked = true;
+                        enabledCount++;
+                    } else {
+                        input.disabled = true;
+                        sizeLabel.style.display = 'none';
+                        input.checked = false;
+                    }
+                } else {
+                    // Nếu chưa chọn màu, hiển thị tất cả size
+                    input.disabled = false;
+                    sizeLabel.style.display = '';
+                    sizeLabel.classList.remove('opacity-50', 'cursor-not-allowed');
+                    if (!firstEnabled) firstEnabled = input;
+                    if (input.checked) foundChecked = true;
+                    enabledCount++;
+                }
+            });
+
+            // Nếu size đang chọn không hợp lệ, tự động chọn size đầu tiên hợp lệ
+            if (!foundChecked && firstEnabled) {
+                firstEnabled.checked = true;
+                console.log('Auto-selected first available size:', firstEnabled.value);
+            }
+
+            // Thông báo nếu không có size nào khả dụng
+            if (selectedColor && enabledCount === 0) {
+                console.log('No sizes available for color:', selectedColor);
+                const noSizeMessage = document.getElementById('no-size-message');
+                if (noSizeMessage) {
+                    noSizeMessage.classList.remove('hidden');
+                }
+            } else {
+                const noSizeMessage = document.getElementById('no-size-message');
+                if (noSizeMessage) {
+                    noSizeMessage.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Function to update stock quantity based on selected variant
+        function updateStockQuantity() {
+            const selectedColor = document.querySelector('input[name="color_name"]:checked')?.value;
+            const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
+            const stockElement = document.getElementById('stock-quantity');
+            const stockDescription = document.getElementById('stock-description');
+            
+            console.log('Selected color:', selectedColor);
+            console.log('Selected size:', selectedSize);
+            console.log('Product variants:', productVariants);
+            
+            if (!stockElement || !stockDescription) {
+                console.log('Stock elements not found');
+                return;
+            }
+            
+            // If both color and size are selected, show specific variant quantity
+            if (selectedColor && selectedSize) {
+                // Convert size to string for comparison if it's a number
+                const sizeToCompare = selectedSize.toString();
+                
+                console.log('Looking for variant with color:', selectedColor, 'and size:', sizeToCompare);
+                
+                // Find the variant that matches both color and size
+                const selectedVariant = productVariants.find(variant => {
+                    const variantColor = variant.color_name;
+                    const variantSize = variant.size.toString();
+                    const matches = variantColor === selectedColor && variantSize === sizeToCompare;
+                    console.log('Checking variant:', variantColor, variantSize, 'matches:', matches);
+                    return matches;
+                });
+                
+                console.log('Found variant:', selectedVariant);
+                
+                if (selectedVariant) {
+                    stockElement.textContent = selectedVariant.quantity;
+                    
+                    // Update color based on availability
+                    if (selectedVariant.quantity > 0) {
+                        stockElement.className = 'text-green-600 font-semibold';
+                        stockDescription.textContent = `Số lượng còn lại cho ${selectedColor} - Size ${selectedSize}`;
+                    } else {
+                        stockElement.className = 'text-red-600 font-semibold';
+                        stockDescription.textContent = `Biến thể ${selectedColor} - Size ${selectedSize} đã hết hàng`;
+                    }
+                } else {
+                    stockElement.textContent = '0';
+                    stockElement.className = 'text-red-600 font-semibold';
+                    stockDescription.textContent = `Biến thể ${selectedColor} - Size ${selectedSize} không tồn tại`;
+                }
+            } else {
+                // If not both color and size are selected, show total quantity
+                const totalQuantity = productVariants.reduce((sum, variant) => sum + parseInt(variant.quantity), 0);
+                stockElement.textContent = totalQuantity;
+                
+                if (totalQuantity > 0) {
+                    stockElement.className = 'text-green-600 font-semibold';
+                    stockDescription.textContent = 'Tổng số lượng tất cả biến thể trong kho - Chọn màu và size để xem số lượng cụ thể';
+                } else {
+                    stockElement.className = 'text-red-600 font-semibold';
+                    stockDescription.textContent = 'Kho hiện tại đang trống';
+                }
+            }
+        }
+        
+        // Add event listeners for color and size selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const colorInputs = document.querySelectorAll('input[name="color_name"]');
+            const sizeInputs = document.querySelectorAll('input[name="size"]');
+            
+            console.log('Color inputs found:', colorInputs.length);
+            console.log('Size inputs found:', sizeInputs.length);
+            
+            // Log the first selected color and size
+            const firstColor = document.querySelector('input[name="color_name"]:checked');
+            const firstSize = document.querySelector('input[name="size"]:checked');
+            console.log('First selected color:', firstColor?.value);
+            console.log('First selected size:', firstSize?.value);
+            
+            colorInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    console.log('Color changed to:', this.value);
+                    updateSizeOptions(); // Cập nhật size options trước
+                    updateStockQuantity(); // Sau đó cập nhật stock
+                });
+            });
+            
+            sizeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    console.log('Size changed to:', this.value);
+                    updateStockQuantity();
+                });
+            });
+            
+            // Initialize stock quantity on page load with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                console.log('Initializing stock quantity...');
+                // Cập nhật size options trước
+                updateSizeOptions();
+                
+                // If both color and size are selected, show specific variant quantity
+                if (firstColor && firstSize) {
+                    const selectedColor = firstColor.value;
+                    const selectedSize = firstSize.value;
+                    const sizeToCompare = selectedSize.toString();
+                    
+                    console.log('Looking for initial variant with color:', selectedColor, 'and size:', sizeToCompare);
+                    
+                    const selectedVariant = productVariants.find(variant => {
+                        const variantColor = variant.color_name;
+                        const variantSize = variant.size.toString();
+                        const matches = variantColor === selectedColor && variantSize === sizeToCompare;
+                        console.log('Checking initial variant:', variantColor, variantSize, 'matches:', matches);
+                        return matches;
+                    });
+                    
+                    console.log('Found initial variant:', selectedVariant);
+                    
+                    if (selectedVariant) {
+                        const stockElement = document.getElementById('stock-quantity');
+                        const stockDescription = document.getElementById('stock-description');
+                        
+                        if (stockElement && stockDescription) {
+                            stockElement.textContent = selectedVariant.quantity;
+                            
+                            if (selectedVariant.quantity > 0) {
+                                stockElement.className = 'text-green-600 font-semibold';
+                                stockDescription.textContent = `Số lượng còn lại cho ${selectedColor} - Size ${selectedSize}`;
+                            } else {
+                                stockElement.className = 'text-red-600 font-semibold';
+                                stockDescription.textContent = `Biến thể ${selectedColor} - Size ${selectedSize} đã hết hàng`;
+                            }
+                        }
+                    } else {
+                        updateStockQuantity();
+                    }
+                } else {
+                    updateStockQuantity();
+                }
+            }, 100);
+        });
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
