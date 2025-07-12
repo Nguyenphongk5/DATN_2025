@@ -51,7 +51,7 @@
                                 @php
                                     $variant = $item->productVariant;
                                     $product = $variant?->product;
-                                    $image = $variant?->image ?? $product?->img_thumb ?? 'images/no-image.png';
+                                    $image = $variant?->image ?? ($product?->img_thumb ?? 'images/no-image.png');
                                 @endphp
                                 <tr class="hover:bg-pink-50 transition">
                                     <td class="py-3 px-2 text-center">
@@ -116,8 +116,8 @@
             <!-- Thông tin đơn hàng -->
             <div class="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100 flex flex-col gap-4">
                 <h5 class="mb-4 text-2xl font-bold text-pink-600 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-indigo-400" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-indigo-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                     Thông tin đơn hàng
@@ -171,9 +171,21 @@
                         </svg>
                         <span class="font-semibold text-gray-900">Ghi chú:</span> {{ $order->note ?? 'Không có' }}
                     </p>
+                    <p class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-5 h-5 text-pink-400">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 6.75h12v10.5h-12V6.75zM14.25 10.5H17.5l2.25 3.75v3H14.25v-6.75z" />
+                            <circle cx="6" cy="18" r="1.5" />
+                            <circle cx="18" cy="18" r="1.5" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Phí vẫn chuyển:</span> <span
+                            class="text-cyan-600 font-bold">{{ number_format($order->shipping_fee, 0, ',', '.') }}
+                            VNĐ</span>
+                    </p>
                 </div>
 
-                 {{-- QR Code chứa toàn bộ thông tin --}}
+                {{-- QR Code chứa toàn bộ thông tin --}}
                 <div class="flex justify-center mb-8">
                     <div class="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100">
                         <div class="text-center mb-2 font-semibold text-indigo-600">Quét mã để xem nhanh thông tin đơn
@@ -213,15 +225,15 @@
                     Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
                         VNĐ</span>
                 </div>
-                @if (in_array($order->status, ['pending', 'confirmed']))
+                @if (in_array($order->status, ['pending']))
                     <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
                         @csrf
                         @method('PUT')
                         <button
                             class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2"
                             onclick="return confirm('Bạn chắc chắn muốn hủy đơn này?')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12" />
                             </svg>
