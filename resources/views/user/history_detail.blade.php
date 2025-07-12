@@ -172,6 +172,36 @@
                         <span class="font-semibold text-gray-900">Ghi chú:</span> {{ $order->note ?? 'Không có' }}
                     </p>
                 </div>
+
+                 {{-- QR Code chứa toàn bộ thông tin --}}
+                <div class="flex justify-center mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100">
+                        <div class="text-center mb-2 font-semibold text-indigo-600">Quét mã để xem nhanh thông tin đơn
+                            hàng</div>
+
+                        <div style=" margin-left: 20%;">@php
+                            $qrText = "Mã đơn: {$order->order_code}\n";
+                            $qrText .= "Tên KH: {$order->user_name}\n";
+                            $qrText .= "SĐT: {$order->user_phone}\n";
+                            $qrText .= "Email: {$order->user_email}\n";
+                            $qrText .= "Địa chỉ: {$order->user_address}\n";
+                            $qrText .= "Trạng thái: {$order->status}\n";
+                            $qrText .= "Thanh toán: {$order->payment_status}\n";
+                            $qrText .= 'Tổng tiền: ' . number_format($order->total_amount, 0, ',', '.') . " VNĐ\n";
+                            $qrText .= "Sản phẩm:\n";
+                            foreach ($order->orderDetails as $item) {
+                                $qrText .=
+                                    "- {$item->product_name} ({$item->quantity} x " .
+                                    number_format($item->price, 0, ',', '.') .
+                                    ")\n";
+                            }
+                        @endphp
+                            {!! QrCode::encoding('UTF-8')->size(180)->generate($qrText) !!}
+                        </div>
+                        <div class="mt-2 text-sm text-</div>gray-500 text-center">Mã: <span
+                                class="font-mono">{{ $order->order_code }}</span></div>
+                    </div>
+                </div>
                 <hr class="my-4 border-t-2 border-pink-100">
                 <div
                     class="bg-gradient-to-r from-indigo-100 to-pink-100 rounded-2xl px-6 py-4 shadow-inner text-lg font-bold text-indigo-700 flex items-center justify-center">
