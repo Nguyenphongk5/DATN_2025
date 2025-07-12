@@ -51,24 +51,28 @@ class HomeController extends Controller
         $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
 
         // Lấy sản phẩm bán chạy nhất
-        $bestSalerProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
-    ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
-    ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-    ->groupBy('products.id')
-    ->orderByDesc('total_sold')
-    ->take(8)
-    ->get()
-    ->map(function ($product) use ($userId) {
-        $product->is_favorited = false;
-        if ($userId) {
-            $product->is_favorited = DB::table('favorites')
-                ->where('user_id', $userId)
-                ->where('product_id', $product->id)
-                ->exists();
-        }
-        return $product;
-    });
-
+        $bestSalerProducts = Product::select(
+            'products.id',
+            'products.name',
+            'products.price', // Add other columns you need
+            DB::raw('SUM(order_details.quantity) as total_sold')
+        )
+            ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+            ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
+            ->groupBy('products.id', 'products.name', 'products.price') // Include all selected columns
+            ->orderByDesc('total_sold')
+            ->take(8)
+            ->get()
+            ->map(function ($product) use ($userId) {
+                $product->is_favorited = false;
+                if ($userId) {
+                    $product->is_favorited = DB::table('favorites')
+                        ->where('user_id', $userId)
+                        ->where('product_id', $product->id)
+                        ->exists();
+                }
+                return $product;
+            });
         // Trả về view
         return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'bestSalerProducts'));
     }

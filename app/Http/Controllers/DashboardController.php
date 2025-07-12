@@ -17,8 +17,10 @@ class DashboardController extends Controller
         $revenueQuery = DB::table('orders')
             ->where('status', 'completed');
 
-        if ($from) $revenueQuery->whereDate('created_at', '>=', $from);
-        if ($to) $revenueQuery->whereDate('created_at', '<=', $to);
+        if ($from)
+            $revenueQuery->whereDate('created_at', '>=', $from);
+        if ($to)
+            $revenueQuery->whereDate('created_at', '<=', $to);
 
         $revenueData = $revenueQuery
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_year, SUM(total_amount) as revenue")
@@ -31,8 +33,10 @@ class DashboardController extends Controller
 
         // Trạng thái đơn hàng
         $orderStatusQuery = DB::table('orders');
-        if ($from) $orderStatusQuery->whereDate('created_at', '>=', $from);
-        if ($to) $orderStatusQuery->whereDate('created_at', '<=', $to);
+        if ($from)
+            $orderStatusQuery->whereDate('created_at', '>=', $from);
+        if ($to)
+            $orderStatusQuery->whereDate('created_at', '<=', $to);
 
         $orderStatusCounts = $orderStatusQuery
             ->select('status', DB::raw('COUNT(*) as count'))
@@ -42,6 +46,7 @@ class DashboardController extends Controller
         // Top sản phẩm
         $topProducts = DB::table('order_details')
             ->join('orders', 'orders.id', '=', 'order_details.order_id')
+            ->where('orders.status', 'completed') // Chỉ tính đơn hàng hoàn thành
             ->when($from, fn($q) => $q->whereDate('orders.created_at', '>=', $from))
             ->when($to, fn($q) => $q->whereDate('orders.created_at', '<=', $to))
             ->select('order_details.product_name', DB::raw('SUM(order_details.quantity) as total'))
@@ -76,8 +81,10 @@ class DashboardController extends Controller
 
         // Tỷ lệ đơn hàng
         $statusQuery = DB::table('orders');
-        if ($from) $statusQuery->whereDate('created_at', '>=', $from);
-        if ($to) $statusQuery->whereDate('created_at', '<=', $to);
+        if ($from)
+            $statusQuery->whereDate('created_at', '>=', $from);
+        if ($to)
+            $statusQuery->whereDate('created_at', '<=', $to);
 
         $totalOrders = $statusQuery->count();
         $percentStatus = [];
@@ -91,13 +98,17 @@ class DashboardController extends Controller
         }
 
         return view('admin.index', compact(
-            'months', 'revenues',
+            'months',
+            'revenues',
             'orderStatusCounts',
-            'topProductNames', 'topProductQuantities',
-            'colors', 'colorQuantities',
+            'topProductNames',
+            'topProductQuantities',
+            'colors',
+            'colorQuantities',
             'stockData',
             'percentStatus',
-            'from', 'to' 
+            'from',
+            'to'
         ));
     }
 }
