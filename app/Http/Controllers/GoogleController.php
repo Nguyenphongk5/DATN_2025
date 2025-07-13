@@ -20,6 +20,10 @@ class GoogleController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
 
+            if ($user = User::where('email', $googleUser->getEmail())->exists()) {
+                return redirect()->route('login')->with('error', 'Email đã được sử dụng để đăng ký tài khoản khác.');
+            }
+
             $user = User::updateOrCreate([
                 'email' => $googleUser->getEmail(),
             ], [

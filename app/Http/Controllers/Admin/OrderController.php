@@ -37,7 +37,10 @@ class OrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
-    public function create() {}
+    public function exportQr($id) {
+        $order = Order::with('orderDetails.productVariant')->findOrFail($id);
+        return view('admin.orders.qrcode', compact('order'));
+    }
     public function store(Request $request) {}
     public function show($id)
     {
@@ -74,7 +77,12 @@ class OrderController extends Controller
         if ($newStatus < $currentStatus) {
             return back()->with('error', 'Không thể cập nhật về trạng thái trước đó.');
         }
-
+        if ($newStatus - $currentStatus > 1) {
+            return back()->with('error', 'Không thể cập nhật trạng thái đơn hàng một cách không hợp lệ.');
+        }
+        if ($newStatus == 5) {
+            return back()->with('error', 'Không thể cập nhật trạng thái đơn hàng đã huỷ.');
+        }
         // Nếu hợp lệ thì cập nhật
         if ($newStatus == 4 && $order->payment_status !== 'Paid') {
             $order->payment_status = 'Paid';

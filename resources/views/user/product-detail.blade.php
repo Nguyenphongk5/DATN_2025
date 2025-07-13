@@ -381,7 +381,6 @@
                             <h5 class="font-bold mb-2">Thông tin thêm</h5>
                             <p>Thông tin bổ sung về sản phẩm...</p>
                         </div>
-
                         <!-- Reviews Tab -->
                         <div x-show="tab === 'review'" class="tab-content" x-transition>
                             @if (session('success'))
@@ -487,7 +486,7 @@
                                                     </form>
                                                 </div>
                                             @endif
-                                            @if (auth()->id() !== $comment->user_id)
+                                            @if (auth()->id() && auth()->user()->role == 'admin')
                                                 @auth
                                                     <div x-show="showReply" class="mt-3" x-transition>
                                                         <form action="{{ route('comments.store') }}#v-pills-reviews"

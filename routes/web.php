@@ -90,6 +90,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
+    Route::get('orders/export-qr/{id}', [OrderController::class, 'exportQr'])->name('orders.exportQr');
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');

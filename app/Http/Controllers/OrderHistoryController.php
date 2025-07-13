@@ -52,8 +52,8 @@ class OrderHistoryController extends Controller
     {
         $order = Order::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        if (!in_array($order->status, ['pending', 'confirmed'])) {
-            return back()->with('error', 'Không thể hủy đơn hàng khi đã xác nhận.');
+        if (!in_array($order->status, ['pending'])) {
+            return back()->with('error', 'Chỉ được hủy khi đơn chưa được xác nhận.');
         }
 
         $order->update([
