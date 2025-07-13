@@ -37,7 +37,7 @@ class OrderSeeder extends Seeder
                 'user_email' => $user->email,
                 'user_phone' => '09' . rand(10000000, 99999999),
                 'user_address' => '123 Đường số ' . rand(1, 100) . ', Quận ' . rand(1, 12),
-                'voucher_id' => rand(0, 1) ? ($voucherIds[array_rand($voucherIds)] ?? null) : null,
+
                 'discount_amount' => $discount,
                 'total_amount' => $total,
                 'status' => $statuses[array_rand($statuses)],
