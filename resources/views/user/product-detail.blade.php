@@ -317,7 +317,8 @@
                             <div>
                                 <h6 class="uppercase text-gray-800 font-semibold mb-2">Quantity:</h6>
                                 <input type="number" name="quantity" value="1" min="1" max="100"
-                                    class="border rounded-lg px-4 py-2 text-center w-32">
+                                    class="border rounded-lg px-4 py-2 text-center w-32"
+                                    oninput="this.value = Math.max(1, Math.min(100, this.value))" />
                             </div>
                             <!-- Action Buttons -->
                             <div class="flex flex-col sm:flex-row gap-4 mt-4">
