@@ -68,4 +68,15 @@ class Comment extends Model
     {
         return $query->whereNotNull('parent_id');
     }
+
+    /**
+     * Kiểm tra xem user đã comment cho sản phẩm này chưa
+     */
+    public static function hasUserCommented($userId, $productId)
+    {
+        return self::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->whereNull('parent_id') // Chỉ kiểm tra comment chính, không phải reply
+            ->exists();
+    }
 }

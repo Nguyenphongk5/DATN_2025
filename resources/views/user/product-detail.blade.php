@@ -387,19 +387,21 @@
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4">
             <div class="bg-white rounded-2xl shadow-xl p-8">
-                <div x-data="{ tab: 'desc' }" class="flex flex-col md:flex-row gap-8">
+                <div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : 'desc' }" 
+                     x-init="$watch('tab', value => { sessionStorage.setItem('currentTab', value); })"
+                     class="flex flex-col md:flex-row gap-8">
                     <div class="flex flex-row md:flex-col gap-2 md:w-1/4 mb-4 md:mb-0">
-                        <button @click="tab = 'desc'"
+                        <button @click="tab = 'desc'; window.location.hash = 'desc'"
                             :class="tab === 'desc' ? 'bg-blue-200 text-blue-800 font-bold' :
                                 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
                             class="tab-btn px-6 py-3 rounded-xl font-semibold text-left focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 transition">Mô
                             tả</button>
-                        <button @click="tab = 'add'"
+                        <button @click="tab = 'add'; window.location.hash = 'add'"
                             :class="tab === 'add' ? 'bg-blue-200 text-blue-800 font-bold' :
                                 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
                             class="tab-btn px-6 py-3 rounded-xl font-semibold text-left focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 transition">Thông
                             tin thêm</button>
-                        <button @click="tab = 'review'"
+                        <button @click="tab = 'review'; window.location.hash = 'review'"
                             :class="tab === 'review' ? 'bg-blue-200 text-blue-800 font-bold' :
                                 'bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800'"
                             class="tab-btn px-6 py-3 rounded-xl font-semibold text-left focus:outline-none focus:ring-2 focus:ring-blue-400 transition">Đánh
@@ -431,10 +433,10 @@
                                     class="mb-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow">
                                     {{ session('success') }}</div>
                             @endif
-                            <div class="max-h-80 md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar space-y-8">
+                            <div class="comments-list max-h-80 md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar space-y-8">
                                 @forelse ($comments as $comment)
-                                    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-5 border border-gray-100"
-                                        x-data="{ showEdit: false, showReply: false }">
+                                    <div class="comment-item bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-5 border border-gray-100"
+                                        x-data="{ showReply: false }" data-comment-id="{{ $comment->id }}">
                                         <div class="flex-shrink-0 flex flex-col items-center">
                                             <img src="{{ asset('storage/' . $comment->user->avatar) }}" alt="user"
                                                 class="w-14 h-14 rounded-full object-cover border-2 border-purple-200">
@@ -495,61 +497,33 @@
                                                 </div>
                                             @endif
                                             <div class="flex gap-2 mt-3 flex-wrap">
-                                                @if (auth()->check() && auth()->id() === $comment->user_id)
-                                                    <button @click="showEdit = !showEdit" type="button"
-                                                        class="px-3 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200 text-xs font-semibold transition">Sửa</button>
-                                                @endif
-                                                @auth
+                                                @if (auth()->check() && auth()->user()->role == 'admin' && $comment->replies->count() == 0)
                                                     <button @click="showReply = !showReply" type="button"
-                                                        class="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-semibold transition">Trả
+                                                        class="px-3 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 text-xs font-semibold transition">Trả
                                                         lời</button>
-                                                @endauth
+                                                @endif
                                             </div>
-                                            @if (auth()->check() && auth()->id() === $comment->user_id)
-                                                <div x-show="showEdit" class="mt-3" x-transition>
-                                                    <form
-                                                        action="{{ route('comments.update', $comment->id) }}#v-pills-reviews"
-                                                        method="POST" enctype="multipart/form-data" class="space-y-3">
+                                            @if (auth()->check() && auth()->user()->role == 'admin')
+                                                <div x-show="showReply" class="mt-3" x-transition>
+                                                    <form class="reply-form" action="{{ route('comments.store') }}#v-pills-reviews"
+                                                        method="POST" class="space-y-3" onsubmit="return handleReplySubmit(event, {{ $comment->id }});">
                                                         @csrf
-                                                        @method('PUT')
+                                                        <input type="hidden" name="product_id"
+                                                            value="{{ $product->id }}">
+                                                        <input type="hidden" name="parent_id"
+                                                            value="{{ $comment->id }}">
+                                                        <input type="hidden" name="ajax_request" value="1">
                                                         <div>
-                                                            <label class="block mb-1 text-sm font-medium">Nội dung</label>
-                                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400"
-                                                                rows="3">{{ $comment->content }}</textarea>
+                                                            <label class="block mb-1 text-sm font-medium">Trả lời:</label>
+                                                            <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="2"
+                                                                placeholder="Trả lời bình luận..." required></textarea>
                                                         </div>
-                                                        <div>
-                                                            <label class="block mb-1 text-sm font-medium">Ảnh mới (nếu
-                                                                thay)</label>
-                                                            <input type="file" name="image"
-                                                                class="w-full border rounded-lg px-3 py-2">
-                                                        </div>
-                                                        <button type="submit"
-                                                            class="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600 transition">Cập
-                                                            nhật</button>
+                                                        <button type="submit" class="reply-submit-btn px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+                                                            <span class="submit-text">Gửi phản hồi</span>
+                                                            <span class="loading-text hidden">Đang gửi...</span>
+                                                        </button>
                                                     </form>
                                                 </div>
-                                            @endif
-                                            @if (auth()->id() && auth()->user()->role == 'admin')
-                                                @auth
-                                                    <div x-show="showReply" class="mt-3" x-transition>
-                                                        <form action="{{ route('comments.store') }}#v-pills-reviews"
-                                                            method="POST" class="space-y-3">
-                                                            @csrf
-                                                            <input type="hidden" name="product_id"
-                                                                value="{{ $product->id }}">
-                                                            <input type="hidden" name="parent_id"
-                                                                value="{{ $comment->id }}">
-                                                            <div>
-                                                                <label class="block mb-1 text-sm font-medium">Trả lời:</label>
-                                                                <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="2"
-                                                                    placeholder="Trả lời bình luận..."></textarea>
-                                                            </div>
-                                                            <button type="submit"
-                                                                class="px-4 py-2 rounded bg-gray-700 text-white font-semibold hover:bg-gray-800 transition">Gửi
-                                                                phản hồi</button>
-                                                        </form>
-                                                    </div>
-                                                @endauth
                                             @endif
                                         </div>
                                     </div>
@@ -561,10 +535,11 @@
                             <div class="add-review mt-10 bg-white rounded-2xl shadow-lg p-8">
                                 <h5 class="mb-4 text-xl font-bold text-gray-900">Gửi bình luận của bạn</h5>
                                 @if ($canComment)
-                                    <form action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
-                                        enctype="multipart/form-data" class="space-y-6" x-data="{ rating: 0, hover: 0 }">
+                                    <form id="comment-form" action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
+                                        enctype="multipart/form-data" class="space-y-6" x-data="{ rating: 0, hover: 0 }" onsubmit="return handleCommentSubmit(event);">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                        <input type="hidden" name="ajax_request" value="1">
                                         <div>
                                             <label class="block mb-1 text-sm font-medium">Đánh giá *</label>
                                             <div class="flex items-center gap-1">
@@ -595,14 +570,32 @@
                                             <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="5"
                                                 placeholder="Nhập bình luận của bạn..."></textarea>
                                         </div>
-                                        <button type="submit"
-                                            class="px-8 py-2 rounded bg-purple-600 text-white font-bold hover:bg-purple-700 transition">Gửi
-                                            bình luận</button>
+                                        <button type="submit" id="submit-comment-btn"
+                                            class="px-8 py-2 rounded bg-purple-600 text-white font-bold hover:bg-purple-700 transition">
+                                            <span class="submit-text">Gửi bình luận</span>
+                                            <span class="loading-text hidden">Đang gửi...</span>
+                                        </button>
                                     </form>
+                                @elseif ($hasCommented)
+                                    <div class="p-6 rounded-lg bg-green-50 border border-green-200 text-center">
+                                        <div class="flex items-center justify-center mb-3">
+                                            <svg class="w-8 h-8 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <h6 class="text-lg font-semibold text-green-800">Đã đánh giá sản phẩm</h6>
+                                        </div>
+                                        <p class="text-green-700">Bạn đã đánh giá sản phẩm này. Cảm ơn bạn đã chia sẻ trải nghiệm!</p>
+                                    </div>
                                 @else
-                                    <div
-                                        class="p-4 rounded bg-yellow-100 text-yellow-800 border border-yellow-300 text-center">
-                                        Chỉ người đã mua sản phẩm mới có thể bình luận.</div>
+                                    <div class="p-6 rounded-lg bg-yellow-50 border border-yellow-200 text-center">
+                                        <div class="flex items-center justify-center mb-3">
+                                            <svg class="w-8 h-8 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                            </svg>
+                                            <h6 class="text-lg font-semibold text-yellow-800">Chưa thể đánh giá</h6>
+                                        </div>
+                                        <p class="text-yellow-700">Bạn cần mua sản phẩm này trước khi có thể đánh giá.</p>
+                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -692,6 +685,42 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing gallery...'); // Debug log
+
+            // Check if we need to scroll to new comment
+            if (sessionStorage.getItem('scrollToNewComment') === 'true') {
+                sessionStorage.removeItem('scrollToNewComment');
+                
+                // Switch to review tab first
+                const reviewsTab = document.querySelector('[x-data]');
+                if (reviewsTab && reviewsTab.__x) {
+                    reviewsTab.__x.$data.tab = 'review';
+                    window.location.hash = 'review';
+                }
+                
+                // Scroll to the first comment (newest) after a short delay
+                setTimeout(() => {
+                    const newComment = document.querySelector('.comment-item:first-child');
+                    if (newComment) {
+                        newComment.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                        
+                        // Add highlight effect
+                        newComment.style.backgroundColor = '#fef3c7';
+                        newComment.style.borderColor = '#f59e0b';
+                        newComment.style.transform = 'scale(1.02)';
+                        newComment.style.transition = 'all 0.3s ease';
+                        
+                        // Remove highlight after 3 seconds
+                        setTimeout(() => {
+                            newComment.style.backgroundColor = '';
+                            newComment.style.borderColor = '';
+                            newComment.style.transform = '';
+                        }, 3000);
+                    }
+                }, 800);
+            }
 
             new Swiper('.related-swiper', {
                 slidesPerView: 4,
@@ -1211,6 +1240,284 @@
                 }
             }, 100);
         });
+
+        // Function to show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full`;
+            notification.innerHTML = `
+                <div class="bg-gradient-to-r ${type === 'success' ? 'from-emerald-500 to-green-600' : 'from-red-500 to-pink-600'} text-white px-6 py-4 rounded-2xl shadow-2xl border ${type === 'success' ? 'border-emerald-400/30' : 'border-red-400/30'} backdrop-blur-sm">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/30">
+                                <svg class="w-5 h-5 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="${type === 'success' ? 'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' : 'M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'}" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-sm">${message}</p>
+                            <p class="text-xs ${type === 'success' ? 'text-emerald-100' : 'text-red-100'}">${type === 'success' ? 'Thao tác thành công!' : 'Đã xảy ra lỗi!'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-x-full');
+                notification.classList.add('opacity-100', 'translate-x-0');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('opacity-100', 'translate-x-0');
+                notification.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Function to handle comment submission (AJAX)
+        function handleCommentSubmit(event) {
+            event.preventDefault();
+            
+            // Show beautiful confirmation modal
+            showConfirmationModal();
+            
+            return false;
+        }
+        
+        // Function to show confirmation modal
+        function showConfirmationModal() {
+            // Create modal HTML
+            const modalHTML = `
+                <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0">
+                        <div class="p-6">
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Xác nhận gửi bình luận</h3>
+                            <p class="text-gray-600 text-center mb-6">
+                                Bạn có chắc chắn muốn gửi bình luận này?<br>
+                                <span class="font-semibold text-yellow-600">Lưu ý:</span> Sau khi gửi, bạn sẽ <span class="font-bold text-red-600">KHÔNG THỂ</span> chỉnh sửa hoặc xóa bình luận này.
+                            </p>
+                            <div class="flex gap-3">
+                                <button id="cancel-comment" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                                    Hủy bỏ
+                                </button>
+                                <button id="confirm-comment" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                                    Gửi bình luận
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Animate modal in
+            setTimeout(() => {
+                const modal = document.getElementById('confirmation-modal');
+                const modalContent = modal.querySelector('.bg-white');
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            
+            // Handle cancel button
+            document.getElementById('cancel-comment').addEventListener('click', () => {
+                hideConfirmationModal();
+            });
+            
+            // Handle confirm button
+            document.getElementById('confirm-comment').addEventListener('click', () => {
+                hideConfirmationModal();
+                submitCommentForm();
+            });
+            
+            // Handle clicking outside modal
+            document.getElementById('confirmation-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'confirmation-modal') {
+                    hideConfirmationModal();
+                }
+            });
+        }
+        
+        // Function to hide confirmation modal
+        function hideConfirmationModal() {
+            const modal = document.getElementById('confirmation-modal');
+            const modalContent = modal.querySelector('.bg-white');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            
+            setTimeout(() => {
+                modal.remove();
+            }, 300);
+        }
+        
+        // Function to submit comment form
+        function submitCommentForm() {
+            const form = document.getElementById('comment-form');
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('#submit-comment-btn');
+            const loadingText = submitBtn.querySelector('.loading-text');
+            const submitText = submitBtn.querySelector('.submit-text');
+
+            // Show loading state
+            submitText.classList.add('hidden');
+            loadingText.classList.remove('hidden');
+            submitBtn.disabled = true;
+            
+
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Reset rating stars
+                    const ratingInputs = form.querySelectorAll('input[name="rating"]');
+                    ratingInputs.forEach(input => input.checked = false);
+                    
+                    // Reset Alpine.js rating
+                    const alpineComponent = form.__x;
+                    if (alpineComponent) {
+                        alpineComponent.$data.rating = 0;
+                        alpineComponent.$data.hover = 0;
+                    }
+                    
+                    // Hide form and show success message
+                    form.style.display = 'none';
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'p-6 rounded-lg bg-green-50 border border-green-200 text-center';
+                    successMessage.innerHTML = `
+                        <div class="flex items-center justify-center mb-3">
+                            <svg class="w-8 h-8 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h6 class="text-lg font-semibold text-green-800">Đã đánh giá sản phẩm</h6>
+                        </div>
+                        <p class="text-green-700">Bạn đã đánh giá sản phẩm này. Cảm ơn bạn đã chia sẻ trải nghiệm!</p>
+                    `;
+                    form.parentNode.appendChild(successMessage);
+                    
+                    // Switch to review tab and scroll to comments
+                    setTimeout(() => {
+                        const reviewsTab = document.querySelector('[x-data]');
+                        if (reviewsTab && reviewsTab.__x) {
+                            reviewsTab.__x.$data.tab = 'review';
+                            window.location.hash = 'review';
+                        }
+                        
+                                            // Reload page to show new comment and scroll to it
+                    setTimeout(() => {
+                        // Store flag in sessionStorage to indicate new comment
+                        sessionStorage.setItem('scrollToNewComment', 'true');
+                        location.reload();
+                    }, 1000);
+                    }, 500);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting comment:', error);
+                showNotification('Đã xảy ra lỗi khi gửi bình luận.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                submitText.classList.remove('hidden');
+                loadingText.classList.add('hidden');
+                submitBtn.disabled = false;
+            });
+            return false;
+        }
+
+
+
+        // Function to handle reply submission (AJAX)
+        function handleReplySubmit(event, commentId) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('.reply-submit-btn');
+            const loadingText = submitBtn.querySelector('.loading-text');
+            const submitText = submitBtn.querySelector('.submit-text');
+
+            // Show loading state
+            submitText.classList.add('hidden');
+            loadingText.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Hide reply form
+                    const replyContainer = form.closest('[x-data]');
+                    if (replyContainer && replyContainer.__x) {
+                        replyContainer.__x.$data.showReply = false;
+                    }
+                    
+                    // Hide reply button after successful reply
+                    const replyButton = document.querySelector(`[data-comment-id="${commentId}"] button[onclick*="showReply"]`);
+                    if (replyButton) {
+                        replyButton.style.display = 'none';
+                    }
+                    
+                    // Reload page to show new reply
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting reply:', error);
+                showNotification('Đã xảy ra lỗi khi gửi phản hồi.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                submitText.classList.remove('hidden');
+                loadingText.classList.add('hidden');
+                submitBtn.disabled = false;
+            });
+            return false;
+        }
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
@@ -1227,6 +1534,52 @@
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #c4b5fd #f3f4f6;
+        }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.5s ease-out;
+        }
+        
+        /* Modal animations */
+        @keyframes modal-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes modal-fade-out {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+        
+        .modal-enter {
+            animation: modal-fade-in 0.3s ease-out;
+        }
+        
+        .modal-exit {
+            animation: modal-fade-out 0.3s ease-in;
         }
     </style>
 @endsection

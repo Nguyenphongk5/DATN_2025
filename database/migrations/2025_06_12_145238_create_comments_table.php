@@ -16,6 +16,7 @@ return new class extends Migration
         $table->tinyInteger('rating')->nullable();
         $table->string('image')->nullable();      
         $table->foreignId('parent_id')->nullable()->constrained('comments');
+        $table->boolean('has_commented')->default(false);
         $table->tinyInteger('is_active')->default(1);
         $table->timestamps();
 });

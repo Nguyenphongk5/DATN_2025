@@ -226,25 +226,28 @@ class HomeController extends Controller
             ->whereNull('parent_id')
             ->orderByDesc('created_at')
             ->get();
-        $canComment = Order::where('user_id', Auth::id())
-            ->where('status', 'completed')
-            ->Where('payment_status', 'paid')
-            ->first();
 
-        // $canComment = false;
-        // if (Auth::check()) {
-        //     $canComment = DB::table('orders')
-        //         ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-        //         ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
-        //         ->where('orders.user_id', Auth::id())
-        //         ->whereIn('orders.status', ['completed', 'paid'])
-        //         ->where('product_variants.product_id', $id)
-        //         ->exists();
-        // }
+        $canComment = false;
+        $hasCommented = false;
+        if (Auth::check()) {
+            // Kiểm tra đã mua sản phẩm chưa
+            $hasPurchased = DB::table('orders')
+                ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+                ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
+                ->where('orders.user_id', Auth::id())
+                ->whereIn('orders.status', ['completed', 'paid'])
+                ->where('product_variants.product_id', $id)
+                ->exists();
 
-        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'comments', 'canComment', 'galleryImages'));
+            // Kiểm tra đã comment chưa
+            $hasCommented = Comment::hasUserCommented(Auth::id(), $id);
+
+            // Chỉ cho phép comment nếu đã mua và chưa comment
+            $canComment = $hasPurchased && !$hasCommented;
+        }
+
+        return view('user.product-detail', compact('product', 'categories', 'productVariants', 'products', 'comments', 'canComment', 'hasCommented', 'galleryImages'));
     }
-
 
     public function storeComment(Request $request)
     {
@@ -256,11 +259,53 @@ class HomeController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Kiểm tra xem user có quyền comment không
+        $hasPurchased = DB::table('orders')
+            ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+            ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
+            ->where('orders.user_id', Auth::id())
+            ->whereIn('orders.status', ['completed', 'paid'])
+            ->where('product_variants.product_id', $request->product_id)
+            ->exists();
+
+        // Admin có thể comment bất kỳ sản phẩm nào
+        $isAdmin = Auth::user()->role === 'admin';
+
+        if (!$hasPurchased && !$isAdmin) {
+            if ($request->ajax() || $request->expectsJson() || $request->has('ajax_request')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn chỉ có thể bình luận sau khi đã mua sản phẩm này.'
+                ]);
+            }
+            return back()->with('error', 'Bạn chỉ có thể bình luận sau khi đã mua sản phẩm này.');
+        }
+
+        // Kiểm tra đã comment chưa (chỉ cho comment chính, không phải reply)
+        if (!$request->parent_id && !$isAdmin) {
+            $hasCommented = Comment::hasUserCommented(Auth::id(), $request->product_id);
+            if ($hasCommented) {
+                if ($request->ajax() || $request->expectsJson() || $request->has('ajax_request')) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Bạn đã bình luận sản phẩm này rồi.'
+                    ]);
+                }
+                return back()->with('error', 'Bạn đã bình luận sản phẩm này rồi.');
+            }
+        }
+
         if (
             !$request->filled('content') &&
             !$request->filled('rating') &&
             !$request->hasFile('image')
         ) {
+            if ($request->ajax() || $request->expectsJson() || $request->has('ajax_request')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn phải nhập ít nhất một trong các trường: nội dung, hình ảnh hoặc đánh giá.'
+                ]);
+            }
             return back()->with('error', 'Bạn phải nhập ít nhất một trong các trường: nội dung, hình ảnh hoặc đánh giá.');
         }
 
@@ -268,7 +313,8 @@ class HomeController extends Controller
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('comments', 'public');
         }
-        Comment::create([
+
+        $comment = Comment::create([
             'user_id' => Auth::id(),
             'product_id' => $request->product_id,
             'content' => $request->content ?? '',
@@ -276,6 +322,21 @@ class HomeController extends Controller
             'image' => $imagePath,
             'parent_id' => $request->parent_id,
         ]);
+
+        if ($request->ajax() || $request->expectsJson() || $request->has('ajax_request')) {
+            // Lấy comment vừa tạo để trả về
+            $newComment = Comment::with(['user', 'replies.user'])
+                ->where('id', $comment->id)
+                ->first();
+
+            $message = $request->has('parent_id') ? '✅ Phản hồi đã được gửi!' : '✅ Bình luận đã được gửi!';
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'comment' => $newComment
+            ]);
+        }
 
         return back()->with('success', '✅ Bình luận đã được gửi!');
     }
