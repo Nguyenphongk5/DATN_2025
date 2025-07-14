@@ -18,14 +18,22 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
-    {
-        $logo = Logo::where('is_active', 1)->first();
-        $categories = DB::table('categories')->get();
-        $user = $request->user();
-        return view('profile.edit', compact('user', 'categories', 'logo'));
-    }
+ public function edit(Request $request): View
+{
+    $logo = Logo::where('is_active', 1)->first();
+    $categories = DB::table('categories')->get();
+    $user = $request->user();
 
+    // Lấy sẵn địa chỉ để load vào form
+    $addressData = [
+        'province' => $user->province,
+        'district' => $user->district,
+        'ward' => $user->ward,
+        'address' => $user->address,
+    ];
+
+    return view('profile.edit', compact('user', 'categories', 'logo', 'addressData'));
+}
     /**
      * Update the user's profile information.
      */

@@ -21,6 +21,10 @@ class ProfileUpdateRequest extends FormRequest
             'password' => 'nullable|string|min:8|confirmed',
             'current_password' => 'required_with:password|string|min:8|current_password',
             'avatar' => 'nullable|image|max:1024',
+            'province' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'ward' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
         ];
     }
 }
