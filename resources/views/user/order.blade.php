@@ -201,13 +201,143 @@
                                 <option value="online">Thanh toán VNPay</option>
                             </select>
                         </div>
+                        {{-- XÓA input cũ mã giảm giá ở đây --}}
+                        {{-- <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mã giảm giá (nếu có)</label>
+                            <input type="text" name="voucher_code" placeholder="Nhập mã giảm giá" class="border rounded px-3 py-2 w-full" value="{{ old('voucher_code') }}">
+                        </div> --}}
+                        @if(session('voucher_error'))
+                            <div class="mb-2 p-2 bg-red-100 text-red-700 rounded">{{ session('voucher_error') }}</div>
+                        @elseif(session('voucher_success'))
+                            <div class="mb-2 p-2 bg-green-100 text-green-700 rounded">{{ session('voucher_success') }}</div>
+                        @endif
                         <button type="submit" id="btn-submit"
-                            class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200">Đặt
-                            hàng</button>
+                            class="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-md hover:from-purple-700 hover:to-pink-700 transition-all duration-200">Đặt hàng</button>
                     </form>
                 </div>
 
                 <div class="w-full lg:w-5/12 bg-white rounded-2xl shadow-lg p-8">
+                    {{-- Di chuyển input và nút Áp dụng voucher lên trên --}}
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="voucher_code" placeholder="Nhập mã giảm giá" class="border rounded px-3 py-2 flex-1">
+                        <button type="button" id="apply-voucher-btn" class="bg-green-500 text-white px-4 py-2 rounded">Áp dụng</button>
+                    </div>
+                    <div id="voucher-message" class="mb-2"></div>
+                    <div id="discount-info" class="mb-2 text-green-700 font-bold"></div>
+                    <input type="hidden" name="voucher_code" id="hidden_voucher_code" form="checkout-form">
+                    <input type="hidden" name="voucher_discount" id="hidden_voucher_discount" form="checkout-form">
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            // Initialize notifications
+                            initializeNotifications();
+                        });
+
+                        // Notification functions
+                        function initializeNotifications() {
+                            const successNotification = document.getElementById('success-notification');
+                            const errorNotification = document.getElementById('error-notification');
+
+                            if (successNotification) {
+                                showNotification(successNotification, 'success-progress-bar');
+                            }
+
+                            if (errorNotification) {
+                                showNotification(errorNotification, 'error-progress-bar');
+                            }
+                        }
+
+                        function showNotification(notification, progressBarId) {
+                            // Show notification with slide-in animation
+                            setTimeout(() => {
+                                notification.classList.remove('opacity-0', 'translate-x-full');
+                                notification.classList.add('opacity-100', 'translate-x-0', 'notification-bounce');
+
+                                // Add glow effect based on notification type
+                                const notificationDiv = notification.querySelector('div');
+                                if (progressBarId === 'success-progress-bar') {
+                                    notificationDiv.classList.add('notification-glow');
+                                } else {
+                                    notificationDiv.classList.add('notification-glow-error');
+                                }
+                            }, 100);
+
+                            // Animate progress bar
+                            const progressBar = document.getElementById(progressBarId);
+                            if (progressBar) {
+                                setTimeout(() => {
+                                    progressBar.style.width = '0%';
+                                }, 100);
+                            }
+
+                            // Auto hide after 5 seconds
+                            setTimeout(() => {
+                                hideNotification(notification);
+                            }, 5000);
+                        }
+
+                        function hideNotification(notification) {
+                            notification.classList.remove('opacity-100', 'translate-x-0');
+                            notification.classList.add('opacity-0', 'translate-x-full');
+
+                            setTimeout(() => {
+                                notification.remove();
+                            }, 500);
+                        }
+
+                        function closeNotification(notificationId) {
+                            const notification = document.getElementById(notificationId);
+                            if (notification) {
+                                hideNotification(notification);
+                            }
+                        }
+
+                        // Add CSS for animations
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            @keyframes bounce {
+                                0%, 20%, 50%, 80%, 100% {
+                                    transform: translateY(0);
+                                }
+                                40% {
+                                    transform: translateY(-10px);
+                                }
+                                60% {
+                                    transform: translateY(-5px);
+                                }
+                            }
+
+                            @keyframes glow {
+                                0%, 100% {
+                                    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+                                }
+                                50% {
+                                    box-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 30px rgba(16, 185, 129, 0.6);
+                                }
+                            }
+
+                            @keyframes glow-error {
+                                0%, 100% {
+                                    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+                                }
+                                50% {
+                                    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), 0 0 30px rgba(239, 68, 68, 0.6);
+                                }
+                            }
+
+                            .notification-bounce {
+                                animation: bounce 0.6s ease-in-out;
+                            }
+
+                            .notification-glow {
+                                animation: glow 2s ease-in-out infinite;
+                            }
+
+                            .notification-glow-error {
+                                animation: glow-error 2s ease-in-out infinite;
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    </script>
                     <h4 class="text-xl font-semibold mb-6">Đơn hàng của bạn</h4>
                     <ul class="divide-y divide-gray-200 mb-6">
                         @php $total = 0; @endphp
@@ -296,115 +426,56 @@
     </section>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Initialize notifications
-            initializeNotifications();
-        });
-
-        // Notification functions
-        function initializeNotifications() {
-            const successNotification = document.getElementById('success-notification');
-            const errorNotification = document.getElementById('error-notification');
-
-            if (successNotification) {
-                showNotification(successNotification, 'success-progress-bar');
+        // Lưu tổng tiền gốc khi load trang
+        let originalTotal = parseFloat(document.getElementById('total-amount').textContent.replace(/[^\d]/g, ''));
+        document.getElementById('apply-voucher-btn').onclick = function() {
+            const code = document.getElementById('voucher_code').value.trim();
+            const total = originalTotal;
+            const msg = document.getElementById('voucher-message');
+            const discountInfo = document.getElementById('discount-info');
+            msg.textContent = '';
+            discountInfo.textContent = '';
+            if (!code) {
+                msg.textContent = 'Vui lòng nhập mã giảm giá.';
+                msg.className = 'mb-2 text-red-600';
+                // Reset lại tổng tiền về gốc
+                document.getElementById('total-amount').textContent = originalTotal.toLocaleString('vi-VN') + ' VNĐ';
+                return;
             }
-
-            if (errorNotification) {
-                showNotification(errorNotification, 'error-progress-bar');
-            }
-        }
-
-        function showNotification(notification, progressBarId) {
-            // Show notification with slide-in animation
-            setTimeout(() => {
-                notification.classList.remove('opacity-0', 'translate-x-full');
-                notification.classList.add('opacity-100', 'translate-x-0', 'notification-bounce');
-
-                // Add glow effect based on notification type
-                const notificationDiv = notification.querySelector('div');
-                if (progressBarId === 'success-progress-bar') {
-                    notificationDiv.classList.add('notification-glow');
+            fetch("{{ route('voucher.check') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                },
+                body: JSON.stringify({ voucher_code: code, total_amount: total })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    discountInfo.textContent = data.message;
+                    msg.textContent = '';
+                    document.getElementById('hidden_voucher_code').value = code;
+                    document.getElementById('hidden_voucher_discount').value = data.discount;
+                    // Cập nhật tổng tiền mới (luôn dựa trên originalTotal)
+                    const newTotal = total - data.discount;
+                    document.getElementById('total-amount').textContent = newTotal.toLocaleString('vi-VN') + ' VNĐ';
                 } else {
-                    notificationDiv.classList.add('notification-glow-error');
+                    msg.textContent = data.message;
+                    msg.className = 'mb-2 text-red-600';
+                    discountInfo.textContent = '';
+                    document.getElementById('hidden_voucher_code').value = '';
+                    document.getElementById('hidden_voucher_discount').value = '';
+                    // Reset lại tổng tiền về gốc nếu mã không hợp lệ
+                    document.getElementById('total-amount').textContent = originalTotal.toLocaleString('vi-VN') + ' VNĐ';
                 }
-            }, 100);
-
-            // Animate progress bar
-            const progressBar = document.getElementById(progressBarId);
-            if (progressBar) {
-                setTimeout(() => {
-                    progressBar.style.width = '0%';
-                }, 100);
-            }
-
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                hideNotification(notification);
-            }, 5000);
-        }
-
-        function hideNotification(notification) {
-            notification.classList.remove('opacity-100', 'translate-x-0');
-            notification.classList.add('opacity-0', 'translate-x-full');
-
-            setTimeout(() => {
-                notification.remove();
-            }, 500);
-        }
-
-        function closeNotification(notificationId) {
-            const notification = document.getElementById(notificationId);
-            if (notification) {
-                hideNotification(notification);
-            }
-        }
-
-        // Add CSS for animations
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes bounce {
-                0%, 20%, 50%, 80%, 100% {
-                    transform: translateY(0);
-                }
-                40% {
-                    transform: translateY(-10px);
-                }
-                60% {
-                    transform: translateY(-5px);
-                }
-            }
-
-            @keyframes glow {
-                0%, 100% {
-                    box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
-                }
-                50% {
-                    box-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 30px rgba(16, 185, 129, 0.6);
-                }
-            }
-
-            @keyframes glow-error {
-                0%, 100% {
-                    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
-                }
-                50% {
-                    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8), 0 0 30px rgba(239, 68, 68, 0.6);
-                }
-            }
-
-            .notification-bounce {
-                animation: bounce 0.6s ease-in-out;
-            }
-
-            .notification-glow {
-                animation: glow 2s ease-in-out infinite;
-            }
-
-            .notification-glow-error {
-                animation: glow-error 2s ease-in-out infinite;
-            }
-        `;
-        document.head.appendChild(style);
+            })
+            .catch(() => {
+                msg.textContent = 'Có lỗi xảy ra khi kiểm tra mã.';
+                msg.className = 'mb-2 text-red-600';
+                // Reset lại tổng tiền về gốc nếu lỗi
+                document.getElementById('total-amount').textContent = originalTotal.toLocaleString('vi-VN') + ' VNĐ';
+            });
+        };
     </script>
 @endsection

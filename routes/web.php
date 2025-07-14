@@ -90,6 +90,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::resource('blogs', BlogController::class);
     Route::resource('logos', LogoController::class);
     Route::resource('orders', OrderController::class);
+    Route::resource('vouchers', \App\Http\Controllers\Admin\VoucherController::class);
     Route::get('orders/export-qr/{id}', [OrderController::class, 'exportQr'])->name('orders.exportQr');
     Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
     Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
@@ -110,6 +111,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::get('/chat', [AdminChatController::class, 'index'])->name('chat.index');
     Route::get('/chat/messages/{user}', [AdminChatController::class, 'messages'])->name('chat.messages');
     Route::post('/chat/messages', [AdminChatController::class, 'store'])->name('chat.store');
+    Route::get('vouchers/usages', [\App\Http\Controllers\Admin\VoucherController::class, 'usages'])->name('vouchers.usages');
 });
 // routes/web.php
 
@@ -143,3 +145,5 @@ Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.mess
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 require __DIR__ . '/auth.php';
+
+Route::post('/voucher/check', [App\Http\Controllers\CheckoutController::class, 'checkVoucher'])->name('voucher.check');

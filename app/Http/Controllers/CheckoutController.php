@@ -83,369 +83,130 @@ class CheckoutController extends Controller
 
         // 3) tạo đơns
 
-        /* Lấy giỏ & lọc theo session selected_items */
-        // $cart = Cart::with(['items.productVariant.product'])
-        //     ->where('user_id', Auth::id())
-        //     ->first();
+        // Xử lý đặt hàng cho giỏ hàng (không phải mua ngay)
+        $cart = Cart::with(['items.productVariant.product'])
+            ->where('user_id', $user->id)
+            ->first();
 
-        // $ids = session('selected_items', []);          // mảng id
-        // if ($ids) {
-        //     $cart->setRelation(
-        //         'items',
-        //         $cart->items->whereIn('id', $ids)->values()
-        //     );
-        // }
+        if (!$cart || $cart->items->isEmpty()) {
+            return redirect()->route('cart.index')->with('error', 'Giỏ hàng của bạn đang trống.');
+        }
 
-        // if (!$cart || $cart->items->isEmpty()) {
-        //     return redirect()->route('cart.index')
-        //         ->with('error', 'Không có sản phẩm nào để đặt hàng.');
-        // }
+        $selectedIds = session('selected_items', []);
+        $items = $cart->items;
+        if (!empty($selectedIds)) {
+            $items = $items->whereIn('id', $selectedIds)->values();
+        }
 
-        // /* ---------- Tính tổng tiền & voucher ---------- */
-        // // $totalAmount = 0;
-        // // foreach ($cart->items as $item) {
-        // //     $price = $item->productVariant?->price ?? $item->product?->price ?? 0;
-        // //     $totalAmount += $price * $item->quantity;
-        // // }
+        $totalAmount = $items->sum(function ($item) {
+            $price = $item->productVariant?->price ?? ($item->product?->price ?? 0);
+            return $price * $item->quantity;
+        });
+        $discountAmount = 0;
+        $voucher = null;
 
-        // $voucher        = null;
-        // $discountAmount = 0;
-
-        // if ($request->filled('voucher_code')) {
-        //     $voucherCode = strtoupper(trim($request->voucher_code));
-        //     $voucher = Voucher::whereRaw('UPPER(code) = ?', [$voucherCode])
-        //         ->where('is_active', 1)
-        //         ->where('start_date', '<=', now())
-        //         ->where('end_date',   '>=', now())
-        //         ->first();
-
-        //     if (!$voucher)
-        //         return back()->with('voucher_error', '❌ Mã giảm giá không hợp lệ hoặc đã hết hạn.');
-        //     if ($voucher->used_count >= $voucher->quantity)
-        //         return back()->with('voucher_error', '❌ Mã giảm giá đã được sử dụng hết.');
-        //     if ($totalAmount < $voucher->min_money || $totalAmount > $voucher->max_money)
-        //         return back()->with('voucher_error', '❌ Mã giảm giá không áp dụng cho đơn hàng này.');
-
-        //     $discountAmount = $voucher->discount_type === 'percent'
-        //         ? $totalAmount * $voucher->discount_value / 100
-        //         : $voucher->discount_value;
-
-        //     $discountAmount = min($discountAmount, $totalAmount);
-        //     $totalAmount   -= $discountAmount;
-        // }
-
-        // /* ---------- Lưu Order ---------- */
-        // DB::beginTransaction();
-        // try {
-        //     $order = Order::create([
-        //         'user_id'         => $user->id,
-        //         'user_name'       => $request->name,
-        //         'user_email'      => $user->email,
-        //         'user_phone'      => $request->phone,
-        //         'user_address'    => $request->address,
-        //         'voucher_id'      => $voucher?->id,
-        //         'discount_amount' => $discountAmount,
-        //         'total_amount'    => $totalAmount,
-        //         'status'          => 'pending',
-        //         'payment_method'  => $request->payment_method,
-        //         'payment_status'  => $isPaid ? 'Paid' : 'Unpaid',
-        //         'shipping_fee'    => 0,
-        //         'shipping_method' => $request->shipping_method,
-        //         'order_code'      => 'ODR-' . strtoupper(Str::random(10)),
-        //         'note'            => $request->note,
-        //     ]);
-
-        // /* ---------- Gửi mail ---------- */
-
-
-        // return redirect()->route('home')->with('success', '🎉 Đặt hàng thành công!');
-
-        if (session('buy_now')) {
-            $buyNow = session('buy_now');
-
-            if (!$buyNow) {
-                return redirect()->route('home')->with('error', 'Không có sản phẩm để mua ngay.');
-            }
-
-            $variant = ProductVariant::with('product')->where('product_id', $buyNow['product_id'])
-                ->where('color_name', $buyNow['color_name'])
-                ->where('size', $buyNow['size'])
+        if ($request->filled('voucher_code')) {
+            $voucherCode = strtoupper(trim($request->voucher_code));
+            $voucher = Voucher::whereRaw('UPPER(code) = ?', [$voucherCode])
+                ->where('is_active', 1)
+                ->where('start_date', '<=', now())
+                ->where('end_date',   '>=', now())
                 ->first();
 
-            if (!$variant) {
-                return redirect()->route('home')->with('error', 'Không tìm thấy biến thể sản phẩm.');
+            if (!$voucher)
+                return back()->with('voucher_error', '❌ Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+            if ($voucher->used_count >= $voucher->quantity)
+                return back()->with('voucher_error', '❌ Mã giảm giá đã được sử dụng hết.');
+            if ($totalAmount < $voucher->min_money || ($voucher->max_money > 0 && $totalAmount > $voucher->max_money))
+                return back()->with('voucher_error', '❌ Mã giảm giá không áp dụng cho đơn hàng này.');
+            // Kiểm tra user_limit
+            $userVoucherCount = \App\Models\Order::where('user_id', $user->id)
+                ->where('voucher_id', $voucher->id)
+                ->where(function($q) {
+                    $q->where('status', 'completed')
+                      ->orWhere('payment_status', 'Paid');
+                })
+                ->count();
+            if ($userVoucherCount >= $voucher->user_limit) {
+                return back()->with('voucher_error', '❌ Bạn đã sử dụng mã này quá số lần cho phép.');
             }
+            $discountAmount = $voucher->discount_type === 'percent'
+                ? $totalAmount * $voucher->discount_value / 100
+                : $voucher->discount_value;
 
-            $totalAmount = $variant->price * $buyNow['quantity'];
-            $discountAmount = 0;
-            $voucher = null;
+            $discountAmount = min($discountAmount, $totalAmount);
+            $totalAmount   -= $discountAmount;
+        }
 
-            if ($request->filled('voucher_code')) {
-                $voucher = Voucher::where('code', $request->voucher_code)
-                    ->where('is_active', 1)
-                    ->where('start_date', '<=', now())
-                    ->where('end_date', '>=', now())
-                    ->first();
-
-                if (!$voucher) {
-                    return back()->with('voucher_error', 'Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+        DB::beginTransaction();
+        try {
+            // Nếu có voucher, lock bản ghi để tránh race condition
+            if ($voucher) {
+                $voucher = \App\Models\Voucher::where('id', $voucher->id)->lockForUpdate()->first();
+                if ($voucher->used_count >= $voucher->quantity) {
+                    DB::rollBack();
+                    return back()->with('voucher_error', '❌ Mã giảm giá đã được sử dụng hết.');
                 }
-
-                if ($voucher->quantity <= $voucher->used_count) {
-                    return back()->with('voucher_error', 'Mã giảm giá đã được sử dụng hết.');
-                }
-
-                if ($totalAmount < $voucher->min_money || $totalAmount > $voucher->max_money) {
-                    return back()->with('voucher_error', 'Mã giảm giá không áp dụng cho đơn hàng này.');
-                }
-
-                if ($voucher->discount_type === 'percent') {
-                    $discountAmount = $totalAmount * $voucher->discount_value / 100;
-                } else {
-                    $discountAmount = $voucher->discount_value;
-                }
-
-                $discountAmount = min($discountAmount, $totalAmount);
-                $totalAmount -= $discountAmount;
             }
+            $order = Order::create([
+                'user_id'         => $user->id,
+                'user_name'       => $request->name,
+                'user_email'      => $user->email,
+                'user_phone'      => $request->phone,
+                'user_address'    => $request->address,
+                'voucher_id'      => $voucher?->id,
+                'discount_amount' => $discountAmount,
+                'total_amount'    => $totalAmount,
+                'status'          => 'pending',
+                'payment_method'  => $request->payment_method,
+                'payment_status'  => $isPaid ? 'Paid' : 'Unpaid',
+                'shipping_fee'    => 0,
+                'shipping_method' => $request->shipping_method,
+                'order_code'      => 'ODR-' . strtoupper(Str::random(10)),
+                'note'            => $request->note,
+            ]);
 
-            DB::beginTransaction();
-
-            try {
-                $order = Order::create([
-                    'user_id'         => $user->id,
-                    'user_name'       => $request->name,
-                    'user_email'      => $user->email,
-                    'user_phone' => $request->phone,
-                    'user_address' => $request->address,
-                    'discount_amount' => $discountAmount,
-                    'total_amount' => $totalAmount,
-                    'status' => $isPaid == 'Paid' ? 'confirmed' : 'pending',
-                    'payment_method' => $request->payment_method,
-                    'payment_status' => $isPaid ? 'Paid' : 'Unpaid',
-                    'shipping_fee' => 0,
-                    'shipping_method' => $request->shipping_method,
-                    'order_code' => 'ODR-' . strtoupper(Str::random(10)),
-                    'note' => $request->note,
-                ]);
-
+            foreach ($items as $item) {
+                $variant = $item->productVariant;
+                if ($variant->quantity < $item->quantity) {
+                    DB::rollBack();
+                    return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
+                }
+                ProductVariant::where('id', $variant->id)
+                    ->decrement('quantity', $item->quantity);
+                if ($variant->quantity - $item->quantity <= 0) {
+                    ProductVariant::where('id', $variant->id)
+                        ->update(['is_active' => 0]);
+                }
                 OrderDetail::create([
                     'order_id' => $order->id,
                     'product_variant_id' => $variant->id,
                     'product_name' => $variant->product?->name ?? 'Không rõ',
                     'size_name' => $variant->size,
                     'color_name' => $variant->color_name,
-                    'quantity' => $buyNow['quantity'],
+                    'quantity' => $item->quantity,
                     'price' => $variant->price,
                 ]);
-
-                $variant = ProductVariant::find($variant->id); // đảm bảo dữ liệu mới nhất
-
-                if ($variant->quantity < $buyNow['quantity']) {
-                    return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
-                }
-
-                // Trừ tồn kho
-                $variant->decrement('quantity', $buyNow['quantity']);
-
-                // Nếu sau khi trừ tồn kho = 0 hoặc < 0, thì ngưng bán
-                if ($variant->quantity - $buyNow['quantity'] <= 0) {
-                    $variant->update(['is_active' => 0]);
-                }
-
-                if ($voucher) {
-                    $voucher->increment('used_count');
-                }
-
-                DB::commit();
-                if ($request->payment_method === 'online') {
-                    $amount = $totalAmount; // VNPay yêu cầu số tiền tính bằng đồng
-                    session()->forget('buy_now');
-
-                    return app(\App\Http\Controllers\VnPayController::class)->createPayment($request, $amount, $order);
-                }
-                session()->forget('buy_now');
-                $mailData = [
-                    'name'           => $request->name,
-                    'phone'          => $request->phone,
-                    'address'        => $request->address,
-                    'note'           => $request->note,
-                    'total'          => $totalAmount,
-                    'payment_method' => $request->payment_method,
-                ];
-
-
-                Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
-                Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
-                return redirect()->route('orders.history')->with('success', 'Đặt hàng thành công (Mua ngay)!');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return back()->with('error', 'Lỗi mua ngay: ' . $e->getMessage());
-            }
-        } else {
-
-            $cart = Cart::with(['items.productVariant.product'])
-                ->where('user_id', $user->id)
-                ->first();
-
-            if (!$cart || $cart->items->isEmpty()) {
-                return redirect()->route('cart.index')->with('error', 'Giỏ hàng của bạn đang trống.');
             }
 
-            $selectedIds = session('selected_items', []);
-            $items = $cart->items;
-            if (!empty($selectedIds)) {
-                $items = $items->whereIn('id', $selectedIds)->values();
-            }
-
-            $totalAmount = $items->sum(function ($item) {
-                $price = $item->productVariant?->price ?? ($item->product?->price ?? 0);
-                return $price * $item->quantity;
-            });
-            $discountAmount = 0;
-            $voucher = null;
-
-            if ($request->filled('voucher_code')) {
-                $voucher = Voucher::where('code', $request->voucher_code)
-                    ->where('is_active', 1)
-                    ->where('start_date', '<=', now())
-                    ->where('end_date', '>=', now())
-                    ->first();
-
-                if (!$voucher) {
-                    return back()->with('voucher_error', 'Mã giảm giá không hợp lệ hoặc đã hết hạn.');
-                }
-
-                if ($voucher->quantity <= $voucher->used_count) {
-                    return back()->with('voucher_error', 'Mã giảm giá đã được sử dụng hết.');
-                }
-
-                if ($totalAmount < $voucher->min_money || $totalAmount > $voucher->max_money) {
-                    return back()->with('voucher_error', 'Mã giảm giá không áp dụng cho đơn hàng này.');
-                }
-
-                if ($voucher->discount_type === 'percent') {
-                    $discountAmount = $totalAmount * $voucher->discount_value / 100;
-                } else {
-                    $discountAmount = $voucher->discount_value;
-                }
-
-                $discountAmount = min($discountAmount, $totalAmount);
-                $totalAmount -= $discountAmount;
-            }
-            DB::beginTransaction();
-
-            try {
-                $order = Order::create([
+            if ($voucher) {
+                $voucher->increment('used_count');
+                
+                \App\Models\VoucherUsage::create([
+                    'voucher_id' => $voucher->id,
                     'user_id' => $user->id,
-                    'user_name' => $request->name,
-                    'user_email' => $user->email,
-                    'user_phone' => $request->phone,
-                    'user_address' => $request->address,
-                    'discount_amount' => 0,
-                    'total_amount' => $totalAmount,
-                    'status' => $isPaid ? 'confirmed' : 'pending',
-                    'payment_method' => $request->payment_method,
-                    'payment_status' => $isPaid ? 'Paid' : 'Unpaid',
-                    'shipping_fee' => 0,
-                    'shipping_method' => $request->shipping_method,
-                    'order_code' => 'ODR-' . strtoupper(Str::random(10)),
-                    'note' => $request->note,
+                    'order_id' => $order->id,
+                    'used_at' => now(),
                 ]);
-
-                foreach ($items as $item) {
-                    $variant = $item->productVariant;
-                    $product = $variant?->product ?? $item->product;
-                    $price = $variant?->price ?? ($product?->price ?? 0);
-
-                    OrderDetail::create([
-                        'order_id' => $order->id,
-                        'product_variant_id' => $variant?->id,
-                        'product_name' => $product?->name ?? 'Không rõ',
-                        'size_name' => $variant?->size,
-                        'color_name' => $variant?->color_name,
-                        'quantity' => $item->quantity,
-                        'price' => $price,
-                    ]);
-                }
-                foreach ($items as $item) {
-                    $variant = $item->productVariant;
-
-                    // Kiểm tra trước khi trừ
-                    if ($variant->quantity < $item->quantity) {
-                        return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
-                    }
-
-                    // Trừ tồn kho
-                    ProductVariant::where('id', $variant->id)
-                        ->decrement('quantity', $item->quantity);
-
-                    // Nếu tồn kho sau khi trừ = 0 → set is_active = 0
-                    if ($variant->quantity - $item->quantity <= 0) {
-                        ProductVariant::where('id', $variant->id)
-                            ->update(['is_active' => 0]);
-                    }
-                }
-
-                if ($voucher) {
-                    $voucher->increment('used_count');
-                }
-
-                DB::commit();
-                if ($request->payment_method === 'online') {
-                    $selectedIds = session('selected_items', []);
-                    if (!empty($selectedIds)) {
-                        // Xóa chỉ những items đã chọn
-                        $cart->items()->whereIn('id', $selectedIds)->delete();
-
-                        // Kiểm tra nếu cart còn items thì giữ lại cart, không thì xóa
-                        if ($cart->items()->count() == 0) {
-                            $cart->delete();
-                        }
-                    } else {
-                        // Nếu không có selected_items (chọn tất cả) thì xóa toàn bộ cart
-                        $cart->items()->delete();
-                        $cart->delete();
-                    }
-                    session()->forget('selected_items');
-
-                    $amount = $totalAmount; // VNPay yêu cầu số tiền tính bằng đồng
-                    return app(\App\Http\Controllers\VnPayController::class)->createPayment($request, $amount, $order);
-                }
-                // Chỉ xóa những sản phẩm đã được chọn
-                $selectedIds = session('selected_items', []);
-                if (!empty($selectedIds)) {
-                    // Xóa chỉ những items đã chọn
-                    $cart->items()->whereIn('id', $selectedIds)->delete();
-
-                    // Kiểm tra nếu cart còn items thì giữ lại cart, không thì xóa
-                    if ($cart->items()->count() == 0) {
-                        $cart->delete();
-                    }
-                } else {
-                    // Nếu không có selected_items (chọn tất cả) thì xóa toàn bộ cart
-                    $cart->items()->delete();
-                    $cart->delete();
-                }
-
-                session()->forget('selected_items');
-                $mailData = [
-                    'name'           => $request->name,
-                    'phone'          => $request->phone,
-                    'address'        => $request->address,
-                    'note'           => $request->note,
-                    'total'          => $totalAmount,
-                    'payment_method' => $request->payment_method,
-                ];
-
-
-                Mail::to(Auth::user()->email)->send(new OrderSuccessMail($mailData));
-                Mail::to('phongnvph50612@gmail.com')->send(new NewOrderNotification($mailData));
-                return redirect()->route('orders.history')->with('success', 'Đặt hàng thành công!');
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
             }
+
+            DB::commit();
+            // Xóa session selected_items sau khi đặt hàng thành công
+            session()->forget('selected_items');
+            return redirect()->route('home')->with('success', '🎉 Đặt hàng thành công!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi đặt hàng: ' . $e->getMessage());
         }
     }
 
@@ -661,6 +422,60 @@ class CheckoutController extends Controller
         return view('user.order', [
             'variants' => $variants,
 
+        ]);
+    }
+
+    public function checkVoucher(Request $request)
+    {
+        $request->validate([
+            'voucher_code' => 'required|string',
+            'total_amount' => 'required|numeric|min:0',
+        ]);
+        $voucherCode = strtoupper(trim($request->voucher_code));
+        $voucher = Voucher::whereRaw('UPPER(code) = ?', [$voucherCode])
+            ->where('is_active', 1)
+            ->where('start_date', '<=', now())
+            ->where('end_date',   '>=', now())
+            ->first();
+        if (!$voucher) {
+            return response()->json(['success' => false, 'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.']);
+        }
+        if ($voucher->used_count >= $voucher->quantity) {
+            return response()->json(['success' => false, 'message' => 'Mã giảm giá đã được sử dụng hết.']);
+        }
+        $totalAmount = $request->total_amount;
+        if ($totalAmount < $voucher->min_money || ($voucher->max_money > 0 && $totalAmount > $voucher->max_money)) {
+            return response()->json(['success' => false, 'message' => 'Mã giảm giá không áp dụng cho đơn hàng này.']);
+        }
+        $user = Auth::user();
+        $userVoucherCount = \App\Models\Order::where('user_id', $user->id)
+            ->where('voucher_id', $voucher->id)
+            ->where(function($q) {
+                $q->where('status', 'completed')
+                  ->orWhere('payment_status', 'Paid');
+            })
+            ->count();
+        if ($userVoucherCount >= $voucher->user_limit) {
+            return response()->json(['success' => false, 'message' => 'Bạn đã sử dụng mã này quá số lần cho phép.']);
+        }
+        $discountAmount = $voucher->discount_type === 'percent'
+            ? $totalAmount * $voucher->discount_value / 100
+            : $voucher->discount_value;
+        $discountAmount = min($discountAmount, $totalAmount);
+        $warning = null;
+        $remaining = $voucher->quantity - $voucher->used_count;
+        $daysLeft = \Carbon\Carbon::parse($voucher->end_date)->diffInDays(now(), false);
+        if ($remaining <= 5) {
+            $warning = '⚠️ Voucher sắp hết lượt sử dụng (còn ' . $remaining . ' lượt)!';
+        }
+        if ($daysLeft >= 0 && $daysLeft <= 3) {
+            $warning = ($warning ? $warning . ' ' : '') . '⚠️ Voucher sắp hết hạn (' . $daysLeft . ' ngày)!';
+        }
+        return response()->json([
+            'success' => true,
+            'discount' => $discountAmount,
+            'voucher_id' => $voucher->id,
+            'message' => 'Áp dụng mã thành công! Giảm giá: ' . number_format($discountAmount, 0, ',', '.') . ' VNĐ' . ($warning ? ' ' . $warning : ''),
         ]);
     }
 }

@@ -211,7 +211,7 @@
             <!-- Main Content -->
             <main
                 class="flex-1 p-6 bg-gradient-to-br from-white via-blue-50 to-cyan-50 min-h-0 h-0 overflow-y-auto custom-scrollbar rounded-tl-3xl rounded-bl-3xl shadow-2xl">
-                {{ $slot ?? '' }}
+                @yield('content')
             </main>
         </div>
     </div>
