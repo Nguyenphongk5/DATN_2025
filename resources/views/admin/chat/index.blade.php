@@ -66,26 +66,26 @@
                     } else {
                         data.forEach(msg => {
                             if (msg.is_admin) {
-                                // Admin bên trái
-                                html += `<div class=\"mb-3 flex justify-start\">
-                                    <div class=\"max-w-[70%] flex items-start gap-2\">
+                                // Admin bên phải
+                                html += `<div class=\"mb-3 flex justify-end\">
+                                    <div class=\"max-w-[70%] flex items-start gap-2 flex-row-reverse\">
                                         <img src=\"https://ui-avatars.com/api/?name=Admin&background=845ec2&color=fff\" class=\"w-8 h-8 rounded-full shadow\" alt=\"avatar\">
                                         <div>
                                             <div class=\"chat-bubble admin bg-purple-100 text-gray-900 px-4 py-2 rounded-2xl font-medium shadow\">
-                                                <div class=\"font-bold text-xs text-purple-700 mb-1\">Admin <span class=\"ml-2 text-[10px] text-purple-400\">${msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span></div>
+                                                <div class=\"font-bold text-xs text-purple-700 mb-1 text-right\">Admin <span class=\"ml-2 text-[10px] text-purple-400\">${msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span></div>
                                                 ${msg.message}
                                             </div>
                                         </div>
                                     </div>
                                 </div>`;
                             } else {
-                                // User bên phải
-                                html += `<div class=\"mb-3 flex justify-end\">
-                                    <div class=\"max-w-[70%] flex items-start gap-2 flex-row-reverse\">
+                                // User bên trái
+                                html += `<div class=\"mb-3 flex justify-start\">
+                                    <div class=\"max-w-[70%] flex items-start gap-2\">
                                         <img src=\"https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=4f8cff&color=fff\" class=\"w-8 h-8 rounded-full shadow\" alt=\"avatar\">
                                         <div>
                                             <div class=\"chat-bubble user bg-gradient-to-br from-pink-400 to-purple-400 text-white px-4 py-2 rounded-2xl font-medium shadow\">
-                                                <div class=\"font-bold text-xs text-white mb-1 text-right\">Bạn <span class=\"ml-2 text-[10px] text-pink-200\">${msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span></div>
+                                                <div class=\"font-bold text-xs text-white mb-1\">Bạn <span class=\"ml-2 text-[10px] text-pink-200\">${msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span></div>
                                                 ${msg.message}
                                             </div>
                                         </div>
@@ -126,11 +126,11 @@
     </script>
     <style>
         .chat-bubble.admin {
-            border-bottom-right-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
         }
 
         .chat-bubble.user {
-            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
         }
     </style>
 </x-app-layout>

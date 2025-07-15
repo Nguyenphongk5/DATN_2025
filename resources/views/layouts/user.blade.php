@@ -523,10 +523,9 @@ if (request()->query('error') === 'admin_cannot_chat') {
                     <div id="mobileMenu" class="lg:hidden hidden">
                         <div class="bg-white border-t border-gray-200 py-4">
                             <ul class="space-y-2 text-center">
-                                <li><a href="#women" class="block py-2 text-gray-700 hover:text-blue-600">Phụ nữ</a>
+                                <li><a href="#women" class="block py-2 text-gray-700 hover:text-blue-600">Trang Chủ</a>
                                 </li>
-                                <li><a href="#men" class="block py-2 text-gray-700 hover:text-blue-600">Nam
-                                        giới</a></li>
+                                <li><a href="/about" class="block py-2 text-gray-700 hover:text-blue-600">Giới thiệu</a></li>
                                 <li><a href="#kids" class="block py-2 text-gray-700 hover:text-blue-600">Trẻ em</a>
                                 </li>
                                 <li><a href="#accessories" class="block py-2 text-gray-700 hover:text-blue-600">Phụ
@@ -742,7 +741,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
         margin-bottom: 0.5rem;
         max-width: 75%;
         word-break: break-word;
-        animation: bubbleIn 0.3s;
+
         transition: background 0.2s;
     }
 
@@ -990,22 +989,29 @@ if (request()->query('error') === 'admin_cannot_chat') {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
             if (!message) return;
-            fetch('/chat/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content')
-                },
-                body: JSON.stringify({
-                    user_id: chatUserId,
-                    message: message,
-                    is_admin: false
-                })
-            }).then(() => {
-                input.value = '';
-                loadUserMessages();
-            });
+       fetch('/chat/messages', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({
+        user_id: chatUserId,
+        message: message,
+        is_admin: false
+    })
+})
+.then(res => res.json())
+.then(data => {
+    input.value = '';
+    loadUserMessages(); // hiển thị message vừa gửi
+
+    // Delay nhẹ rồi fetch lại để lấy phản hồi từ chatbot nếu có
+    setTimeout(() => {
+        loadUserMessages();
+    }, 800); // Tùy thời gian backend trả lời, 500-1000ms là ổn
+});
+
         };
         document.getElementById('chat-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
