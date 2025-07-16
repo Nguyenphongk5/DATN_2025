@@ -142,4 +142,9 @@ Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.mess
 
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('/about', function () {
+    return view('layouts.about'); // đúng với đường dẫn layout/about.blade.php
+})->name('about');
+Route::get('/products/{id}', [HomeController::class, 'show'])->name('product.show');
+
 require __DIR__ . '/auth.php';
