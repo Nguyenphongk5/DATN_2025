@@ -97,6 +97,26 @@ class DashboardController extends Controller
             }
         }
 
+        // Thống kê voucher
+        $voucherStats = DB::table('vouchers')
+            ->selectRaw('
+                COUNT(*) as total_vouchers,
+                SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active_vouchers,
+                SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) as inactive_vouchers,
+                SUM(quantity) as total_quantity,
+                SUM(used_count) as total_used,
+                SUM(CASE WHEN end_date < NOW() THEN 1 ELSE 0 END) as expired_vouchers
+            ')
+            ->first();
+
+        // Top voucher được sử dụng nhiều nhất
+        $topVouchers = DB::table('vouchers')
+            ->select('code', 'discount_type', 'discount_value', 'used_count', 'quantity')
+            ->where('used_count', '>', 0)
+            ->orderByDesc('used_count')
+            ->limit(5)
+            ->get();
+
         return view('admin.index', compact(
             'months',
             'revenues',
@@ -107,6 +127,8 @@ class DashboardController extends Controller
             'colorQuantities',
             'stockData',
             'percentStatus',
+            'voucherStats',
+            'topVouchers',
             'from',
             'to'
         ));
