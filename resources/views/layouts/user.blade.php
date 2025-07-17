@@ -514,6 +514,9 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                     Mãi</a>
                             </li>
                             <li>
+                                <a href="{{ route('vouchers.index') }}" class="text-gray-700 hover:text-blue-600 transition-colors">Mã Giảm Giá</a>
+                            </li>
+                            <li>
                                 <a href="#blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
                             </li>
                         </ul>
@@ -534,6 +537,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                         Hiệu</a></li>
                                 <li><a href="#sale" class="block py-2 text-gray-700 hover:text-blue-600">Khuyến
                                         Mãi</a></li>
+                                <li><a href="{{ route('vouchers.index') }}" class="block py-2 text-gray-700 hover:text-blue-600">Mã Giảm Giá</a></li>
                                 <li><a href="#blog" class="block py-2 text-gray-700 hover:text-blue-600">Blog</a>
                                 </li>
                             </ul>
