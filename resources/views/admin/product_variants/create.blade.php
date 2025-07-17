@@ -19,8 +19,9 @@
                         <select id="product_id" name="product_id" required
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('product_id') border-red-500 @enderror">
                             <option value="">Chọn sản phẩm</option>
-                            @foreach($products as $product)
-                                <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
+                            @foreach ($products as $product)
+                                <option value="{{ $product->id }}" data-price="{{ $product->price }}"
+                                    {{ old('product_id') == $product->id ? 'selected' : '' }}>
                                     {{ $product->name }}
                                 </option>
                             @endforeach
@@ -59,8 +60,8 @@
                         <label for="hex_code" class="block text-gray-700 font-medium mb-1">Mã màu hex <span
                                 class="text-red-500">*</span></label>
                         <div class="flex items-center space-x-2">
-                            <input type="color" id="hex_code" name="hex_code" value="{{ old('hex_code', '#000000') }}"
-                                required
+                            <input type="color" id="hex_code" name="hex_code"
+                                value="{{ old('hex_code', '#000000') }}" required
                                 class="w-16 h-10 border border-gray-300 rounded cursor-pointer @error('hex_code') border-red-500 @enderror">
                             <input type="text" id="hex_code_text" value="{{ old('hex_code', '#000000') }}"
                                 class="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500"
@@ -75,8 +76,8 @@
                     <div class="mb-4">
                         <label for="quantity" class="block text-gray-700 font-medium mb-1">Số lượng <span
                                 class="text-red-500">*</span></label>
-                        <input type="number" id="quantity" name="quantity" value="{{ old('quantity') }}" min="0"
-                            required
+                        <input type="number" id="quantity" name="quantity" value="{{ old('quantity') }}"
+                            min="0" required
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('quantity') border-red-500 @enderror"
                             placeholder="0">
                         @error('quantity')
@@ -88,8 +89,8 @@
                     <div class="mb-4">
                         <label for="price" class="block text-gray-700 font-medium mb-1">Giá gốc <span
                                 class="text-red-500">*</span></label>
-                        <input type="number" id="price" name="price" value="{{ old('price') }}" step="0.01" min="0"
-                            required
+                        <input type="number" id="price" name="price" value="" step="0.01"
+                            min="0" readonly
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('price') border-red-500 @enderror"
                             placeholder="0.00">
                         @error('price')
@@ -121,17 +122,35 @@
                         </button>
                     </div>
                 </form>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const select = document.getElementById('product_id');
+                        const priceInput = document.getElementById('price');
+
+                        function updatePrice() {
+                            const selectedOption = select.options[select.selectedIndex];
+                            const price = selectedOption.getAttribute('data-price');
+                            priceInput.value = price || '';
+                        }
+
+                        // Gọi khi chọn sản phẩm
+                        select.addEventListener('change', updatePrice);
+
+                        // Gọi khi load lần đầu (nếu có sẵn selected)
+                        updatePrice();
+                    });
+                </script>
             </div>
         </div>
     </div>
 
     <script>
         // Đồng bộ giá trị màu hex
-        document.getElementById('hex_code').addEventListener('input', function () {
+        document.getElementById('hex_code').addEventListener('input', function() {
             document.getElementById('hex_code_text').value = this.value;
         });
 
-        document.getElementById('hex_code_text').addEventListener('input', function () {
+        document.getElementById('hex_code_text').addEventListener('input', function() {
             const value = this.value;
             if (value.match(/^#[0-9A-F]{6}$/i)) {
                 document.getElementById('hex_code').value = value;

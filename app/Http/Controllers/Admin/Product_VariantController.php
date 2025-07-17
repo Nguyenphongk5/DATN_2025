@@ -28,7 +28,7 @@ class Product_VariantController extends Controller
     public function create()
     {
         //
-        $products = DB::table('products')->select('id', 'name')->get();
+        $products = DB::table('products')->select('id', 'name','price')->get();
         return view('admin.product_variants.create', compact('products'));
     }
 
@@ -38,15 +38,16 @@ class Product_VariantController extends Controller
     public function store(Request $request)
     {
         //
+
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'size' => 'required|integer|min:0',
+            'size' => 'required|integer|min:36|max:46',
             'color_name' => 'required|string|max:50',
             'hex_code' => 'required|string|max:7',
             'quantity' => 'required|integer|min:0',
-            'price' => 'required|numeric|min:0',
             'price_sale' => 'nullable|numeric|min:0',
         ]);
+        $data['price'] = DB::table('products')->where('id', $data['product_id'])->value('price');
         DB::table('product_variants')->insert($data);
         return redirect()->route('admin.product_variants.index')->with('success', 'Product variant created successfully.');
     }
@@ -73,7 +74,7 @@ class Product_VariantController extends Controller
     public function edit(string $id)
     {
         //
-        $products = DB::table('products')->select('id', 'name')->get();
+        $products = DB::table('products')->select('id', 'name', 'price')->get();
         $productVariant = DB::table('product_variants')->where('id', $id)->first();
         if (!$productVariant) {
             return redirect()->route('admin.product_variants.index')->with('error', 'Product variant not found.');
@@ -89,13 +90,13 @@ class Product_VariantController extends Controller
         //
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'size' => 'required|integer|min:0',
+            'size' => 'required|integer|min:36|max:46',
             'color_name' => 'required|string|max:50',
             'hex_code' => 'required|string|max:7',
             'quantity' => 'required|integer|min:0',
-            'price' => 'required|numeric|min:0',
             'price_sale' => 'nullable|numeric|min:0',
         ]);
+        $data['price'] = DB::table('products')->where('id', $data['product_id'])->value('price');
         DB::table('product_variants')->where('id', $id)->update($data);
         return redirect()->route('admin.product_variants.index')->with('success', 'Product variant updated successfully.');
     }

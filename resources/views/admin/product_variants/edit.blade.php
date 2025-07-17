@@ -26,15 +26,13 @@
                     <div class="mb-4">
                         <label for="product_id" class="block text-gray-700 font-medium mb-1">Sản phẩm <span
                                 class="text-red-500">*</span></label>
-                        <select id="product_id" name="product_id" required
+
+                        @foreach ($products as $product)
+                        <input type="text" id="product_id" name="product_id"
+                            value="{{ old('product_id', $productVariant->product_id) == $product->id ? $product->name : '' }}" readonly
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('product_id') border-red-500 @enderror">
-                            <option value="">Chọn sản phẩm</option>
-                            @foreach($products as $product)
-                                <option value="{{ $product->id }}" {{ old('product_id', $productVariant->product_id) == $product->id ? 'selected' : '' }}>
-                                    {{ $product->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                            @break
+                        @endforeach
                         @error('product_id')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -44,8 +42,8 @@
                     <div class="mb-4">
                         <label for="size" class="block text-gray-700 font-medium mb-1">Kích thước <span
                                 class="text-red-500">*</span></label>
-                        <input type="number" id="size" name="size" value="{{ old('size', $productVariant->size) }}"
-                            required
+                        <input type="number" id="size" name="size"
+                            value="{{ old('size', $productVariant->size) }}" required
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('size') border-red-500 @enderror"
                             placeholder="Ví dụ: 39">
                         @error('size')
@@ -101,8 +99,8 @@
                     <div class="mb-4">
                         <label for="price" class="block text-gray-700 font-medium mb-1">Giá gốc <span
                                 class="text-red-500">*</span></label>
-                        <input type="number" id="price" name="price" value="{{ old('price', $productVariant->price) }}"
-                            step="0.01" min="0" required
+                        <input type="number" id="price" name="price"
+                            value="{{ old('price', $productVariant->price) }}" step="0.01" min="0" required
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('price') border-red-500 @enderror"
                             placeholder="0.00">
                         @error('price')
@@ -140,11 +138,11 @@
 
     <script>
         // Đồng bộ giá trị màu hex
-        document.getElementById('hex_code').addEventListener('input', function () {
+        document.getElementById('hex_code').addEventListener('input', function() {
             document.getElementById('hex_code_text').value = this.value;
         });
 
-        document.getElementById('hex_code_text').addEventListener('input', function () {
+        document.getElementById('hex_code_text').addEventListener('input', function() {
             const value = this.value;
             if (value.match(/^#[0-9A-F]{6}$/i)) {
                 document.getElementById('hex_code').value = value;
