@@ -23,6 +23,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Models\Logo;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\OrderReturnController;
 
 // <<<<<<< UI-Improved-Profile
 // Route này đã được thay thế bằng HomeController::index
@@ -74,6 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
 
     Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
+    Route::get('/returns/create/{order}', [OrderReturnController::class, 'create'])->name('returns.create');
+    Route::post('/returns/store/{order}', [OrderReturnController::class, 'store'])->name('returns.store');
 });
 
 
