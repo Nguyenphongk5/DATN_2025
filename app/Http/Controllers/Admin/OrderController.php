@@ -96,4 +96,20 @@ class OrderController extends Controller
 
 
     public function destroy(string $id) {}
+     public function getStatus($id)
+    {
+        $order = Order::findOrFail($id);
+        return response()->json(['status' => $order->status]);
+    }
+  public function getFullStatus($id)
+{
+    $order = Order::findOrFail($id);
+
+    return response()->json([
+        'status' => $order->status,
+        'payment_status' => $order->payment_status,
+    ]);
+}
+
+
 }

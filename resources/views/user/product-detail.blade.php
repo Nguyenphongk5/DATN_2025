@@ -266,7 +266,7 @@
                                 VNĐ</del>
                         </div>
                         <p class="text-gray-700 mb-6">{{ $product->description }}</p>
-                        
+
                         <!-- Stock Information -->
                         <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
                             <h6 class="font-semibold text-gray-800 flex items-center mb-2">
@@ -279,7 +279,7 @@
                                 Đang tải thông tin kho...
                             </p>
                         </div>
-                        
+
                         <form action="{{ route('cart.add') }}" method="POST" class="space-y-4">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -289,7 +289,7 @@
                                 <div class="flex flex-wrap gap-2">
                                     @php $colors = $productVariants->pluck('color_name')->unique(); @endphp
                                     @foreach ($colors as $index => $color)
-                                        @php 
+                                        @php
                                             $variantsWithColor = $productVariants->where('color_name', $color);
                                             $totalQuantity = $variantsWithColor->sum('quantity');
                                             $isAvailable = $totalQuantity > 0;
@@ -323,7 +323,7 @@
                                 <div class="flex flex-wrap gap-2">
                                     @php $sizes = $productVariants->pluck('size')->unique(); @endphp
                                     @foreach ($sizes as $index => $size)
-                                        @php 
+                                        @php
                                             $variantsWithSize = $productVariants->where('size', $size);
                                             $totalQuantity = $variantsWithSize->sum('quantity');
                                             $isAvailable = $totalQuantity > 0;
@@ -387,7 +387,7 @@
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4">
             <div class="bg-white rounded-2xl shadow-xl p-8">
-                <div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : 'desc' }" 
+                <div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : 'desc' }"
                      x-init="$watch('tab', value => { sessionStorage.setItem('currentTab', value); })"
                      class="flex flex-col md:flex-row gap-8">
                     <div class="flex flex-row md:flex-col gap-2 md:w-1/4 mb-4 md:mb-0">
@@ -535,7 +535,7 @@
                             <div class="add-review mt-10 bg-white rounded-2xl shadow-lg p-8">
                                 <h5 class="mb-4 text-xl font-bold text-gray-900">Gửi bình luận của bạn</h5>
                                 @if ($canComment)
-                                    <form id="comment-form" action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
+                                    <form id="review" action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
                                         enctype="multipart/form-data" class="space-y-6" x-data="{ rating: 0, hover: 0 }" onsubmit="return handleCommentSubmit(event);">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -689,29 +689,29 @@
             // Check if we need to scroll to new comment
             if (sessionStorage.getItem('scrollToNewComment') === 'true') {
                 sessionStorage.removeItem('scrollToNewComment');
-                
+
                 // Switch to review tab first
                 const reviewsTab = document.querySelector('[x-data]');
                 if (reviewsTab && reviewsTab.__x) {
                     reviewsTab.__x.$data.tab = 'review';
                     window.location.hash = 'review';
                 }
-                
+
                 // Scroll to the first comment (newest) after a short delay
                 setTimeout(() => {
                     const newComment = document.querySelector('.comment-item:first-child');
                     if (newComment) {
-                        newComment.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center' 
+                        newComment.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
                         });
-                        
+
                         // Add highlight effect
                         newComment.style.backgroundColor = '#fef3c7';
                         newComment.style.borderColor = '#f59e0b';
                         newComment.style.transform = 'scale(1.02)';
                         newComment.style.transition = 'all 0.3s ease';
-                        
+
                         // Remove highlight after 3 seconds
                         setTimeout(() => {
                             newComment.style.backgroundColor = '';
@@ -1032,7 +1032,7 @@
 
         // Product variants data for stock calculation
         const productVariants = @json($productVariants);
-        
+
         // Function to update size options based on selected color
         function updateSizeOptions() {
             const selectedColor = document.querySelector('input[name="color_name"]:checked')?.value;
@@ -1046,15 +1046,15 @@
             sizeInputs.forEach(input => {
                 const sizeValue = input.value;
                 const sizeLabel = input.parentElement;
-                
+
                 if (selectedColor) {
                     // Kiểm tra có biến thể với color và size này không
                     const exists = productVariants.some(variant =>
                         variant.color_name === selectedColor && variant.size.toString() === sizeValue.toString()
                     );
-                    
+
                     console.log('Size', sizeValue, 'exists for color', selectedColor, ':', exists);
-                    
+
                     if (exists) {
                         input.disabled = false;
                         sizeLabel.style.display = '';
@@ -1098,30 +1098,30 @@
                 }
             }
         }
-        
+
         // Function to update stock quantity based on selected variant
         function updateStockQuantity() {
             const selectedColor = document.querySelector('input[name="color_name"]:checked')?.value;
             const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
             const stockElement = document.getElementById('stock-quantity');
             const stockDescription = document.getElementById('stock-description');
-            
+
             console.log('Selected color:', selectedColor);
             console.log('Selected size:', selectedSize);
             console.log('Product variants:', productVariants);
-            
+
             if (!stockElement || !stockDescription) {
                 console.log('Stock elements not found');
                 return;
             }
-            
+
             // If both color and size are selected, show specific variant quantity
             if (selectedColor && selectedSize) {
                 // Convert size to string for comparison if it's a number
                 const sizeToCompare = selectedSize.toString();
-                
+
                 console.log('Looking for variant with color:', selectedColor, 'and size:', sizeToCompare);
-                
+
                 // Find the variant that matches both color and size
                 const selectedVariant = productVariants.find(variant => {
                     const variantColor = variant.color_name;
@@ -1130,12 +1130,12 @@
                     console.log('Checking variant:', variantColor, variantSize, 'matches:', matches);
                     return matches;
                 });
-                
+
                 console.log('Found variant:', selectedVariant);
-                
+
                 if (selectedVariant) {
                     stockElement.textContent = selectedVariant.quantity;
-                    
+
                     // Update color based on availability
                     if (selectedVariant.quantity > 0) {
                         stockElement.className = 'text-green-600 font-semibold';
@@ -1153,7 +1153,7 @@
                 // If not both color and size are selected, show total quantity
                 const totalQuantity = productVariants.reduce((sum, variant) => sum + parseInt(variant.quantity), 0);
                 stockElement.textContent = totalQuantity;
-                
+
                 if (totalQuantity > 0) {
                     stockElement.className = 'text-green-600 font-semibold';
                     stockDescription.textContent = 'Tổng số lượng tất cả biến thể trong kho - Chọn màu và size để xem số lượng cụ thể';
@@ -1163,21 +1163,21 @@
                 }
             }
         }
-        
+
         // Add event listeners for color and size selection
         document.addEventListener('DOMContentLoaded', function() {
             const colorInputs = document.querySelectorAll('input[name="color_name"]');
             const sizeInputs = document.querySelectorAll('input[name="size"]');
-            
+
             console.log('Color inputs found:', colorInputs.length);
             console.log('Size inputs found:', sizeInputs.length);
-            
+
             // Log the first selected color and size
             const firstColor = document.querySelector('input[name="color_name"]:checked');
             const firstSize = document.querySelector('input[name="size"]:checked');
             console.log('First selected color:', firstColor?.value);
             console.log('First selected size:', firstSize?.value);
-            
+
             colorInputs.forEach(input => {
                 input.addEventListener('change', function() {
                     console.log('Color changed to:', this.value);
@@ -1185,28 +1185,28 @@
                     updateStockQuantity(); // Sau đó cập nhật stock
                 });
             });
-            
+
             sizeInputs.forEach(input => {
                 input.addEventListener('change', function() {
                     console.log('Size changed to:', this.value);
                     updateStockQuantity();
                 });
             });
-            
+
             // Initialize stock quantity on page load with a small delay to ensure DOM is ready
             setTimeout(() => {
                 console.log('Initializing stock quantity...');
                 // Cập nhật size options trước
                 updateSizeOptions();
-                
+
                 // If both color and size are selected, show specific variant quantity
                 if (firstColor && firstSize) {
                     const selectedColor = firstColor.value;
                     const selectedSize = firstSize.value;
                     const sizeToCompare = selectedSize.toString();
-                    
+
                     console.log('Looking for initial variant with color:', selectedColor, 'and size:', sizeToCompare);
-                    
+
                     const selectedVariant = productVariants.find(variant => {
                         const variantColor = variant.color_name;
                         const variantSize = variant.size.toString();
@@ -1214,16 +1214,16 @@
                         console.log('Checking initial variant:', variantColor, variantSize, 'matches:', matches);
                         return matches;
                     });
-                    
+
                     console.log('Found initial variant:', selectedVariant);
-                    
+
                     if (selectedVariant) {
                         const stockElement = document.getElementById('stock-quantity');
                         const stockDescription = document.getElementById('stock-description');
-                        
+
                         if (stockElement && stockDescription) {
                             stockElement.textContent = selectedVariant.quantity;
-                            
+
                             if (selectedVariant.quantity > 0) {
                                 stockElement.className = 'text-green-600 font-semibold';
                                 stockDescription.textContent = `Số lượng còn lại cho ${selectedColor} - Size ${selectedSize}`;
@@ -1282,13 +1282,13 @@
         // Function to handle comment submission (AJAX)
         function handleCommentSubmit(event) {
             event.preventDefault();
-            
+
             // Show beautiful confirmation modal
             showConfirmationModal();
-            
+
             return false;
         }
-        
+
         // Function to show confirmation modal
         function showConfirmationModal() {
             // Create modal HTML
@@ -1320,10 +1320,10 @@
                     </div>
                 </div>
             `;
-            
+
             // Add modal to body
             document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
+
             // Animate modal in
             setTimeout(() => {
                 const modal = document.getElementById('confirmation-modal');
@@ -1331,18 +1331,18 @@
                 modalContent.classList.remove('scale-95', 'opacity-0');
                 modalContent.classList.add('scale-100', 'opacity-100');
             }, 10);
-            
+
             // Handle cancel button
             document.getElementById('cancel-comment').addEventListener('click', () => {
                 hideConfirmationModal();
             });
-            
+
             // Handle confirm button
             document.getElementById('confirm-comment').addEventListener('click', () => {
                 hideConfirmationModal();
                 submitCommentForm();
             });
-            
+
             // Handle clicking outside modal
             document.getElementById('confirmation-modal').addEventListener('click', (e) => {
                 if (e.target.id === 'confirmation-modal') {
@@ -1350,19 +1350,19 @@
                 }
             });
         }
-        
+
         // Function to hide confirmation modal
         function hideConfirmationModal() {
             const modal = document.getElementById('confirmation-modal');
             const modalContent = modal.querySelector('.bg-white');
             modalContent.classList.add('scale-95', 'opacity-0');
             modalContent.classList.remove('scale-100', 'opacity-100');
-            
+
             setTimeout(() => {
                 modal.remove();
             }, 300);
         }
-        
+
         // Function to submit comment form
         function submitCommentForm() {
             const form = document.getElementById('comment-form');
@@ -1375,7 +1375,7 @@
             submitText.classList.add('hidden');
             loadingText.classList.remove('hidden');
             submitBtn.disabled = true;
-            
+
 
 
             fetch(form.action, {
@@ -1391,21 +1391,21 @@
             .then(data => {
                 if (data.success) {
                     showNotification(data.message, 'success');
-                    
+
                     // Reset form
                     form.reset();
-                    
+
                     // Reset rating stars
                     const ratingInputs = form.querySelectorAll('input[name="rating"]');
                     ratingInputs.forEach(input => input.checked = false);
-                    
+
                     // Reset Alpine.js rating
                     const alpineComponent = form.__x;
                     if (alpineComponent) {
                         alpineComponent.$data.rating = 0;
                         alpineComponent.$data.hover = 0;
                     }
-                    
+
                     // Hide form and show success message
                     form.style.display = 'none';
                     const successMessage = document.createElement('div');
@@ -1420,7 +1420,7 @@
                         <p class="text-green-700">Bạn đã đánh giá sản phẩm này. Cảm ơn bạn đã chia sẻ trải nghiệm!</p>
                     `;
                     form.parentNode.appendChild(successMessage);
-                    
+
                     // Switch to review tab and scroll to comments
                     setTimeout(() => {
                         const reviewsTab = document.querySelector('[x-data]');
@@ -1428,7 +1428,7 @@
                             reviewsTab.__x.$data.tab = 'review';
                             window.location.hash = 'review';
                         }
-                        
+
                                             // Reload page to show new comment and scroll to it
                     setTimeout(() => {
                         // Store flag in sessionStorage to indicate new comment
@@ -1482,22 +1482,22 @@
             .then(data => {
                 if (data.success) {
                     showNotification(data.message, 'success');
-                    
+
                     // Reset form
                     form.reset();
-                    
+
                     // Hide reply form
                     const replyContainer = form.closest('[x-data]');
                     if (replyContainer && replyContainer.__x) {
                         replyContainer.__x.$data.showReply = false;
                     }
-                    
+
                     // Hide reply button after successful reply
                     const replyButton = document.querySelector(`[data-comment-id="${commentId}"] button[onclick*="showReply"]`);
                     if (replyButton) {
                         replyButton.style.display = 'none';
                     }
-                    
+
                     // Reload page to show new reply
                     setTimeout(() => {
                         location.reload();
@@ -1550,7 +1550,7 @@
         .animate-fade-in-up {
             animation: fade-in-up 0.5s ease-out;
         }
-        
+
         /* Modal animations */
         @keyframes modal-fade-in {
             from {
@@ -1562,7 +1562,7 @@
                 transform: scale(1);
             }
         }
-        
+
         @keyframes modal-fade-out {
             from {
                 opacity: 1;
@@ -1573,11 +1573,11 @@
                 transform: scale(0.9);
             }
         }
-        
+
         .modal-enter {
             animation: modal-fade-in 0.3s ease-out;
         }
-        
+
         .modal-exit {
             animation: modal-fade-out 0.3s ease-in;
         }

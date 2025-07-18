@@ -152,4 +152,13 @@ Route::get('/products/{id}', [HomeController::class, 'show'])->name('product.sho
 Route::get('/vouchers', [App\Http\Controllers\VoucherController::class, 'index'])->name('vouchers.index');
 Route::post('/validate-voucher', [App\Http\Controllers\VoucherController::class, 'validateVoucher'])->name('voucher.validate');
 
+// routes/web.php hoặc routes/api.php
+Route::get('/api/order-status/{id}', function ($id) {
+    $order = \App\Models\Order::find($id);
+    return response()->json(['status' => $order->status]);
+});
+Route::get('/order/{id}/payment-status', [OrderController::class, 'getPaymentStatus']);
+
+Route::get('/api/order-full-status/{id}', [OrderController::class, 'getFullStatus']);
+
 require __DIR__ . '/auth.php';

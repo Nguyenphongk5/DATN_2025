@@ -139,29 +139,29 @@
                         </svg>
                         <span class="font-semibold text-gray-900">SĐT:</span> {{ $order->user_phone }}
                     </p>
-                        <p class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243" />
-                                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span class="font-semibold text-gray-900">Địa chỉ:</span>
-                            <span class="text-gray-700">
-                                @php
-                                    $addressParts = [];
-                                    if ($order->user_address) {
-                                        $addressParts[] = $order->user_address;
-                                    }
-                                    if ($order->ward) {
-                                        $addressParts[] = $order->ward;
-                                    }
-                                    if ($order->district) {
-                                        $addressParts[] = $order->district;
-                                    }
-                                    if ($order->province) {
-                                        $addressParts[] = $order->province;
-                                    }
-                                @endphp
+                    <p class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243" />
+                            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Địa chỉ:</span>
+                        <span class="text-gray-700">
+                            @php
+                                $addressParts = [];
+                                if ($order->user_address) {
+                                    $addressParts[] = $order->user_address;
+                                }
+                                if ($order->ward) {
+                                    $addressParts[] = $order->ward;
+                                }
+                                if ($order->district) {
+                                    $addressParts[] = $order->district;
+                                }
+                                if ($order->province) {
+                                    $addressParts[] = $order->province;
+                                }
+                            @endphp
                             {{ implode(', ', $addressParts) ?: 'Chưa có địa chỉ' }}
                         </span>
                     </p>
@@ -170,16 +170,44 @@
                             viewBox="0 0 24 24">
                             <path d="M9 17v-2a4 4 0 014-4h4" />
                         </svg>
-                        <span class="font-semibold text-gray-900">Trạng thái:</span> <span
-                            class="capitalize px-2 py-1 rounded bg-gradient-to-r from-indigo-200 to-pink-200 text-indigo-700 font-semibold">{{ ucfirst($order->status) }}</span>
+@php
+function getStatusLabel($status) {
+    return match ($status) {
+        'pending' => 'Chờ xác nhận',
+        'confirmed'=> 'Đã xác nhận',
+        'shipping' => 'Đang vận chuyển',
+        'completed' => 'Đã giao',
+        'cancelled' => 'Đã hủy',
+        default => ucfirst($status)
+    };
+}
+@endphp
+<span class="font-semibold text-gray-900">Trạng thái:</span>
+<span id="order-status" class="capitalize px-2 py-1 rounded font-semibold text-indigo-700">
+    {{ getStatusLabel($order->status) }}
+</span>
+
+
+
                     </p>
-                    <p class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path
-                                d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 16v-4m8-4h-4m-8 0H4" />
-                        </svg>
-                        <span class="font-semibold text-gray-900">Thanh toán:</span> {{ $order->payment_status }}
+                    
+
+                        @php
+                            $paymentStatus = strtolower(trim($order->payment_status));
+                        @endphp
+
+                     <p class="flex items-center gap-2">
+    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+        viewBox="0 0 24 24">
+        <path d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 16v-4m8-4h-4m-8 0H4" />
+    </svg>
+    <span class="font-semibold text-gray-900">Thanh toán:</span>
+    <span id="payment-status">
+        {{ strtolower(trim($order->payment_status)) === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+    </span>
+</p>
+
+
                     </p>
                     <p class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
@@ -215,7 +243,17 @@
                             $qrText .= "SĐT: {$order->user_phone}\n";
                             $qrText .= "Email: {$order->user_email}\n";
                             $qrText .= "Địa chỉ: {$order->user_address}\n";
-                            $qrText .= "Trạng thái: {$order->status}\n";
+                            $qrText .=
+                                'Trạng thái: ' .
+                                match ($order->status) {
+                                    'pending' => 'Chờ xác nhận',
+                                    'processing' => 'Đang xử lý',
+                                    'shipping' => 'Đang vận chuyển',
+                                    'completed' => 'Đã giao',
+                                    'cancelled' => 'Đã hủy',
+                                    default => ucfirst($order->status),
+                                } .
+                                "\n";
                             $qrText .= "Thanh toán: {$order->payment_status}\n";
                             $qrText .= 'Tổng tiền: ' . number_format($order->total_amount, 0, ',', '.') . " VNĐ\n";
                             $qrText .= "Sản phẩm:\n";
@@ -243,22 +281,70 @@
                     Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
                         VNĐ</span>
                 </div>
-                @if (!in_array($order->status, ['cancelled']))
-                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
-                        @csrf
-                        @method('PUT')
-                        <button
-                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Hủy đơn hàng
-                        </button>
-                    </form>
-                @endif
+                @php
+                    $isPending = $order->status === 'pending';
+                @endphp
+
+                <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
+                    @csrf
+                    @method('PUT')
+                    <button @if (!$isPending) disabled @endif
+                        class="w-full py-3 rounded-xl font-bold shadow-lg transition transform duration-200 flex items-center justify-center gap-2
+            {{ $isPending
+                ? 'bg-gradient-to-r from-pink-500 to-indigo-500 text-white hover:scale-105 hover:from-pink-400 hover:to-indigo-400'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Hủy đơn hàng
+                    </button>
+                </form>
+
+
             </div>
         </div>
     </section>
 @endsection
+<script>
+    const orderId = {{ $order->id }};
+    let prevStatus = null;
+
+    const statusMap = {
+        pending: 'Chờ xác nhận',
+        confirmed: 'Đã xác nhận',
+        shipping: 'Đang giao',
+        completed: 'Đã giao',
+        cancelled: 'Đã hủy',
+        confirm: 'Đã xác nhận'
+    };
+
+    function fetchOrderAndPaymentStatus() {
+        fetch(`/api/order-full-status/${orderId}?t=${Date.now()}`) // tránh cache
+            .then(res => res.json())
+            .then(data => {
+                // --- Cập nhật trạng thái đơn hàng ---
+                const statusText = statusMap[data.status] || data.status;
+                const statusEl = document.getElementById('order-status');
+                if (statusEl && data.status !== prevStatus) {
+                    prevStatus = data.status;
+                    statusEl.innerText = statusText;
+                }
+
+                // --- Cập nhật trạng thái thanh toán ---
+                const paymentStatusEl = document.getElementById('payment-status');
+                const paymentStatus = data.payment_status?.toLowerCase().trim();
+                if (data.status === 'completed' || paymentStatus === 'paid') {
+                    paymentStatusEl.textContent = 'Đã thanh toán';
+                } else {
+                    paymentStatusEl.textContent = 'Chưa thanh toán';
+                }
+            })
+            .catch(err => console.error('Lỗi lấy trạng thái đơn hàng & thanh toán:', err));
+    }
+
+    // Gọi lần đầu và mỗi giây
+    fetchOrderAndPaymentStatus();
+    setInterval(fetchOrderAndPaymentStatus, 1000);
+</script>

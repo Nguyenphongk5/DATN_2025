@@ -86,6 +86,14 @@
                         </svg>
                         Xem chi tiết
                     </a>
+          <a href="{{ route('product.show', $item->productVariant->product->id) }}#review"
+    class="inline-flex items-center px-4 py-1.5 rounded-lg text-white font-semibold text-sm bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 transition shadow-md">
+    <!-- icon + text -->
+    Đánh giá
+</a>
+
+
+
                     <a href="{{ route('orders.reorder', $order->id) }}"
                         class="inline-flex items-center px-5 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-semibold text-base hover:from-pink-400 hover:to-indigo-400 transition shadow-md">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
