@@ -148,3 +148,5 @@ Route::get('/about', function () {
 Route::get('/products/{id}', [HomeController::class, 'show'])->name('product.show');
 
 require __DIR__ . '/auth.php';
+
+Route::post('/ajax/apply-voucher', [App\Http\Controllers\CheckoutController::class, 'ajaxApplyVoucher'])->name('ajax.applyVoucher');

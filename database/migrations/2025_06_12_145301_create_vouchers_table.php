@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('used_count')->default(0);
             $table->integer('user_limit')->default(1);
             $table->decimal('min_money', 10, 2);
-            $table->decimal('max_money', 10, 2);
+            $table->integer('max_money')->nullable();
             $table->tinyInteger('is_active')->default(1);
 
 
