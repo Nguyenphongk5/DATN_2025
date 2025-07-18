@@ -46,8 +46,8 @@ Route::post('/comments', [HomeController::class, 'storeComment'])->name('comment
 Route::put('/comments/{id}', [HomeController::class, 'updateComment'])->name('comments.update');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile', [ProfileController::class, 'avatar'])->name('profile.avatar');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile', [ProfileController::class, 'avatar'])->name('profile.avatar');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('orders', OrderController::class);
     Route::post('/cart/add', [CartController::class, 'handleAction'])->name('cart.add');

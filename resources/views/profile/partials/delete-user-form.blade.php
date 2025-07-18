@@ -1,9 +1,8 @@
 <section class="mb-8">
     <div class="bg-white/90 shadow-xl rounded-2xl p-8 border border-red-200">
         <h4 class="text-lg font-bold text-red-600 mb-2 flex items-center gap-2"><i
-                class="fas fa-exclamation-triangle"></i> Delete Account</h4>
-        <p class="text-gray-500 mb-4">Once your account is deleted, all of its data will be permanently removed. Please
-            download any data you want to keep before proceeding.</p>
+                class="fas fa-exclamation-triangle"></i> Xóa tài khoản</h4>
+        <p class="text-gray-500 mb-4">Sau khi tài khoản của bạn bị xóa, toàn bộ dữ liệu sẽ bị xóa vĩnh viễn. Vui lòng tải xuống bất kỳ dữ liệu nào bạn muốn giữ lại trước khi tiếp tục.</p>
         <!-- Trigger Delete Modal -->
         <button type="button" @click="showModal = true"
             class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-pink-500 hover:to-red-400 text-white font-bold py-2 px-8 rounded-xl shadow-lg flex items-center gap-2 transition mt-3">Delete

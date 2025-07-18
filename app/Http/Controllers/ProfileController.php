@@ -18,22 +18,22 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
- public function edit(Request $request): View
-{
-    $logo = Logo::where('is_active', 1)->first();
-    $categories = DB::table('categories')->get();
-    $user = $request->user();
+    public function edit(Request $request): View
+    {
+        $logo = Logo::where('is_active', 1)->first();
+        $categories = DB::table('categories')->get();
+        $user = $request->user();
 
-    // Lấy sẵn địa chỉ để load vào form
-    $addressData = [
-        'province' => $user->province,
-        'district' => $user->district,
-        'ward' => $user->ward,
-        'address' => $user->address,
-    ];
+        // Lấy sẵn địa chỉ để load vào form
+        $addressData = [
+            'province' => $user->province,
+            'district' => $user->district,
+            'ward' => $user->ward,
+            'address' => $user->address,
+        ];
 
-    return view('profile.edit', compact('user', 'categories', 'logo', 'addressData'));
-}
+        return view('profile.edit', compact('user', 'categories', 'logo', 'addressData'));
+    }
     /**
      * Update the user's profile information.
      */
@@ -48,16 +48,17 @@ class ProfileController extends Controller
         }
         DB::table('users')->where('id', $user->id)->update($data);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        session()->flash('success', 'Cập nhật thông tin thành công !');
+        return Redirect::route('profile.edit');
     }
 
     public function avatar(Request $request)
-{
-    $request->validate([
-        'avatar' => 'nullable|image|max:1024',
-    ]);
+    {
+        $request->validate([
+            'avatar' => 'nullable|image|max:1024',
+        ]);
 
-    $user = $request->user();
+        $user = $request->user();
 
         if ($request->hasFile('avatar')) {
             // Xóa avatar cũ nếu có
@@ -71,7 +72,8 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        return back()->with('status', 'avatar-updated');
+        session()->flash('success', 'Cập nhật ảnh đại diện thành công !');
+        return back();
     }
 
     /**
