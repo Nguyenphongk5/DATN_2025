@@ -2,10 +2,10 @@
 
 @section('content')
     <!-- Notification Messages -->
-    {{-- @php
-        dd(session('selected_items'));
-        dd(session('buy_now'));
-    @endphp --}}
+    @php
+        // dd(session('selected_items'));
+        // dd(session('buy_now'));
+    @endphp
     @if (session('success'))
         <div id="success-notification"
             class="fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full">
@@ -252,6 +252,51 @@
 
                 <div class="w-full lg:w-5/12 bg-white rounded-2xl shadow-lg p-8">
                     <h4 class="text-xl font-semibold mb-6">Đơn hàng của bạn</h4>
+                    <!-- MÃ GIẢM GIÁ chuyển sang đây -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mã giảm giá</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" name="voucher_code"
+                                class="flex-1 rounded-xl border-2 border-purple-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-200 focus:ring-opacity-50 py-3 px-4 text-base bg-gradient-to-r from-purple-50 to-pink-50 shadow-inner transition-all duration-200"
+                                placeholder="Nhập mã giảm giá cực xịn..." value="{{ old('voucher_code') }}">
+                            <button type="button" id="btn-apply-voucher"
+                                class="px-5 py-3 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 text-white font-bold rounded-xl shadow-lg hover:from-pink-600 hover:to-purple-700 hover:scale-105 transition-all duration-200 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+                                </svg>
+                                Áp dụng
+                            </button>
+                        </div>
+                        @if (isset($vouchers) && $vouchers->count())
+                            <div class="mt-3">
+                                <div class="font-semibold text-sm text-purple-700 mb-2 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+                                    </svg>
+                                    Mã giảm giá có sẵn:
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($vouchers as $voucher)
+                                        <button type="button"
+                                            class="px-3 py-2 rounded-lg bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white font-bold shadow hover:scale-105 transition-all duration-200"
+                                            onclick="document.querySelector('input[name=\'voucher_code\']').value='{{ $voucher->code }}'">
+                                            {{ $voucher->code }}
+                                            <span class="ml-1 text-xs font-normal">
+                                                @if ($voucher->discount_type === 'percent')
+                                                    -{{ $voucher->discount_value }}%
+                                                @else
+                                                    -{{ number_format($voucher->discount_value, 0, ',', '.') }}đ
+                                                @endif
+                                            </span>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    <!-- END MÃ GIẢM GIÁ -->
                     <ul class="divide-y divide-gray-200 mb-6">
                         @php $total = 0; @endphp
                         @if (session('buy_now'))
@@ -327,11 +372,13 @@
                                 @endforeach
                             @endif
                         @endif
-                        <li class="flex justify-between items-center py-4 border-t border-gray-200">
+                        <li class="flex justify-between items-center py-4 border-t border-gray-200" id="order-total-row">
                             <span class="font-bold text-lg">Tổng cộng</span>
-                            <span class="font-bold text-lg text-purple-700"
-                                id="total-amount">{{ number_format($total, 0, ',', '.') }} VNĐ</span>
+                            <span class="font-bold text-lg text-purple-700" id="total-amount-original"
+                                data-total-original="{{ $total }}">{{ number_format($total, 0, ',', '.') }}
+                                VNĐ</span>
                         </li>
+                        <!-- Dòng giảm giá và tổng sau giảm sẽ được JS chèn vào đây -->
                     </ul>
                 </div>
             </div>
@@ -424,6 +471,7 @@
         });
     </script>
     <script>
+        window.TOTAL_ORIGINAL = {{ $total }};
         document.addEventListener("DOMContentLoaded", function() {
             // Initialize notifications
             initializeNotifications();
@@ -643,5 +691,96 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Hiệu ứng fade-in cho các dòng giảm giá
+        const style2 = document.createElement('style');
+        style2.textContent = `
+            @keyframes fade-in-down {
+                0% { opacity: 0; transform: translateY(-20px); }
+                100% { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fade-in-up {
+                0% { opacity: 0; transform: translateY(20px); }
+                100% { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-down { animation: fade-in-down 0.7s cubic-bezier(.4,0,.2,1) both; }
+            .animate-fade-in-up { animation: fade-in-up 0.7s cubic-bezier(.4,0,.2,1) both; }
+        `;
+        document.head.appendChild(style2);
+
+        document.getElementById('btn-apply-voucher').onclick = function() {
+            const code = document.querySelector('input[name="voucher_code"]').value;
+            let total = window.TOTAL_ORIGINAL;
+            const totalEl = document.getElementById('total-amount-original');
+            const orderTotalRow = document.getElementById('order-total-row');
+
+            // Luôn hiện lại dòng tổng cộng gốc trước khi áp dụng mã mới
+            if (orderTotalRow) orderTotalRow.style.display = '';
+
+            // Xóa các dòng giảm giá/tổng sau giảm cũ nếu có
+            let discountLi = document.getElementById('voucher-discount-li');
+            let totalAfterLi = document.getElementById('voucher-totalafter-li');
+            if (discountLi) discountLi.remove();
+            if (totalAfterLi) totalAfterLi.remove();
+
+            // Xóa thông báo cũ
+            document.querySelectorAll('.voucher-message').forEach(e => e.remove());
+
+            fetch("{{ route('ajax.applyVoucher') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        voucher_code: code,
+                        total_amount: total
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    // Hiển thị thông báo ở dưới (notification chung)
+                    let notification = document.getElementById('voucher-notification');
+                    if (!notification) {
+                        notification = document.createElement('div');
+                        notification.id = 'voucher-notification';
+                        notification.style.position = 'fixed';
+                        notification.style.bottom = '30px';
+                        notification.style.left = '50%';
+                        notification.style.transform = 'translateX(-50%)';
+                        notification.style.zIndex = '9999';
+                        document.body.appendChild(notification);
+                    }
+                    notification.innerHTML = '';
+                    if (data.success) {
+                        // Chèn dòng giảm giá và tổng sau giảm vào box Đơn hàng của bạn
+                        discountLi = document.createElement('li');
+                        discountLi.id = 'voucher-discount-li';
+                        discountLi.className = 'flex justify-between items-center py-2 animate-fade-in-down';
+                        discountLi.innerHTML =
+                            `<span class="font-medium text-base text-gray-600 flex items-center gap-1"><svg class=\"w-5 h-5 text-emerald-500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M5 13l4 4L19 7\" /></svg>Giảm giá</span><span class=\"inline-flex items-center gap-1 bg-cyan-50 rounded-lg px-2 py-1 font-bold text-cyan-600\">-${data.discount.toLocaleString('vi-VN')} <span class=\"text-xs text-cyan-400 font-normal\">VNĐ</span></span>`;
+                        orderTotalRow.parentElement.insertBefore(discountLi, orderTotalRow.nextSibling);
+
+                        totalAfterLi = document.createElement('li');
+                        totalAfterLi.id = 'voucher-totalafter-li';
+                        totalAfterLi.className = 'flex justify-between items-center py-2 animate-fade-in-up';
+                        const totalAfter = total - data.discount;
+                        totalAfterLi.innerHTML =
+                            `<span class=\"font-bold text-lg flex items-center gap-1\"><svg class=\"w-5 h-5 text-purple-500\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 8v4l3 3\" /></svg>Tổng sau giảm</span><span class=\"font-bold text-lg text-purple-700\" id=\"total-amount-discounted\">${totalAfter.toLocaleString('vi-VN')} VNĐ</span>`;
+                        discountLi.parentElement.insertBefore(totalAfterLi, discountLi.nextSibling);
+                        // Ẩn dòng tổng cộng gốc
+                        orderTotalRow.style.display = 'none';
+
+                        notification.innerHTML =
+                            `<div class='voucher-message flex items-center gap-2 bg-gradient-to-r from-emerald-400 to-green-500 text-white px-6 py-3 rounded-2xl shadow-xl animate-pulse text-base font-semibold'><svg class='w-6 h-6 text-white' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M5 13l4 4L19 7' /></svg> ${data.message}</div>`;
+                    } else {
+                        notification.innerHTML =
+                            `<div class='voucher-message flex items-center gap-2 bg-gradient-to-r from-red-400 to-pink-500 text-white px-6 py-3 rounded-2xl shadow-xl animate-pulse text-base font-semibold'><svg class='w-6 h-6 text-white' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12' /></svg> ${data.message}</div>`;
+                    }
+                    setTimeout(() => {
+                        if (notification) notification.innerHTML = '';
+                    }, 3000);
+                });
+        };
     </script>
 @endsection

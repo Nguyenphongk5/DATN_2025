@@ -162,3 +162,5 @@ Route::get('/order/{id}/payment-status', [OrderController::class, 'getPaymentSta
 Route::get('/api/order-full-status/{id}', [OrderController::class, 'getFullStatus']);
 
 require __DIR__ . '/auth.php';
+
+Route::post('/ajax/apply-voucher', [App\Http\Controllers\CheckoutController::class, 'ajaxApplyVoucher'])->name('ajax.applyVoucher');

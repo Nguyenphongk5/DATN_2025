@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{Cart, Logo, Order, OrderDetail, ProductVariant, Voucher};
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Validator};
 use Illuminate\Support\Str;
@@ -16,6 +17,10 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
+        // Chỉ xóa session voucher khi là GET (không phải AJAX/POST)
+        if ($request->isMethod('get') && !$request->ajax()) {
+            session()->forget(['applied_coupon', 'discount_amount', 'voucher_success']);
+        }
         $cart = Cart::with(['items.productVariant.product'])
             ->where('user_id', Auth::id())
             ->first();
@@ -37,7 +42,12 @@ class CheckoutController extends Controller
             session(['selected_items' => $ids]);
         }
         $logo = Logo::where('is_active', 1)->first();
-        return view('user.order', compact('cart', 'logo'));
+        $vouchers = \App\Models\Voucher::where('is_active', 1)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->whereColumn('used_count', '<', 'quantity')
+            ->get();
+        return view('user.order', compact('cart', 'logo', 'vouchers'));
     }
 
     /* ================================================
@@ -49,8 +59,8 @@ class CheckoutController extends Controller
             'name'            => 'required|string|max:255',
             'phone'           => 'required|string|max:50',
             'address'         => 'required|string|max:255',
-            'province'        => 'required|string|max:255',  
-            'district'        => 'required|string|max:255',    
+            'province'        => 'required|string|max:255',
+            'district'        => 'required|string|max:255',
             'ward'            => 'required|string|max:255',
             'note'            => 'nullable|string',
             'payment_method'  => 'required|in:cod,online',
@@ -174,6 +184,7 @@ class CheckoutController extends Controller
                 ->where('color_name', $buyNow['color_name'])
                 ->where('size', $buyNow['size'])
                 ->first();
+            $product = Product::where('id', $buyNow['product_id'])->first();
 
             if (!$variant) {
                 return redirect()->route('home')->with('error', 'Không tìm thấy biến thể sản phẩm.');
@@ -183,8 +194,10 @@ class CheckoutController extends Controller
             $discountAmount = 0;
             $voucher = null;
 
-            if ($request->filled('voucher_code')) {
-                $voucher = Voucher::where('code', $request->voucher_code)
+
+            $voucherCode = $request->input('voucher_code') ?? session('applied_coupon');
+            if ($voucherCode) {
+                $voucher = Voucher::where('code', $voucherCode)
                     ->where('is_active', 1)
                     ->where('start_date', '<=', now())
                     ->where('end_date', '>=', now())
@@ -198,7 +211,7 @@ class CheckoutController extends Controller
                     return back()->with('voucher_error', 'Mã giảm giá đã được sử dụng hết.');
                 }
 
-                if ($totalAmount < $voucher->min_money || $totalAmount > $voucher->max_money) {
+                if ($totalAmount < $voucher->min_money || ($voucher->max_money !== null && $totalAmount > $voucher->max_money)) {
                     return back()->with('voucher_error', 'Mã giảm giá không áp dụng cho đơn hàng này.');
                 }
 
@@ -224,6 +237,7 @@ class CheckoutController extends Controller
                     'province'        => $request->province,
                     'district'        => $request->district,
                     'ward'            => $request->ward,
+                    'voucher_id' => $voucher?->id,
                     'discount_amount' => $discountAmount,
                     'total_amount' => $totalAmount,
                     'status' => $isPaid == 'Paid' ? 'confirmed' : 'pending',
@@ -253,7 +267,7 @@ class CheckoutController extends Controller
 
                 // Trừ tồn kho
                 $variant->decrement('quantity', $buyNow['quantity']);
-
+                $product->decrement('quantity', $buyNow['quantity']);
                 // Nếu sau khi trừ tồn kho = 0 hoặc < 0, thì ngưng bán
                 if ($variant->quantity - $buyNow['quantity'] <= 0) {
                     $variant->update(['is_active' => 0]);
@@ -311,8 +325,9 @@ class CheckoutController extends Controller
             $discountAmount = 0;
             $voucher = null;
 
-            if ($request->filled('voucher_code')) {
-                $voucher = Voucher::where('code', $request->voucher_code)
+            $voucherCode = $request->input('voucher_code') ?? session('applied_coupon');
+            if ($voucherCode) {
+                $voucher = Voucher::where('code', $voucherCode)
                     ->where('is_active', 1)
                     ->where('start_date', '<=', now())
                     ->where('end_date', '>=', now())
@@ -326,7 +341,7 @@ class CheckoutController extends Controller
                     return back()->with('voucher_error', 'Mã giảm giá đã được sử dụng hết.');
                 }
 
-                if ($totalAmount < $voucher->min_money || $totalAmount > $voucher->max_money) {
+                if ($totalAmount < $voucher->min_money || ($voucher->max_money !== null && $totalAmount > $voucher->max_money)) {
                     return back()->with('voucher_error', 'Mã giảm giá không áp dụng cho đơn hàng này.');
                 }
 
@@ -351,7 +366,8 @@ class CheckoutController extends Controller
                     'province'        => $request->province,
                     'district'        => $request->district,
                     'ward'            => $request->ward,
-                    'discount_amount' => 0,
+                    'voucher_id' => $voucher?->id,
+                    'discount_amount' => $discountAmount,
                     'total_amount' => $totalAmount,
                     'status' => $isPaid ? 'confirmed' : 'pending',
                     'payment_method' => $request->payment_method,
@@ -384,7 +400,8 @@ class CheckoutController extends Controller
                     if ($variant->quantity < $item->quantity) {
                         return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
                     }
-
+                    Product::where( 'id', $variant->product_id)
+                        ->decrement('quantity', $item->quantity);
                     // Trừ tồn kho
                     ProductVariant::where('id', $variant->id)
                         ->decrement('quantity', $item->quantity);
@@ -392,6 +409,10 @@ class CheckoutController extends Controller
                     // Nếu tồn kho sau khi trừ = 0 → set is_active = 0
                     if ($variant->quantity - $item->quantity <= 0) {
                         ProductVariant::where('id', $variant->id)
+                            ->update(['is_active' => 0]);
+                    }
+                    if ($product->quantity - $item->quantity <= 0) {
+                        Product::where('id', $product->id)
                             ->update(['is_active' => 0]);
                     }
                 }
@@ -458,7 +479,46 @@ class CheckoutController extends Controller
         }
     }
 
+    public function ajaxApplyVoucher(Request $request)
+    {
+        $code = $request->input('voucher_code');
+        $total = $request->input('total_amount');
+        $voucher_id = $request->input('voucher_id');
 
+        $voucher = \App\Models\Voucher::where('code', $code)
+            ->where('is_active', 1)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->first();
+
+        if (!$voucher) {
+            return response()->json(['success' => false, 'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.']);
+        }
+        if ($voucher->quantity <= $voucher->used_count) {
+            return response()->json(['success' => false, 'message' => 'Mã giảm giá đã được sử dụng hết.']);
+        }
+        if ($total < $voucher->min_money || ($voucher->max_money !== null && $total > $voucher->max_money)) {
+            return response()->json(['success' => false, 'message' => 'Mã giảm giá không áp dụng cho đơn hàng này.']);
+        }
+
+        $discount = $voucher->discount_type === 'percent'
+            ? $total * $voucher->discount_value / 100
+            : $voucher->discount_value;
+        $discount = min($discount, $total);
+        session([
+            'applied_coupon' => $code,
+            'discount_amount' => $discount,
+            'voucher_id' => $voucher_id,
+            'voucher_success' => 'Áp dụng mã giảm giá thành công!',
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Áp dụng mã giảm giá thành công!',
+            'discount' => $discount,
+            'voucher_code' => $code,
+            'voucher_id' => $voucher_id,
+        ]);
+    }
 
     // public function buyNow()
     // {

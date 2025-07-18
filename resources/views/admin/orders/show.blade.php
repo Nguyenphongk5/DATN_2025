@@ -143,7 +143,7 @@
                                         <td class="px-4 py-2 text-right">{{ number_format($item->price, 0, ',', '.') }}
                                             VNĐ</td>
                                         <td class="px-4 py-2 text-right font-bold text-cyan-600">
-                                            {{ number_format($item->price * $item->quantity, 0, ',', '.') }} VNĐ</td>
+                                            {{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,7 +29,7 @@ class Product_VariantController extends Controller
     public function create()
     {
         //
-        $products = DB::table('products')->select('id', 'name','price')->get();
+        $products = DB::table('products')->select('id', 'name', 'price')->get();
         return view('admin.product_variants.create', compact('products'));
     }
 
@@ -47,6 +48,14 @@ class Product_VariantController extends Controller
             'quantity' => 'required|integer|min:0',
             'price_sale' => 'nullable|numeric|min:0',
         ]);
+        $variants = ProductVariant::all();
+        foreach ($variants as $variant) {
+            if ($variant->size == $data['size'] && $variant->color_name == $data['color_name'] && $variant->product_id == $data['product_id']) {
+                return redirect()->back()->with('error', 'Đã có size và màu của sản phẩm này tồn tại');
+            }
+        }
+        $quantity = DB::table('products')->where('id', $data['product_id'])->value('quantity');
+        DB::table('products')->where('id', $data['product_id'])->update(['quantity' => $quantity + $data['quantity']]);
         $data['price'] = DB::table('products')->where('id', $data['product_id'])->value('price');
         DB::table('product_variants')->insert($data);
         return redirect()->route('admin.product_variants.index')->with('success', 'Product variant created successfully.');
@@ -74,12 +83,13 @@ class Product_VariantController extends Controller
     public function edit(string $id)
     {
         //
-        $products = DB::table('products')->select('id', 'name', 'price')->get();
+
         $productVariant = DB::table('product_variants')->where('id', $id)->first();
         if (!$productVariant) {
             return redirect()->route('admin.product_variants.index')->with('error', 'Product variant not found.');
         }
-        return view('admin.product_variants.edit', compact('productVariant', 'products'));
+        $product = DB::table('products')->where('id', $productVariant->product_id)->select('id', 'name', 'price')->first();
+        return view('admin.product_variants.edit', compact('productVariant', 'product'));
     }
 
     /**
@@ -96,6 +106,25 @@ class Product_VariantController extends Controller
             'quantity' => 'required|integer|min:0',
             'price_sale' => 'nullable|numeric|min:0',
         ]);
+        // Lấy số lượng cũ của biến thể\
+
+        $oldVariant = DB::table('product_variants')->where('id', $id)->first();
+        $oldQuantity = $oldVariant ? $oldVariant->quantity : 0;
+        // Tính chênh lệch
+        $delta = $data['quantity'] - $oldQuantity;
+        $exists = DB::table('product_variants')
+            ->where('product_id', $data['product_id'])
+            ->where('color_name', $data['color_name'])
+            ->where('size', $data['size'])
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Đã có biến thể với màu và size này cho sản phẩm này!');
+        }
+        // Cập nhật lại số lượng product
+        $productQuantity = DB::table('products')->where('id', $data['product_id'])->value('quantity');
+        DB::table('products')->where('id', $data['product_id'])->update(['quantity' => $productQuantity + $delta]);
         $data['price'] = DB::table('products')->where('id', $data['product_id'])->value('price');
         DB::table('product_variants')->where('id', $id)->update($data);
         return redirect()->route('admin.product_variants.index')->with('success', 'Product variant updated successfully.');

@@ -259,25 +259,26 @@
                             <span class="ml-2 text-sm text-gray-500">(4.5)</span>
                         </div>
                         <div class="flex items-center gap-4 mb-6">
-                            <span
-                                class="text-3xl font-bold text-gray-900">{{ number_format($product->price, 0, '', '.') }}
-                                <span class="text-base">VNĐ</span></span>
-                            <del class="text-lg text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }}
-                                VNĐ</del>
+                            <span id="product-price" class="text-3xl font-bold text-gray-900">
+                                {{ number_format($product->price_sale, 0, '', '.') }} <span class="text-base">VNĐ</span>
+                            </span>
+                            <del id="product-price-sale" class="text-lg text-gray-400">
+                                {{ number_format($product->price, 0, '', '.') }} VNĐ
+                            </del>
                         </div>
                         <p class="text-gray-700 mb-6">{{ $product->description }}</p>
 
                         <!-- Stock Information -->
                         <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
                             <h6 class="font-semibold text-gray-800 flex items-center mb-2">
-                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                                 </svg>
-                                Kho: <span id="stock-quantity" class="text-green-600 font-semibold">...</span> sản phẩm
+                                Kho: <span id="stock-quantity"
+                                    class="text-green-600 font-semibold">{{ $product->quantity }}</span>sản phẩm
                             </h6>
-                            <p class="text-xs text-gray-600" id="stock-description">
-                                Đang tải thông tin kho...
-                            </p>
                         </div>
 
                         <form action="{{ route('cart.add') }}" method="POST" class="space-y-4">
@@ -297,8 +298,7 @@
                                         <div>
                                             <input type="radio" class="hidden peer" name="color_name"
                                                 id="color-{{ $index }}" value="{{ $color }}"
-                                                {{ $loop->first ? 'checked' : '' }}
-                                                {{ !$isAvailable ? 'disabled' : '' }}>
+                                                {{ $loop->first ? 'checked' : '' }} {{ !$isAvailable ? 'disabled' : '' }}>
                                             <label
                                                 class="inline-flex items-center cursor-pointer px-3 py-1 border-2 border-gray-300 rounded-full transition
                                                                                                                                                                         peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
@@ -307,8 +307,9 @@
                                                 <span class="rounded-full inline-block mr-2 border"
                                                     style="width: 16px; height: 16px; background-color: {{ optional($productVariants->firstWhere('color_name', $color))->hex_code ?? '#ccc' }};"></span>
                                                 {{ $color }}
-                                                @if($isAvailable)
-                                                    <span class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
+                                                @if ($isAvailable)
+                                                    <span
+                                                        class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
                                                 @else
                                                     <span class="ml-1 text-xs text-red-600 font-medium">(Hết hàng)</span>
                                                 @endif
@@ -325,22 +326,22 @@
                                     @foreach ($sizes as $index => $size)
                                         @php
                                             $variantsWithSize = $productVariants->where('size', $size);
-                                            $totalQuantity = $variantsWithSize->sum('quantity');
+                                            $totalQuantity = $variantsWithSize->first()->quantity;
                                             $isAvailable = $totalQuantity > 0;
                                         @endphp
                                         <div>
                                             <input type="radio" class="hidden peer size-radio" name="size"
                                                 id="size-{{ $index }}" value="{{ $size }}"
-                                                {{ $loop->first ? 'checked' : '' }}
-                                                {{ !$isAvailable ? 'disabled' : '' }}>
+                                                {{ $loop->first ? 'checked' : '' }} {{ !$isAvailable ? 'disabled' : '' }}>
                                             <label
                                                 class="inline-flex items-center cursor-pointer px-4 py-2 border-2 border-gray-300 rounded-full transition
                                                                                                                                                                         peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
                                                                                                                                                                         bg-white text-gray-700 font-semibold {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                 for="size-{{ $index }}">
                                                 {{ $size }}
-                                                @if($isAvailable)
-                                                    <span class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
+                                                @if ($isAvailable)
+                                                    <span {{-- id="stock-quantity" --}}
+                                                        class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
                                                 @else
                                                     <span class="ml-1 text-xs text-red-600 font-medium">(Hết hàng)</span>
                                                 @endif
@@ -349,8 +350,11 @@
                                     @endforeach
                                 </div>
                                 <div id="no-size-message" class="hidden mt-2 text-sm text-red-600">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                        </path>
                                     </svg>
                                     Không có size nào khả dụng cho màu này
                                 </div>
@@ -433,7 +437,8 @@
                                     class="mb-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-300 shadow">
                                     {{ session('success') }}</div>
                             @endif
-                            <div class="comments-list max-h-80 md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar space-y-8">
+                            <div
+                                class="comments-list max-h-80 md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar space-y-8">
                                 @forelse ($comments as $comment)
                                     <div class="comment-item bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-5 border border-gray-100"
                                         x-data="{ showReply: false }" data-comment-id="{{ $comment->id }}">
@@ -505,8 +510,10 @@
                                             </div>
                                             @if (auth()->check() && auth()->user()->role == 'admin')
                                                 <div x-show="showReply" class="mt-3" x-transition>
-                                                    <form class="reply-form" action="{{ route('comments.store') }}#v-pills-reviews"
-                                                        method="POST" class="space-y-3" onsubmit="return handleReplySubmit(event, {{ $comment->id }});">
+                                                    <form class="reply-form"
+                                                        action="{{ route('comments.store') }}#v-pills-reviews"
+                                                        method="POST" class="space-y-3"
+                                                        onsubmit="return handleReplySubmit(event, {{ $comment->id }});">
                                                         @csrf
                                                         <input type="hidden" name="product_id"
                                                             value="{{ $product->id }}">
@@ -518,7 +525,8 @@
                                                             <textarea name="content" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-400" rows="2"
                                                                 placeholder="Trả lời bình luận..." required></textarea>
                                                         </div>
-                                                        <button type="submit" class="reply-submit-btn px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+                                                        <button type="submit"
+                                                            class="reply-submit-btn px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
                                                             <span class="submit-text">Gửi phản hồi</span>
                                                             <span class="loading-text hidden">Đang gửi...</span>
                                                         </button>
@@ -579,18 +587,24 @@
                                 @elseif ($hasCommented)
                                     <div class="p-6 rounded-lg bg-green-50 border border-green-200 text-center">
                                         <div class="flex items-center justify-center mb-3">
-                                            <svg class="w-8 h-8 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            <svg class="w-8 h-8 text-green-500 mr-2" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                             <h6 class="text-lg font-semibold text-green-800">Đã đánh giá sản phẩm</h6>
                                         </div>
-                                        <p class="text-green-700">Bạn đã đánh giá sản phẩm này. Cảm ơn bạn đã chia sẻ trải nghiệm!</p>
+                                        <p class="text-green-700">Bạn đã đánh giá sản phẩm này. Cảm ơn bạn đã chia sẻ trải
+                                            nghiệm!</p>
                                     </div>
                                 @else
                                     <div class="p-6 rounded-lg bg-yellow-50 border border-yellow-200 text-center">
                                         <div class="flex items-center justify-center mb-3">
-                                            <svg class="w-8 h-8 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                            <svg class="w-8 h-8 text-yellow-500 mr-2" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                                </path>
                                             </svg>
                                             <h6 class="text-lg font-semibold text-yellow-800">Chưa thể đánh giá</h6>
                                         </div>
@@ -1050,7 +1064,8 @@
                 if (selectedColor) {
                     // Kiểm tra có biến thể với color và size này không
                     const exists = productVariants.some(variant =>
-                        variant.color_name === selectedColor && variant.size.toString() === sizeValue.toString()
+                        variant.color_name.trim().toLowerCase() === selectedColor.trim().toLowerCase() &&
+                        variant.size.toString() === sizeValue.toString()
                     );
 
                     console.log('Size', sizeValue, 'exists for color', selectedColor, ':', exists);
@@ -1082,6 +1097,7 @@
             if (!foundChecked && firstEnabled) {
                 firstEnabled.checked = true;
                 console.log('Auto-selected first available size:', firstEnabled.value);
+                updateProductPrice(); // Gọi lại để cập nhật giá đúng
             }
 
             // Thông báo nếu không có size nào khả dụng
@@ -1156,7 +1172,8 @@
 
                 if (totalQuantity > 0) {
                     stockElement.className = 'text-green-600 font-semibold';
-                    stockDescription.textContent = 'Tổng số lượng tất cả biến thể trong kho - Chọn màu và size để xem số lượng cụ thể';
+                    stockDescription.textContent =
+                        'Tổng số lượng tất cả biến thể trong kho - Chọn màu và size để xem số lượng cụ thể';
                 } else {
                     stockElement.className = 'text-red-600 font-semibold';
                     stockDescription.textContent = 'Kho hiện tại đang trống';
@@ -1210,8 +1227,10 @@
                     const selectedVariant = productVariants.find(variant => {
                         const variantColor = variant.color_name;
                         const variantSize = variant.size.toString();
-                        const matches = variantColor === selectedColor && variantSize === sizeToCompare;
-                        console.log('Checking initial variant:', variantColor, variantSize, 'matches:', matches);
+                        const matches = variantColor === selectedColor && variantSize ===
+                            sizeToCompare;
+                        console.log('Checking initial variant:', variantColor, variantSize,
+                            'matches:', matches);
                         return matches;
                     });
 
@@ -1226,10 +1245,8 @@
 
                             if (selectedVariant.quantity > 0) {
                                 stockElement.className = 'text-green-600 font-semibold';
-                                stockDescription.textContent = `Số lượng còn lại cho ${selectedColor} - Size ${selectedSize}`;
                             } else {
                                 stockElement.className = 'text-red-600 font-semibold';
-                                stockDescription.textContent = `Biến thể ${selectedColor} - Size ${selectedSize} đã hết hàng`;
                             }
                         }
                     } else {
@@ -1244,7 +1261,8 @@
         // Function to show notification
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
-            notification.className = `fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full`;
+            notification.className =
+                `fixed top-6 right-6 z-50 transform transition-all duration-500 ease-out opacity-0 translate-x-full`;
             notification.innerHTML = `
                 <div class="bg-gradient-to-r ${type === 'success' ? 'from-emerald-500 to-green-600' : 'from-red-500 to-pink-600'} text-white px-6 py-4 rounded-2xl shadow-2xl border ${type === 'success' ? 'border-emerald-400/30' : 'border-red-400/30'} backdrop-blur-sm">
                     <div class="flex items-center space-x-3">
@@ -1518,6 +1536,56 @@
             });
             return false;
         }
+
+        console.log('productVariants:', productVariants);
+
+        function updateProductPrice() {
+            const selectedColorInput = document.querySelector('input[name="color_name"]:checked');
+            const selectedSizeInput = document.querySelector('input[name="size"]:checked');
+            const selectedColor = selectedColorInput?.value;
+            const selectedSize = selectedSizeInput?.value;
+            const priceEl = document.getElementById('product-price');
+            const priceSaleEl = document.getElementById('product-price-sale');
+
+            console.log('Selected color:', selectedColor, 'Selected size:', selectedSize);
+            if (!selectedColor || !selectedSize) {
+                console.warn('Chưa chọn đủ biến thể!');
+                return;
+            }
+
+            // So sánh color_name không phân biệt hoa thường, loại bỏ dấu cách thừa
+            const variant = productVariants.find(v =>
+                v.color_name.trim().toLowerCase() === selectedColor.trim().toLowerCase() &&
+                v.size.toString() === selectedSize.toString()
+            );
+            console.log('Matched variant:', variant);
+
+            if (variant) {
+                priceEl.innerHTML = Number(variant.price_sale ?? variant.price).toLocaleString('vi-VN') +
+                    ' <span class="text-base">VNĐ</span>';
+                priceSaleEl.textContent = Number(variant.price).toLocaleString('vi-VN') + ' VNĐ';
+            } else {
+                // Nếu không tìm thấy biến thể, log cảnh báo và không đổi giá
+                console.warn('Không tìm thấy biến thể phù hợp với', selectedColor, selectedSize);
+            }
+        }
+
+        (function() {
+            const colorInputs = document.querySelectorAll('input[name="color_name"]');
+            const sizeInputs = document.querySelectorAll('input[name="size"]');
+            console.log('Color inputs:', colorInputs.length, colorInputs);
+            console.log('Size inputs:', sizeInputs.length, sizeInputs);
+
+            colorInputs.forEach(input => {
+                input.addEventListener('change', updateProductPrice);
+            });
+            sizeInputs.forEach(input => {
+                input.addEventListener('change', updateProductPrice);
+            });
+
+            // Gọi lần đầu để đồng bộ giá khi trang vừa load
+            updateProductPrice();
+        })();
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
@@ -1541,6 +1609,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1557,6 +1626,7 @@
                 opacity: 0;
                 transform: scale(0.9);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -1568,6 +1638,7 @@
                 opacity: 1;
                 transform: scale(1);
             }
+
             to {
                 opacity: 0;
                 transform: scale(0.9);

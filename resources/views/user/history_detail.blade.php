@@ -43,6 +43,7 @@
                                 <th class="py-3 px-2 text-center">Màu</th>
                                 <th class="py-3 px-2 text-center">Số lượng</th>
                                 <th class="py-3 px-2 text-right">Đơn giá</th>
+                                <th class="py-3 px-2 text-right">Giảm giá</th>
                                 <th class="py-3 px-2 text-right">Thành tiền</th>
                             </tr>
                         </thead>
@@ -102,9 +103,13 @@
                                         {{ number_format($item->price, 0, ',', '.') }} <span
                                             class="text-xs text-gray-400">VNĐ</span>
                                     </td>
+                                    <td class="py-3 px-2 text-right text-indigo-600 font-semibold">
+                                        {{ number_format($order->discount_amount, 0, ',', '.') }} <span
+                                            class="text-xs text-gray-400">VNĐ</span>
+                                    </td>
                                     <td
                                         class="py-3 px-2 text-right font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">
-                                        {{ number_format($item->price * $item->quantity, 0, ',', '.') }} <span
+                                        {{ number_format($order->total_amount, 0, ',', '.') }} <span
                                             class="text-xs text-gray-400">VNĐ</span>
                                     </td>
                                 </tr>
@@ -190,7 +195,7 @@ function getStatusLabel($status) {
 
 
                     </p>
-                    
+
 
                         @php
                             $paymentStatus = strtolower(trim($order->payment_status));
@@ -227,6 +232,16 @@ function getStatusLabel($status) {
                         </svg>
                         <span class="font-semibold text-gray-900">Phí vẫn chuyển:</span> <span
                             class="text-cyan-600 font-bold">{{ number_format($order->shipping_fee, 0, ',', '.') }}
+                            VNĐ</span>
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-5 h-5 text-cyan-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+                        </svg>
+                        <span class="font-semibold text-gray-700 text-base">Giảm giá:</span>
+                        <span
+                            class="text-base font-bold text-cyan-600 ml-1">{{ number_format($order->discount_amount, 0, ',', '.') }}
                             VNĐ</span>
                     </p>
                 </div>
@@ -281,28 +296,21 @@ function getStatusLabel($status) {
                     Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
                         VNĐ</span>
                 </div>
-                @php
-                    $isPending = $order->status === 'pending';
-                @endphp
-
-                <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
-                    @csrf
-                    @method('PUT')
-                    <button @if (!$isPending) disabled @endif
-                        class="w-full py-3 rounded-xl font-bold shadow-lg transition transform duration-200 flex items-center justify-center gap-2
-            {{ $isPending
-                ? 'bg-gradient-to-r from-pink-500 to-indigo-500 text-white hover:scale-105 hover:from-pink-400 hover:to-indigo-400'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        Hủy đơn hàng
-                    </button>
-                </form>
-
-
+                @if (!in_array($order->status, ['cancelled']))
+                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
+                        @csrf
+                        @method('PUT')
+                        <button
+                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Hủy đơn hàng
+                        </button>
+                    </form>
+                @endif
             </div>
         </div>
     </section>
