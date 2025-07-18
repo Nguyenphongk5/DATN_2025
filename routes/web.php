@@ -99,6 +99,11 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+      Route::get('/returns', [App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('returns.index');
+    Route::get('/returns/{id}', [App\Http\Controllers\Admin\ReturnController::class, 'show'])->name('returns.show');
+    Route::post('/returns/{id}/approve', [App\Http\Controllers\Admin\ReturnController::class, 'approve'])->name('returns.approve');
+    Route::post('/returns/{id}/reject', [App\Http\Controllers\Admin\ReturnController::class, 'reject'])->name('returns.reject');
+    Route::put('/returns/{id}', [App\Http\Controllers\Admin\ReturnController::class, 'update'])->name('returns.update');
     // Product Gallery routes
     Route::prefix('products/{product}/galleries')->name('products.galleries.')->group(function () {
         Route::get('/', [ProductGalleryController::class, 'index'])->name('index');
