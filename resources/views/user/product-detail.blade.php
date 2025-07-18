@@ -323,27 +323,16 @@
                                 <div class="flex flex-wrap gap-2">
                                     @php $sizes = $productVariants->pluck('size')->unique(); @endphp
                                     @foreach ($sizes as $index => $size)
-                                        @php
-                                            $variantsWithSize = $productVariants->where('size', $size);
-                                            $totalQuantity = $variantsWithSize->sum('quantity');
-                                            $isAvailable = $totalQuantity > 0;
-                                        @endphp
                                         <div>
                                             <input type="radio" class="hidden peer size-radio" name="size"
                                                 id="size-{{ $index }}" value="{{ $size }}"
-                                                {{ $loop->first ? 'checked' : '' }}
-                                                {{ !$isAvailable ? 'disabled' : '' }}>
-                                            <label
-                                                class="inline-flex items-center cursor-pointer px-4 py-2 border-2 border-gray-300 rounded-full transition
-                                                                                                                                                                        peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
-                                                                                                                                                                        bg-white text-gray-700 font-semibold {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                                for="size-{{ $index }}">
+                                                {{ $loop->first ? 'checked' : '' }}>
+                                            <label class="inline-flex items-center cursor-pointer px-4 py-2 border-2 border-gray-300 rounded-full transition
+                                                peer-checked:border-blue-600 peer-checked:bg-blue-100 peer-checked:text-blue-700 peer-checked:shadow-md
+                                                bg-white text-gray-700 font-semibold size-label"
+                                                data-size="{{ $size }}" for="size-{{ $index }}">
                                                 {{ $size }}
-                                                @if($isAvailable)
-                                                    <span class="ml-1 text-xs text-green-600 font-medium">({{ $totalQuantity }})</span>
-                                                @else
-                                                    <span class="ml-1 text-xs text-red-600 font-medium">(Hết hàng)</span>
-                                                @endif
+                                                <span class="ml-1 text-xs size-quantity"></span>
                                             </label>
                                         </div>
                                     @endforeach
@@ -1032,6 +1021,7 @@
 
         // Product variants data for stock calculation
         const productVariants = @json($productVariants);
+        console.log('productVariants:', productVariants);
 
         // Function to update size options based on selected color
         function updateSizeOptions() {
@@ -1106,40 +1096,19 @@
             const stockElement = document.getElementById('stock-quantity');
             const stockDescription = document.getElementById('stock-description');
 
-            console.log('Selected color:', selectedColor);
-            console.log('Selected size:', selectedSize);
-            console.log('Product variants:', productVariants);
+            if (!stockElement || !stockDescription) return;
 
-            if (!stockElement || !stockDescription) {
-                console.log('Stock elements not found');
-                return;
-            }
-
-            // If both color and size are selected, show specific variant quantity
             if (selectedColor && selectedSize) {
-                // Convert size to string for comparison if it's a number
-                const sizeToCompare = selectedSize.toString();
-
-                console.log('Looking for variant with color:', selectedColor, 'and size:', sizeToCompare);
-
-                // Find the variant that matches both color and size
-                const selectedVariant = productVariants.find(variant => {
-                    const variantColor = variant.color_name;
-                    const variantSize = variant.size.toString();
-                    const matches = variantColor === selectedColor && variantSize === sizeToCompare;
-                    console.log('Checking variant:', variantColor, variantSize, 'matches:', matches);
-                    return matches;
-                });
-
-                console.log('Found variant:', selectedVariant);
+                // Tìm đúng biến thể
+                const selectedVariant = productVariants.find(variant =>
+                    variant.color_name === selectedColor && variant.size.toString() === selectedSize.toString()
+                );
 
                 if (selectedVariant) {
                     stockElement.textContent = selectedVariant.quantity;
-
-                    // Update color based on availability
                     if (selectedVariant.quantity > 0) {
                         stockElement.className = 'text-green-600 font-semibold';
-                        stockDescription.textContent = `Số lượng còn lại cho ${selectedColor} - Size ${selectedSize}`;
+                        stockDescription.textContent = `Còn lại: ${selectedVariant.quantity} sản phẩm cho ${selectedColor} - Size ${selectedSize}`;
                     } else {
                         stockElement.className = 'text-red-600 font-semibold';
                         stockDescription.textContent = `Biến thể ${selectedColor} - Size ${selectedSize} đã hết hàng`;
@@ -1147,19 +1116,18 @@
                 } else {
                     stockElement.textContent = '0';
                     stockElement.className = 'text-red-600 font-semibold';
-                    stockDescription.textContent = `Biến thể ${selectedColor} - Size ${selectedSize} không tồn tại`;
+                    stockDescription.textContent = `Không tồn tại biến thể này`;
                 }
             } else {
-                // If not both color and size are selected, show total quantity
-                const totalQuantity = productVariants.reduce((sum, variant) => sum + parseInt(variant.quantity), 0);
+                // Tổng số lượng còn hàng của tất cả biến thể
+                const totalQuantity = productVariants.reduce((sum, v) => sum + (parseInt(v.quantity) > 0 ? parseInt(v.quantity) : 0), 0);
                 stockElement.textContent = totalQuantity;
-
                 if (totalQuantity > 0) {
                     stockElement.className = 'text-green-600 font-semibold';
-                    stockDescription.textContent = 'Tổng số lượng tất cả biến thể trong kho - Chọn màu và size để xem số lượng cụ thể';
+                    stockDescription.textContent = 'Tổng số lượng còn lại của tất cả biến thể. Chọn màu và size để xem chi tiết.';
                 } else {
                     stockElement.className = 'text-red-600 font-semibold';
-                    stockDescription.textContent = 'Kho hiện tại đang trống';
+                    stockDescription.textContent = 'Tất cả biến thể đã hết hàng';
                 }
             }
         }
@@ -1518,6 +1486,29 @@
             });
             return false;
         }
+
+        function updateSizeQuantities() {
+            const selectedColor = document.querySelector('input[name="color_name"]:checked')?.value;
+            document.querySelectorAll('.size-label').forEach(label => {
+                const size = label.getAttribute('data-size');
+                const variant = productVariants.find(v => v.color_name === selectedColor && v.size.toString() === size.toString());
+                const quantity = variant ? variant.quantity : 0;
+                const span = label.querySelector('.size-quantity');
+                if (span) {
+                    span.textContent = quantity > 0 ? `(${quantity})` : '(Hết hàng)';
+                    span.className = 'ml-1 text-xs size-quantity ' + (quantity > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium');
+                }
+            });
+        }
+        // Gọi khi đổi màu
+        const colorInputs = document.querySelectorAll('input[name="color_name"]');
+        colorInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                updateSizeQuantities();
+            });
+        });
+        // Gọi khi load trang
+        updateSizeQuantities();
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {

@@ -199,8 +199,11 @@ class HomeController extends Controller
     public function show(string $id)
     {
         $categories = Category::all();
+        // Lấy các biến thể còn tồn tại, quantity >= 0
         $productVariants = DB::table('product_variants')
             ->where('product_id', $id)
+            ->where('quantity', '>=', 0)
+            ->select('id', 'product_id', 'color_name', 'size', 'quantity', 'hex_code')
             ->get();
 
         // Lấy ảnh gallery

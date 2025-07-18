@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
 
 class VoucherController extends Controller
 {
@@ -65,6 +67,21 @@ class VoucherController extends Controller
                 'success' => false,
                 'message' => "Đơn hàng tối đa chỉ được " . number_format($voucher->max_money, 0, ',', '.') . " VNĐ."
             ]);
+        }
+
+        // Kiểm tra số lần user đã dùng voucher này (không cần bảng mới)
+        $user = Auth::user();
+        if ($user) {
+            $userUsed = Order::where('user_id', $user->id)
+                ->where('voucher_id', $voucher->id)
+                ->count();
+
+            if ($userUsed >= $voucher->user_limit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn đã sử dụng hết số lần cho phép với mã này.'
+                ]);
+            }
         }
 
         // Tính toán giảm giá
