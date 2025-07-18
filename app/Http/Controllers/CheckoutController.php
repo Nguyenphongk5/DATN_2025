@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{Cart, Logo, Order, OrderDetail, ProductVariant, Voucher};
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Validator};
 use Illuminate\Support\Str;
@@ -180,6 +181,7 @@ class CheckoutController extends Controller
                 ->where('color_name', $buyNow['color_name'])
                 ->where('size', $buyNow['size'])
                 ->first();
+            $product = Product::where('id', $buyNow['product_id'])->first();
 
             if (!$variant) {
                 return redirect()->route('home')->with('error', 'Không tìm thấy biến thể sản phẩm.');
@@ -259,7 +261,7 @@ class CheckoutController extends Controller
 
                 // Trừ tồn kho
                 $variant->decrement('quantity', $buyNow['quantity']);
-
+                $product->decrement('quantity', $buyNow['quantity']);
                 // Nếu sau khi trừ tồn kho = 0 hoặc < 0, thì ngưng bán
                 if ($variant->quantity - $buyNow['quantity'] <= 0) {
                     $variant->update(['is_active' => 0]);
@@ -389,7 +391,8 @@ class CheckoutController extends Controller
                     if ($variant->quantity < $item->quantity) {
                         return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
                     }
-
+                    Product::where( 'id', $variant->product_id)
+                        ->decrement('quantity', $item->quantity);
                     // Trừ tồn kho
                     ProductVariant::where('id', $variant->id)
                         ->decrement('quantity', $item->quantity);
@@ -397,6 +400,10 @@ class CheckoutController extends Controller
                     // Nếu tồn kho sau khi trừ = 0 → set is_active = 0
                     if ($variant->quantity - $item->quantity <= 0) {
                         ProductVariant::where('id', $variant->id)
+                            ->update(['is_active' => 0]);
+                    }
+                    if ($product->quantity - $item->quantity <= 0) {
+                        Product::where('id', $product->id)
                             ->update(['is_active' => 0]);
                     }
                 }

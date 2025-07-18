@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('price_sale', 10, 2)->nullable();
             $table->foreignId('category_id')->constrained(); // Foreign key to categories table
             $table->foreignId('brand_id')->constrained();
+            $table->integer('quantity')->default(0);
             $table->integer('view')->default(0);
             $table->tinyInteger('is_active')->default(1);
             $table->softDeletes();

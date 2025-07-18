@@ -26,13 +26,10 @@
                     <div class="mb-4">
                         <label for="product_id" class="block text-gray-700 font-medium mb-1">Sản phẩm <span
                                 class="text-red-500">*</span></label>
-
-                        @foreach ($products as $product)
-                        <input type="text" id="product_id" name="product_id"
-                            value="{{ old('product_id', $productVariant->product_id) == $product->id ? $product->name : '' }}" readonly
+                        <input type="hidden" name="product_id" value="{{ $productVariant->product_id }}">
+                        <input type="text" id="product_id" value="{{ $product->name }}"
+                            readonly
                             class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 @error('product_id') border-red-500 @enderror">
-                            @break
-                        @endforeach
                         @error('product_id')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
