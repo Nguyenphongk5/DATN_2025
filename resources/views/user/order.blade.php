@@ -172,10 +172,37 @@
                                 value="{{ old('phone') }}" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
-                            <input type="text" name="address"
-                                class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
-                                value="{{ old('address') }}" required>
+                            <!-- Tỉnh/Thành phố -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố</label>
+                                <select name="province" id="checkout-province" required
+                                    class="block w-full rounded-xl border-gray-300 focus:border-purple-500 py-3 px-4">
+                                    <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện</label>
+                                <select name="district" id="checkout-district" required
+                                    class="block w-full rounded-xl border-gray-300 focus:border-purple-500 py-3 px-4">
+                                    <option value="">-- Chọn Quận/Huyện --</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phường/Xã</label>
+                                <select name="ward" id="checkout-ward" required
+                                    class="block w-full rounded-xl border-gray-300 focus:border-purple-500 py-3 px-4">
+                                    <option value="">-- Chọn Phường/Xã --</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ cụ thể</label>
+                                <input type="text" name="address"
+                                    class="block w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
+                                    value="{{ old('address', auth()->user()->address ?? '') }}"
+                                    placeholder="Số nhà, tên đường..." required>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Mã giảm giá</label>
@@ -188,7 +215,7 @@
                                     Áp dụng
                                 </button>
                             </div>
-                            @if(session('voucher_error'))
+                            @if (session('voucher_error'))
                                 <div class="mt-2 text-red-600 text-sm">{{ session('voucher_error') }}</div>
                             @endif
                             <div id="voucher-info" class="mt-2 text-green-600 text-sm hidden"></div>
@@ -310,22 +337,107 @@
             </div>
         </div>
     </section>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let checkoutProvinces = document.getElementById("checkout-province");
+            let checkoutDistricts = document.getElementById("checkout-district");
+            let checkoutWards = document.getElementById("checkout-ward");
 
+            let userProvince = @json(old('province', auth()->user()->province ?? ''));
+            let userDistrict = @json(old('district', auth()->user()->district ?? ''));
+            let userWard = @json(old('ward', auth()->user()->ward ?? ''));
+
+            fetch("/vn-addresses.json")
+                .then(res => res.json())
+                .then(data => {
+                    data.data.forEach(province => {
+                        const option = new Option(province.name, province.name);
+                        checkoutProvinces.add(option);
+                    });
+
+                    if (userProvince) {
+                        checkoutProvinces.value = userProvince;
+                        checkoutProvinces.dispatchEvent(new Event("change"));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading provinces:', error);
+                });
+
+            // Xử lý khi chọn province
+            checkoutProvinces.addEventListener("change", function() {
+                checkoutDistricts.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+                checkoutWards.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+
+                if (this.value) {
+                    fetch("/vn-addresses.json")
+                        .then(res => res.json())
+                        .then(data => {
+                            const province = data.data.find(p => p.name === this.value);
+                            if (province && province.level2s) {
+                                province.level2s.forEach(district => {
+                                    const option = new Option(district.name, district.name);
+                                    checkoutDistricts.add(option);
+                                });
+
+                                // Set user district nếu có
+                                if (userDistrict && this.value === userProvince) {
+                                    checkoutDistricts.value = userDistrict;
+                                    checkoutDistricts.dispatchEvent(new Event("change"));
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading districts:', error);
+                        });
+                }
+            });
+
+            // Xử lý khi chọn district
+            checkoutDistricts.addEventListener("change", function() {
+                checkoutWards.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+
+                if (this.value && checkoutProvinces.value) {
+                    fetch("/vn-addresses.json")
+                        .then(res => res.json())
+                        .then(data => {
+                            const province = data.data.find(p => p.name === checkoutProvinces.value);
+                            const district = province?.level2s.find(d => d.name === this.value);
+                            if (district && district.level3s) {
+                                district.level3s.forEach(ward => {
+                                    const option = new Option(ward.name, ward.name);
+                                    checkoutWards.add(option);
+                                });
+
+                                // Set user ward nếu có
+                                if (userWard && this.value === userDistrict && checkoutProvinces
+                                    .value === userProvince) {
+                                    checkoutWards.value = userWard;
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading wards:', error);
+                        });
+                }
+            });
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Initialize notifications
             initializeNotifications();
-            
+
             // Initialize voucher functionality
             initializeVoucher();
         });
-        
+
         // Voucher functionality
         function initializeVoucher() {
             const applyBtn = document.getElementById('apply-voucher');
             const voucherInput = document.getElementById('voucher_code');
             const voucherInfo = document.getElementById('voucher-info');
-            
+
             if (applyBtn && voucherInput) {
                 applyBtn.addEventListener('click', function() {
                     const code = voucherInput.value.trim();
@@ -333,11 +445,11 @@
                         showVoucherInfo('Vui lòng nhập mã giảm giá', 'error');
                         return;
                     }
-                    
+
                     // Validate voucher via AJAX
                     validateVoucher(code);
                 });
-                
+
                 // Allow Enter key to apply voucher
                 voucherInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
@@ -347,67 +459,67 @@
                 });
             }
         }
-        
+
         function validateVoucher(code) {
             const applyBtn = document.getElementById('apply-voucher');
             const originalText = applyBtn.textContent;
-            
+
             // Show loading state
             applyBtn.textContent = 'Đang kiểm tra...';
             applyBtn.disabled = true;
-            
+
             // Get current total amount
             const totalElement = document.getElementById('total-amount');
             const totalText = totalElement.textContent;
             const total = parseFloat(totalText.replace(/[^\d]/g, ''));
-            
+
             // Send AJAX request to validate voucher
             fetch('/validate-voucher', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    code: code,
-                    total_amount: total
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        total_amount: total
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showVoucherInfo(data.message, 'success');
-                    updateTotalWithDiscount(data.discount_amount, total);
-                } else {
-                    showVoucherInfo(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                showVoucherInfo('Có lỗi xảy ra, vui lòng thử lại', 'error');
-            })
-            .finally(() => {
-                applyBtn.textContent = originalText;
-                applyBtn.disabled = false;
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showVoucherInfo(data.message, 'success');
+                        updateTotalWithDiscount(data.discount_amount, total);
+                    } else {
+                        showVoucherInfo(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showVoucherInfo('Có lỗi xảy ra, vui lòng thử lại', 'error');
+                })
+                .finally(() => {
+                    applyBtn.textContent = originalText;
+                    applyBtn.disabled = false;
+                });
         }
-        
+
         function showVoucherInfo(message, type) {
             const voucherInfo = document.getElementById('voucher-info');
             voucherInfo.textContent = message;
             voucherInfo.className = `mt-2 text-sm ${type === 'success' ? 'text-green-600' : 'text-red-600'}`;
             voucherInfo.classList.remove('hidden');
-            
+
             // Auto hide after 5 seconds
             setTimeout(() => {
                 voucherInfo.classList.add('hidden');
             }, 5000);
         }
-        
+
         function updateTotalWithDiscount(discountAmount, originalTotal) {
             const totalElement = document.getElementById('total-amount');
             const newTotal = originalTotal - discountAmount;
             totalElement.textContent = new Intl.NumberFormat('vi-VN').format(newTotal) + ' VNĐ';
-            
+
             // Add discount info
             const discountInfo = document.createElement('div');
             discountInfo.id = 'discount-info';
@@ -416,7 +528,7 @@
                 <span>Giảm giá:</span>
                 <span>-${new Intl.NumberFormat('vi-VN').format(discountAmount)} VNĐ</span>
             `;
-            
+
             // Insert before total
             const totalLi = totalElement.closest('li');
             const existingDiscount = document.getElementById('discount-info');

@@ -15,6 +15,9 @@ class Order extends Model
         'user_email',
         'user_phone',
         'user_address',
+        'province',
+        'district',
+        'ward',
         'discount_amount',
         'total_amount',
         'status',
@@ -40,4 +43,3 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class);
     }
 }
-

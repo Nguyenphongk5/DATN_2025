@@ -139,13 +139,31 @@
                         </svg>
                         <span class="font-semibold text-gray-900">SĐT:</span> {{ $order->user_phone }}
                     </p>
-                    <p class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243" />
-                            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span class="font-semibold text-gray-900">Địa chỉ:</span> {{ $order->user_address }}
+                        <p class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243" />
+                                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="font-semibold text-gray-900">Địa chỉ:</span>
+                            <span class="text-gray-700">
+                                @php
+                                    $addressParts = [];
+                                    if ($order->user_address) {
+                                        $addressParts[] = $order->user_address;
+                                    }
+                                    if ($order->ward) {
+                                        $addressParts[] = $order->ward;
+                                    }
+                                    if ($order->district) {
+                                        $addressParts[] = $order->district;
+                                    }
+                                    if ($order->province) {
+                                        $addressParts[] = $order->province;
+                                    }
+                                @endphp
+                            {{ implode(', ', $addressParts) ?: 'Chưa có địa chỉ' }}
+                        </span>
                     </p>
                     <p class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
@@ -231,8 +249,8 @@
                         @method('PUT')
                         <button
                             class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M6 18L18 6M6 6l12 12" />
                             </svg>

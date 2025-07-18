@@ -15,6 +15,9 @@ return new class extends Migration
             $table->string('user_email');
             $table->string('user_phone', 50);
             $table->string('user_address');
+            $table->string('province')->nullable();
+            $table->string('district')->nullable();
+            $table->string('ward')->nullable();
             $table->foreignId('voucher_id')->nullable()->constrained();
             $table->decimal('discount_amount', 10, 2);
             $table->integer('total_amount');
