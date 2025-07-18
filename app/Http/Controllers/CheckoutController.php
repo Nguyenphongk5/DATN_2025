@@ -36,8 +36,10 @@ class CheckoutController extends Controller
             /* Lưu lại ids để placeOrder() dùng */
             session(['selected_items' => $ids]);
         }
+       $vouchers = \App\Models\Voucher::all();
+
         $logo = Logo::where('is_active', 1)->first();
-        return view('user.order', compact('cart', 'logo'));
+        return view('user.order', compact('cart', 'logo','vouchers'));
     }
 
     /* ================================================

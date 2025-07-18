@@ -180,9 +180,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Mã giảm giá</label>
                             <div class="flex gap-2">
-                                <input type="text" name="voucher_code" id="voucher_code"
-                                    class="flex-1 rounded-xl border-2 border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
-                                    placeholder="Nhập mã giảm giá" value="{{ old('voucher_code') }}">
+                               <select name="voucher_code" id="voucher_code" class="form-select">
+    <option value="">-- Chọn mã giảm giá --</option>
+    @foreach ($vouchers as $voucher)
+        <option value="{{ $voucher->code }}">{{ $voucher->code }}</option>
+    @endforeach
+</select>
+
                                 <button type="button" id="apply-voucher"
                                     class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors">
                                     Áp dụng
@@ -315,17 +319,17 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Initialize notifications
             initializeNotifications();
-            
+
             // Initialize voucher functionality
             initializeVoucher();
         });
-        
+
         // Voucher functionality
         function initializeVoucher() {
             const applyBtn = document.getElementById('apply-voucher');
             const voucherInput = document.getElementById('voucher_code');
             const voucherInfo = document.getElementById('voucher-info');
-            
+
             if (applyBtn && voucherInput) {
                 applyBtn.addEventListener('click', function() {
                     const code = voucherInput.value.trim();
@@ -333,11 +337,11 @@
                         showVoucherInfo('Vui lòng nhập mã giảm giá', 'error');
                         return;
                     }
-                    
+
                     // Validate voucher via AJAX
                     validateVoucher(code);
                 });
-                
+
                 // Allow Enter key to apply voucher
                 voucherInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
@@ -347,20 +351,20 @@
                 });
             }
         }
-        
+
         function validateVoucher(code) {
             const applyBtn = document.getElementById('apply-voucher');
             const originalText = applyBtn.textContent;
-            
+
             // Show loading state
             applyBtn.textContent = 'Đang kiểm tra...';
             applyBtn.disabled = true;
-            
+
             // Get current total amount
             const totalElement = document.getElementById('total-amount');
             const totalText = totalElement.textContent;
             const total = parseFloat(totalText.replace(/[^\d]/g, ''));
-            
+
             // Send AJAX request to validate voucher
             fetch('/validate-voucher', {
                 method: 'POST',
@@ -390,24 +394,24 @@
                 applyBtn.disabled = false;
             });
         }
-        
+
         function showVoucherInfo(message, type) {
             const voucherInfo = document.getElementById('voucher-info');
             voucherInfo.textContent = message;
             voucherInfo.className = `mt-2 text-sm ${type === 'success' ? 'text-green-600' : 'text-red-600'}`;
             voucherInfo.classList.remove('hidden');
-            
+
             // Auto hide after 5 seconds
             setTimeout(() => {
                 voucherInfo.classList.add('hidden');
             }, 5000);
         }
-        
+
         function updateTotalWithDiscount(discountAmount, originalTotal) {
             const totalElement = document.getElementById('total-amount');
             const newTotal = originalTotal - discountAmount;
             totalElement.textContent = new Intl.NumberFormat('vi-VN').format(newTotal) + ' VNĐ';
-            
+
             // Add discount info
             const discountInfo = document.createElement('div');
             discountInfo.id = 'discount-info';
@@ -416,7 +420,7 @@
                 <span>Giảm giá:</span>
                 <span>-${new Intl.NumberFormat('vi-VN').format(discountAmount)} VNĐ</span>
             `;
-            
+
             // Insert before total
             const totalLi = totalElement.closest('li');
             const existingDiscount = document.getElementById('discount-info');
