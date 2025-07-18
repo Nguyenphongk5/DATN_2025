@@ -74,8 +74,8 @@ class DashboardController extends Controller
         // Tồn kho (không cần lọc ngày)
         $stockData = DB::table('product_variants')
             ->join('products', 'product_variants.product_id', '=', 'products.id')
-            ->select('products.name as product_name', 'color_name', 'size', 'quantity')
-            ->orderByDesc('quantity')
+            ->select('products.name as product_name', 'color_name', 'size', 'product_variants.quantity')
+            ->orderByDesc('product_variants.quantity')
             ->limit(10)
             ->get();
 

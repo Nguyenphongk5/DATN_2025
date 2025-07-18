@@ -190,7 +190,7 @@ class CheckoutController extends Controller
                 return redirect()->route('home')->with('error', 'Không tìm thấy biến thể sản phẩm.');
             }
 
-            $totalAmount = $variant->price * $buyNow['quantity'];
+            $totalAmount = $variant->price_sale * $buyNow['quantity'];
             $discountAmount = 0;
             $voucher = null;
 
@@ -256,7 +256,7 @@ class CheckoutController extends Controller
                     'size_name' => $variant->size,
                     'color_name' => $variant->color_name,
                     'quantity' => $buyNow['quantity'],
-                    'price' => $variant->price,
+                    'price' => $variant->price_sale,
                 ]);
 
                 $variant = ProductVariant::find($variant->id); // đảm bảo dữ liệu mới nhất
@@ -319,7 +319,7 @@ class CheckoutController extends Controller
             }
 
             $totalAmount = $items->sum(function ($item) {
-                $price = $item->productVariant?->price ?? ($item->product?->price ?? 0);
+                $price = $item->productVariant?->price_sale ?? ($item->product?->price ?? 0);
                 return $price * $item->quantity;
             });
             $discountAmount = 0;
@@ -381,7 +381,7 @@ class CheckoutController extends Controller
                 foreach ($items as $item) {
                     $variant = $item->productVariant;
                     $product = $variant?->product ?? $item->product;
-                    $price = $variant?->price ?? ($product?->price ?? 0);
+                    $price = $variant?->price_sale ?? ($product?->price ?? 0);
 
                     OrderDetail::create([
                         'order_id' => $order->id,
@@ -390,7 +390,7 @@ class CheckoutController extends Controller
                         'size_name' => $variant?->size,
                         'color_name' => $variant?->color_name,
                         'quantity' => $item->quantity,
-                        'price' => $price,
+                        'price' => $price
                     ]);
                 }
                 foreach ($items as $item) {

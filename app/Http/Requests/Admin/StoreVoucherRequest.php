@@ -22,7 +22,7 @@ class StoreVoucherRequest extends FormRequest
             'quantity' => 'required|integer|min:1',
             'user_limit' => 'required|integer|min:1',
             'min_money' => 'required|numeric|min:0',
-            'max_money' => 'required|numeric|min:0',
+            'max_money' => 'nullable|numeric|min:0',
             'is_active' => 'required|boolean',
         ];
     }
@@ -50,4 +50,4 @@ class StoreVoucherRequest extends FormRequest
             'is_active.required' => 'Vui lòng chọn trạng thái.',
         ];
     }
-} 
+}

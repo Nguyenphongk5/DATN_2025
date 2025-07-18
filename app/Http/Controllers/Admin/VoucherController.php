@@ -49,4 +49,4 @@ class VoucherController extends Controller
         $voucher->delete();
         return redirect()->route('admin.vouchers.index')->with('success', 'Xóa voucher thành công!');
     }
-} 
+}

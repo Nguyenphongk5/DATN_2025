@@ -13,7 +13,7 @@
                 @endif
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-2xl font-bold text-indigo-700">Danh sách voucher</h2>
-                    <a href="{{ route('admin.vouchers.create') }}" 
+                    <a href="{{ route('admin.vouchers.create') }}"
                        class="bg-gradient-to-r from-green-400 to-cyan-400 hover:from-cyan-400 hover:to-green-400 text-white font-bold px-6 py-2 rounded-xl shadow-lg flex items-center gap-2 transition">
                         <i class="fas fa-plus-circle"></i> Tạo voucher mới
                     </a>
@@ -56,7 +56,7 @@
                                     <td class="px-6 py-4 font-bold text-orange-600">{{ $voucher->used_count }}</td>
                                     <td class="px-6 py-4 text-gray-600">{{ $voucher->user_limit }}</td>
                                     <td class="px-6 py-4 text-gray-600">{{ number_format($voucher->min_money) }}</td>
-                                    <td class="px-6 py-4 text-gray-600">{{ number_format($voucher->max_money) }}</td>
+                                    <td class="px-6 py-4 text-gray-600">{{ $voucher->max_money == null ? 'Không giới hạn' : number_format($voucher->max_money) }}</td>
                                     <td class="px-6 py-4">
                                         @if($voucher->is_active)
                                             <span class="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-white font-bold text-sm">Kích hoạt</span>
@@ -66,14 +66,14 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex gap-2 justify-center">
-                                            <a href="{{ route('admin.vouchers.edit', $voucher) }}" 
+                                            <a href="{{ route('admin.vouchers.edit', $voucher) }}"
                                                class="bg-gradient-to-r from-yellow-400 to-pink-400 hover:from-pink-400 hover:to-yellow-400 text-white font-bold py-2 px-4 rounded-xl shadow-lg flex items-center gap-1 transition">
                                                 <i class="fas fa-edit"></i> Sửa
                                             </a>
                                             <form action="{{ route('admin.vouchers.destroy', $voucher) }}" method="POST" style="display:inline-block;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
+                                                <button type="submit"
                                                         class="bg-gradient-to-r from-red-400 to-pink-400 hover:from-pink-400 hover:to-red-400 text-white font-bold py-2 px-4 rounded-xl shadow-lg flex items-center gap-1 transition"
                                                         onclick="return confirm('Bạn có chắc muốn xóa voucher này?')">
                                                     <i class="fas fa-trash"></i> Xóa
@@ -89,4 +89,4 @@
             </div>
         </div>
     </div>
-</x-app-layout> 
+</x-app-layout>

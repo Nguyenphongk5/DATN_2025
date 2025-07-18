@@ -205,22 +205,6 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Mã giảm giá</label>
-                            <div class="flex gap-2">
-                                <input type="text" name="voucher_code" id="voucher_code"
-                                    class="flex-1 rounded-xl border-2 border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
-                                    placeholder="Nhập mã giảm giá" value="{{ old('voucher_code') }}">
-                                <button type="button" id="apply-voucher"
-                                    class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors">
-                                    Áp dụng
-                                </button>
-                            </div>
-                            @if (session('voucher_error'))
-                                <div class="mt-2 text-red-600 text-sm">{{ session('voucher_error') }}</div>
-                            @endif
-                            <div id="voucher-info" class="mt-2 text-green-600 text-sm hidden"></div>
-                        </div>
-                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
                             <textarea name="note"
                                 class="block w-full rounded-xl border 2 -gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 py-3 px-4 text-base"
@@ -277,10 +261,11 @@
                                     </svg>
                                     Mã giảm giá có sẵn:
                                 </div>
-                                <div class="flex flex-wrap gap-2">
+                                <div class="flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50 py-2 px-1" style="scroll-snap-type: x mandatory;">
                                     @foreach ($vouchers as $voucher)
                                         <button type="button"
-                                            class="px-3 py-2 rounded-lg bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white font-bold shadow hover:scale-105 transition-all duration-200"
+                                            class="flex-shrink-0 px-3 py-2 rounded-lg bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white font-bold shadow hover:scale-105 transition-all duration-200"
+                                            style="scroll-snap-align: start;"
                                             onclick="document.querySelector('input[name=\'voucher_code\']').value='{{ $voucher->code }}'">
                                             {{ $voucher->code }}
                                             <span class="ml-1 text-xs font-normal">
@@ -309,7 +294,7 @@
                                     ->first();
                                 $quantity = $data['quantity'] ?? 1;
                                 $product = $var->product;
-                                $price = $var->price;
+                                $price = $var->price_sale;
                                 $subtotal = $price * $quantity;
                                 $total += $subtotal;
                             @endphp
@@ -327,7 +312,7 @@
                             @if (isset($variant))
                                 @php
                                     $product = $variant->product;
-                                    $price = $variant->price;
+                                    $price = $variant->price_sale;
                                     $subtotal = $price * $quantity;
                                     $total += $subtotal;
                                 @endphp
@@ -348,7 +333,7 @@
                                         @php
                                             $variant = $item->productVariant;
                                             $product = $variant?->product ?? $item->product;
-                                            $price = $variant?->price ?? ($product?->price ?? 0);
+                                            $price = $variant?->price_sale ?? ($product?->price_sale ?? 0);
                                             $subtotal = $price * $item->quantity;
                                             $total += $subtotal;
                                         @endphp

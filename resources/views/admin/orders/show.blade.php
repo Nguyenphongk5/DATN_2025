@@ -21,32 +21,65 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div>
-                        <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin khách hàng</div>
-                        <div class="mb-1"><span class="font-semibold">Họ tên:</span> {{ $order->user_name }}</div>
-                        <div class="mb-1"><span class="font-semibold">Email:</span> {{ $order->user_email }}</div>
-                        <div class="mb-1"><span class="font-semibold">SĐT:</span> {{ $order->user_phone }}</div>
-                        <div class="mb-1">
-                            <span class="font-semibold"> Địa chỉ:</span>
-                            @php
-                                $addressParts = [];
-                                if ($order->user_address) {
-                                    $addressParts[] = $order->user_address;
-                                }
-                                if ($order->ward) {
-                                    $addressParts[] = $order->ward;
-                                }
-                                if ($order->district) {
-                                    $addressParts[] = $order->district;
-                                }
-                                if ($order->province) {
-                                    $addressParts[] = $order->province;
-                                }
-                            @endphp
-                            {{ implode(', ', $addressParts) }}
+                        <div>
+                            <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin người đặt hàng</div>
+                            <div class="mb-1"><span class="font-semibold">Họ tên:</span>
+                                {{ auth()->user()->name }}</div>
+                            <div class="mb-1"><span class="font-semibold">Email:</span>
+                                {{ auth()->user()->email }}</div>
+                            <div class="mb-1">
+                                <span class="font-semibold"> Địa chỉ:</span>
+                                @php
+                                    $addressParts = [];
+                                    if ($order->user_address) {
+                                        $addressParts[] = $order->user_address;
+                                    }
+                                    if ($order->ward) {
+                                        $addressParts[] = $order->ward;
+                                    }
+                                    if ($order->district) {
+                                        $addressParts[] = $order->district;
+                                    }
+                                    if ($order->province) {
+                                        $addressParts[] = $order->province;
+                                    }
+                                @endphp
+                                {{ implode(', ', $addressParts) }}
+                            </div>
+                            @if ($order->note)
+                                <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}
+                                </div>
+                            @endif
                         </div>
-                        @if ($order->note)
-                            <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}</div>
-                        @endif
+                        <div>
+                            <div class="mb-2 text-lg font-bold text-indigo-700">Thông tin người nhận hàng</div>
+                            <div class="mb-1"><span class="font-semibold">Họ tên:</span> {{ $order->user_name }}</div>
+                            <div class="mb-1"><span class="font-semibold">Email:</span> {{ $order->user_email }}</div>
+                            <div class="mb-1"><span class="font-semibold">SĐT:</span> {{ $order->user_phone }}</div>
+                            <div class="mb-1">
+                                <span class="font-semibold"> Địa chỉ:</span>
+                                @php
+                                    $addressParts = [];
+                                    if ($order->user_address) {
+                                        $addressParts[] = $order->user_address;
+                                    }
+                                    if ($order->ward) {
+                                        $addressParts[] = $order->ward;
+                                    }
+                                    if ($order->district) {
+                                        $addressParts[] = $order->district;
+                                    }
+                                    if ($order->province) {
+                                        $addressParts[] = $order->province;
+                                    }
+                                @endphp
+                                {{ implode(', ', $addressParts) }}
+                            </div>
+                            @if ($order->note)
+                                <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <div>
