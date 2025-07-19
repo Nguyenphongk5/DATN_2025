@@ -241,6 +241,7 @@
             </form>
             @endif
             @if ($order->status === 'completed' || $order->status === 'confirmed')
+            @if (!$order->returnRequest || $order->returnRequest->status === 'pending')
             <a href="{{ route('returns.create', $order->id) }}"
                 class="w-full mt-3 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold shadow-lg hover:scale-105 hover:from-red-400 hover:to-orange-400 transition transform duration-200 flex items-center justify-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
@@ -249,7 +250,24 @@
                 </svg>
                 Hoàn hàng
             </a>
+            @else
+            <div class="mt-4 px-6 py-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-xl text-gray-800 shadow-md">
+                <h3 class="font-bold text-lg mb-1">Thông tin hoàn hàng</h3>
+                <p><strong>Trạng thái:</strong>
+                    @if ($order->returnRequest->status === 'approved')
+                    <span class="text-green-600 font-semibold">Đã chấp nhận</span>
+                    @elseif ($order->returnRequest->status === 'rejected')
+                    <span class="text-red-600 font-semibold">Không chấp nhận</span>
+                    @else
+                    <span class="text-yellow-600 font-semibold">Đang chờ xử lý</span>
+                    @endif
+                </p>
+                <p><strong>Phản hồi từ shop:</strong> {{ $order->returnRequest->response_note ?? 'Chưa có phản hồi' }}
+                </p>
+            </div>
             @endif
+            @endif
+
 
         </div>
     </div>

@@ -65,7 +65,7 @@
 
         <div>
             <label for="description" class="block font-semibold text-gray-700 mb-1">Mô tả chi tiết</label>
-            <textarea name="description" id="description" rows="4"
+            <textarea name="note" id="note" rows="4"
                 class="w-full border rounded-lg px-4 py-2 focus:ring-pink-500 focus:border-pink-500"></textarea>
         </div>
 

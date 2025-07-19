@@ -39,5 +39,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+    public function returnRequest()
+{
+    return $this->hasOne(OrderReturn::class);
+}
+
 }
 

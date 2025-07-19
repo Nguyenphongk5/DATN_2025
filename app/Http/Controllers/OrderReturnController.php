@@ -16,28 +16,30 @@ class OrderReturnController extends Controller
         return view('user.return', compact('order'));
     }
 
-    public function store(Request $request, $orderId)
-    {
-        $request->validate([
-            'reason' => 'required|string|max:255',
-            'note' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-        ]);
+    public function store(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|exists:orders,id',
+        'reason' => 'required|string',
+        'note' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('returns', 'public');
-        }
+    $imagePath = null;
 
-        OrderReturn::create([
-            'order_id' => $orderId,
-            'user_id' => auth()->id(),
-            'reason' => $request->reason,
-            'note' => $request->note,
-            'image' => $imagePath,
-            'status' => 'pending',
-        ]);
-
-        return redirect()->route('orders.show', $orderId)->with('success', 'Gửi yêu cầu hoàn hàng thành công!');
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('order_returns', 'public');
     }
+
+    OrderReturn::create([
+        'order_id' => $request->order_id,
+        'user_id' => auth()->id(),
+        'reason' => $request->reason,
+        'note' => $request->note,
+        'image' => $imagePath,
+    ]);
+
+    return redirect()->back()->with('success', 'Đã gửi yêu cầu hoàn hàng!');
+}
+
 }

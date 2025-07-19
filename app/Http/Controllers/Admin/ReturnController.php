@@ -18,7 +18,8 @@ class ReturnController extends Controller
 
     public function show($id)
     {
-        $return = OrderReturn::with('user', 'order')->findOrFail($id);
+        $return = OrderReturn::with('order.orderDetails.productVariant.product')->findOrFail($id);
+
         return view('admin.returns.show', compact('return'));
     }
 
@@ -39,19 +40,29 @@ class ReturnController extends Controller
 
         return redirect()->back()->with('error', 'Đã từ chối yêu cầu hoàn hàng.');
     }
-   public function update(Request $request, $id)
+public function update(Request $request, $id)
 {
     $return = OrderReturn::findOrFail($id);
     $action = $request->query('action');
 
-    if (!in_array($action, ['approve', 'reject'])) {
-        return redirect()->back()->with('error', 'Hành động không hợp lệ.');
+    if ($action) {
+        if (!in_array($action, ['approve', 'reject'])) {
+            return redirect()->back()->with('error', 'Hành động không hợp lệ.');
+        }
+
+        $return->status = $action === 'approve' ? 'approved' : 'rejected';
     }
 
-    $return->status = $action === 'approve' ? 'approved' : 'rejected';
+    // Phản hồi từ shop
+    if ($request->filled('shop_response')) {
+        $return->response_note = $request->input('shop_response');
+    }
+
     $return->save();
 
-    return redirect()->route('admin.returns.show', $id)->with('success', 'Cập nhật trạng thái thành công!');
+    return redirect()->route('admin.returns.show', $id)->with('success', 'Cập nhật thông tin thành công!');
 }
+
+
 
 }
