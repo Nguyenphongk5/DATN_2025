@@ -1,25 +1,25 @@
 @extends('layouts.user')
 
 @section('content')
-    <section class="py-8 mb-8 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 shadow-inner">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1
-                    class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-2 drop-shadow-lg">
-                    Chi tiết đơn hàng</h1>
-                <p class="text-lg text-gray-700">Mã đơn hàng: <strong
-                        class="text-indigo-600">{{ $order->order_code }}</strong></p>
-            </div>
-            <a href="{{ route('orders.history') }}"
-                class="inline-flex items-center px-5 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-semibold text-base shadow-md hover:from-pink-400 hover:to-indigo-400 transition group">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform"
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                Quay lại
-            </a>
+<section class="py-8 mb-8 bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 shadow-inner">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1
+                class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mb-2 drop-shadow-lg">
+                Chi tiết đơn hàng</h1>
+            <p class="text-lg text-gray-700">Mã đơn hàng: <strong
+                    class="text-indigo-600">{{ $order->order_code }}</strong></p>
         </div>
-    </section>
+        <a href="{{ route('orders.history') }}"
+            class="inline-flex items-center px-5 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-semibold text-base shadow-md hover:from-pink-400 hover:to-indigo-400 transition group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Quay lại
+        </a>
+    </div>
+</section>
 
     <section class="py-6">
         <div class="container mx-auto px-4 flex flex-col gap-8">
@@ -246,11 +246,11 @@ function getStatusLabel($status) {
                     </p>
                 </div>
 
-                {{-- QR Code chứa toàn bộ thông tin --}}
-                <div class="flex justify-center mb-8">
-                    <div class="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100">
-                        <div class="text-center mb-2 font-semibold text-indigo-600">Quét mã để xem nhanh thông tin đơn
-                            hàng</div>
+            {{-- QR Code chứa toàn bộ thông tin --}}
+            <div class="flex justify-center mb-8">
+                <div class="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100">
+                    <div class="text-center mb-2 font-semibold text-indigo-600">Quét mã để xem nhanh thông tin đơn
+                        hàng</div>
 
                         <div style=" margin-left: 20%;">@php
                             $qrText = "Mã đơn: {$order->order_code}\n";
@@ -279,41 +279,70 @@ function getStatusLabel($status) {
                                     ")\n";
                             }
                         @endphp
-                            {!! QrCode::encoding('UTF-8')->size(180)->generate($qrText) !!}
-                        </div>
-                        <div class="mt-2 text-sm text-</div>gray-500 text-center">Mã: <span
-                                class="font-mono">{{ $order->order_code }}</span></div>
+                        {!! QrCode::encoding('UTF-8')->size(180)->generate($qrText) !!}
                     </div>
+                    <div class="mt-2 text-sm text-</div>gray-500 text-center">Mã: <span
+                            class="font-mono">{{ $order->order_code }}</span></div>
                 </div>
-                <hr class="my-4 border-t-2 border-pink-100">
-                <div
-                    class="bg-gradient-to-r from-indigo-100 to-pink-100 rounded-2xl px-6 py-4 shadow-inner text-lg font-bold text-indigo-700 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pink-400" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 16v-4m8-4h-4m-8 0H4" />
-                    </svg>
-                    Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
-                        VNĐ</span>
-                </div>
-                @if (!in_array($order->status, ['cancelled']))
-                    <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
-                        @csrf
-                        @method('PUT')
-                        <button
-                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Hủy đơn hàng
-                        </button>
-                    </form>
-                @endif
             </div>
+            <hr class="my-4 border-t-2 border-pink-100">
+            <div
+                class="bg-gradient-to-r from-indigo-100 to-pink-100 rounded-2xl px-6 py-4 shadow-inner text-lg font-bold text-indigo-700 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-pink-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 0V4m0 16v-4m8-4h-4m-8 0H4" />
+                </svg>
+                Tổng tiền: <span class="ml-2 text-pink-600">{{ number_format($order->total_amount, 0, ',', '.') }}
+                    VNĐ</span>
+            </div>
+            @if (in_array($order->status, ['pending']))
+            <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
+                @csrf
+                @method('PUT')
+                <button
+                    class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 text-white font-bold shadow-lg hover:scale-105 hover:from-pink-400 hover:to-indigo-400 transition transform duration-200 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Hủy đơn hàng
+                </button>
+            </form>
+            @endif
+            @if ($order->status === 'completed' || $order->status === 'confirmed')
+            @if (!$order->returnRequest || $order->returnRequest->status === 'pending')
+            <a href="{{ route('returns.create', $order->id) }}"
+                class="w-full mt-3 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold shadow-lg hover:scale-105 hover:from-red-400 hover:to-orange-400 transition transform duration-200 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H3m6 6-6-6 6-6" />
+                </svg>
+                Hoàn hàng
+            </a>
+            @else
+            <div class="mt-4 px-6 py-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-xl text-gray-800 shadow-md">
+                <h3 class="font-bold text-lg mb-1">Thông tin hoàn hàng</h3>
+                <p><strong>Trạng thái:</strong>
+                    @if ($order->returnRequest->status === 'approved')
+                    <span class="text-green-600 font-semibold">Đã chấp nhận</span>
+                    @elseif ($order->returnRequest->status === 'rejected')
+                    <span class="text-red-600 font-semibold">Không chấp nhận</span>
+                    @else
+                    <span class="text-yellow-600 font-semibold">Đang chờ xử lý</span>
+                    @endif
+                </p>
+                <p><strong>Phản hồi từ shop:</strong> {{ $order->returnRequest->response_note ?? 'Chưa có phản hồi' }}
+                </p>
+            </div>
+            @endif
+            @endif
+
+
         </div>
-    </section>
+    </div>
+</section>
 @endsection
 <script>
     const orderId = {{ $order->id }};

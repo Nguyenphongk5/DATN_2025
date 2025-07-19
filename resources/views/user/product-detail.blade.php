@@ -543,7 +543,7 @@
                             <div class="add-review mt-10 bg-white rounded-2xl shadow-lg p-8">
                                 <h5 class="mb-4 text-xl font-bold text-gray-900">Gửi bình luận của bạn</h5>
                                 @if ($canComment)
-                                    <form id="review" action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
+                                    <form id="comment-form" action="{{ route('comments.store') }}#v-pills-reviews" method="POST"
                                         enctype="multipart/form-data" class="space-y-6" x-data="{ rating: 0, hover: 0 }" onsubmit="return handleCommentSubmit(event);">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">

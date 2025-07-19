@@ -23,6 +23,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Models\Logo;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\OrderReturnController;
 
 // <<<<<<< UI-Improved-Profile
 // Route này đã được thay thế bằng HomeController::index
@@ -74,6 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
 
     Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
+    Route::get('/returns/create/{order}', [OrderReturnController::class, 'create'])->name('returns.create');
+    Route::post('/returns/store/{order}', [OrderReturnController::class, 'store'])->name('returns.store');
 });
 
 
@@ -96,6 +99,11 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+      Route::get('/returns', [App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('returns.index');
+    Route::get('/returns/{id}', [App\Http\Controllers\Admin\ReturnController::class, 'show'])->name('returns.show');
+    Route::post('/returns/{id}/approve', [App\Http\Controllers\Admin\ReturnController::class, 'approve'])->name('returns.approve');
+    Route::post('/returns/{id}/reject', [App\Http\Controllers\Admin\ReturnController::class, 'reject'])->name('returns.reject');
+    Route::put('/returns/{id}', [App\Http\Controllers\Admin\ReturnController::class, 'update'])->name('returns.update');
     // Product Gallery routes
     Route::prefix('products/{product}/galleries')->name('products.galleries.')->group(function () {
         Route::get('/', [ProductGalleryController::class, 'index'])->name('index');
