@@ -38,10 +38,29 @@ class DashboardController extends Controller
         if ($to)
             $orderStatusQuery->whereDate('created_at', '<=', $to);
 
-        $orderStatusCounts = $orderStatusQuery
-            ->select('status', DB::raw('COUNT(*) as count'))
-            ->groupBy('status')
-            ->pluck('count', 'status')->toArray();
+       $rawOrderStatusCounts = $orderStatusQuery
+    ->select('status', DB::raw('COUNT(*) as count'))
+    ->groupBy('status')
+    ->pluck('count', 'status')->toArray();
+
+// Dịch key trạng thái sang tiếng Việt
+$translatedStatus = [
+    'completed' => 'Đã giao',
+    'cancelled' => 'Đã hủy',
+    'returned' => 'Hoàn trả',
+    'confirmed' => 'Đã xác nhận',
+    'pending' => 'Chờ xác nhận',
+];
+
+// Tạo biến orderStatusCounts mới đã được dịch
+$orderStatusCounts = [];
+foreach ($rawOrderStatusCounts as $key => $value) {
+    $orderStatusCounts[$translatedStatus[$key] ?? ucfirst($key)] = $value;
+}
+
+
+
+
 
         // Top sản phẩm
         $topProducts = DB::table('order_details')
@@ -120,7 +139,7 @@ class DashboardController extends Controller
         return view('admin.index', compact(
             'months',
             'revenues',
-            'orderStatusCounts',
+          'orderStatusCounts',
             'topProductNames',
             'topProductQuantities',
             'colors',

@@ -37,9 +37,25 @@ if (request()->query('error') === 'admin_cannot_chat') {
     <script src="{{ asset('js/jquery-1.11.0.min.js') }}"></script>
 
     @vite('resources/css/app.css')
+    <!-- BẮT BUỘC: đặt lên đầu ngay sau <head> hoặc trước script chính -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Winwheel.js/2.7.0/Winwheel.min.js"></script>
+
 </head>
 
 <body>
+    @auth
+        @if (!session('popup_shown'))
+            @include('components.spin-wheel')
+
+            <script>
+                // Sau khi hiển thị, gọi route để cập nhật session popup_shown = true
+                fetch("{{ route('popup.mark-shown') }}");
+            </script>
+        @endif
+    @endauth
+
+
 
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
         <defs>
@@ -110,7 +126,9 @@ if (request()->query('error') === 'admin_cannot_chat') {
         </div>
     </div>
 
+
     <!-- Cart Sidebar -->
+
     <div id="cartSidebar"
         class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
         <div class="flex flex-col h-full">
@@ -124,6 +142,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                     </svg>
                 </button>
             </div>
+
 
             <!-- Cart Items -->
             <div class="flex-1 overflow-y-auto p-4">
@@ -452,6 +471,17 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                 </span>
                             @endif
                         </button>
+                        <!-- Gift Icon -->
+<a href="{{ route('checkin.index') }}"
+    class="bg-gradient-to-r from-yellow-300 to-pink-400 hover:from-yellow-400 hover:to-pink-500 p-2 rounded-full transition-colors relative group"
+    title="Điểm danh nhận quà">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-white w-6 h-6" viewBox="0 0 24 24">
+        <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7h16Zm0-2H4V8a2 2 0 0 1 2-2h3.17a3 3 0 1 1 5.66 0H18a2 2 0 0 1 2 2v2Zm-6.5-5a1 1 0 1 0-2 0a1 1 0 0 0 2 0Z"/>
+    </svg>
+    <span class="hidden lg:block absolute -top-2 -right-2 text-xs font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full animate-ping group-hover:animate-none">
+        🎁
+    </span>
+</a>
 
                         <!-- Mobile Search Icon -->
                         <button id="mobileSearchToggle"
@@ -464,6 +494,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                 </div>
             </div>
         </div>
+
         <!-- Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-center py-4">
@@ -481,10 +512,11 @@ if (request()->query('error') === 'admin_cannot_chat') {
                     <!-- Desktop Menu -->
                     <div class="hidden lg:flex justify-center">
                         <ul class="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wide">
-                            <li>
-                                <a href="#women" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
-                                    nữ</a>
-                            </li>
+                           <li>
+                             <a href="{{ route('about') }}">Giới thiệu</a>
+                           </li>
+                           <li><a href="{{ route('blogs.index') }}" class="hover:text-indigo-600">Blog</a></li>
+
                             <li>
                                 <a href="#men" class="text-gray-700 hover:text-blue-600 transition-colors">Nam
                                     giới</a>
@@ -514,11 +546,11 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                     Mãi</a>
                             </li>
                             <li>
-                                <a href="{{ route('vouchers.index') }}" class="text-gray-700 hover:text-blue-600 transition-colors">Mã Giảm Giá</a>
+                                <a href="{{ route('vouchers.index') }}"
+                                    class="text-gray-700 hover:text-blue-600 transition-colors">Mã Giảm Giá</a>
                             </li>
-                            <li>
-                                <a href="#blog" class="text-gray-700 hover:text-blue-600 transition-colors">Blog</a>
-                            </li>
+
+
                         </ul>
                     </div>
 
@@ -526,9 +558,11 @@ if (request()->query('error') === 'admin_cannot_chat') {
                     <div id="mobileMenu" class="lg:hidden hidden">
                         <div class="bg-white border-t border-gray-200 py-4">
                             <ul class="space-y-2 text-center">
-                                <li><a href="#women" class="block py-2 text-gray-700 hover:text-blue-600">Trang Chủ</a>
+                                <li><a href="#women" class="block py-2 text-gray-700 hover:text-blue-600">Trang
+                                        Chủ</a>
                                 </li>
-                                <li><a href="/about" class="block py-2 text-gray-700 hover:text-blue-600">Giới thiệu</a></li>
+                                <li><a href="/about" class="block py-2 text-gray-700 hover:text-blue-600">Giới
+                                        thiệu</a></li>
                                 <li><a href="#kids" class="block py-2 text-gray-700 hover:text-blue-600">Trẻ em</a>
                                 </li>
                                 <li><a href="#accessories" class="block py-2 text-gray-700 hover:text-blue-600">Phụ
@@ -537,7 +571,8 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                         Hiệu</a></li>
                                 <li><a href="#sale" class="block py-2 text-gray-700 hover:text-blue-600">Khuyến
                                         Mãi</a></li>
-                                <li><a href="{{ route('vouchers.index') }}" class="block py-2 text-gray-700 hover:text-blue-600">Mã Giảm Giá</a></li>
+                                <li><a href="{{ route('vouchers.index') }}"
+                                        class="block py-2 text-gray-700 hover:text-blue-600">Mã Giảm Giá</a></li>
                                 <li><a href="#blog" class="block py-2 text-gray-700 hover:text-blue-600">Blog</a>
                                 </li>
                             </ul>
@@ -682,7 +717,6 @@ if (request()->query('error') === 'admin_cannot_chat') {
             </div>
         </div>
     </div>
-
 </body>
 
 <style>
@@ -993,28 +1027,29 @@ if (request()->query('error') === 'admin_cannot_chat') {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
             if (!message) return;
-       fetch('/chat/messages', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    },
-    body: JSON.stringify({
-        user_id: chatUserId,
-        message: message,
-        is_admin: false
-    })
-})
-.then(res => res.json())
-.then(data => {
-    input.value = '';
-    loadUserMessages(); // hiển thị message vừa gửi
+            fetch('/chat/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    },
+                    body: JSON.stringify({
+                        user_id: chatUserId,
+                        message: message,
+                        is_admin: false
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    input.value = '';
+                    loadUserMessages(); // hiển thị message vừa gửi
 
-    // Delay nhẹ rồi fetch lại để lấy phản hồi từ chatbot nếu có
-    setTimeout(() => {
-        loadUserMessages();
-    }, 800); // Tùy thời gian backend trả lời, 500-1000ms là ổn
-});
+                    // Delay nhẹ rồi fetch lại để lấy phản hồi từ chatbot nếu có
+                    setTimeout(() => {
+                        loadUserMessages();
+                    }, 800); // Tùy thời gian backend trả lời, 500-1000ms là ổn
+                });
 
         };
         document.getElementById('chat-input').addEventListener('keypress', function(e) {

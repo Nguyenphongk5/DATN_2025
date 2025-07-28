@@ -297,7 +297,7 @@ function getStatusLabel($status) {
                     VNĐ</span>
             </div>
             @if (in_array($order->status, ['pending']))
-            <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
+            <form id="cancel-form" action="{{ route('orders.cancel', $order->id) }}" method="POST" class="mt-6">
                 @csrf
                 @method('PUT')
                 <button
@@ -314,7 +314,7 @@ function getStatusLabel($status) {
             @if ($order->status === 'completed' || $order->status === 'confirmed')
             @if (!$order->returnRequest || $order->returnRequest->status === 'pending')
             <a href="{{ route('returns.create', $order->id) }}"
-                class="w-full mt-3 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold shadow-lg hover:scale-105 hover:from-red-400 hover:to-orange-400 transition transform duration-200 flex items-center justify-center gap-2">
+              id="return-btn"    class="w-full mt-3 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold shadow-lg hover:scale-105 hover:from-red-400 hover:to-orange-400 transition transform duration-200 flex items-center justify-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 -mt-1" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H3m6 6-6-6 6-6" />
@@ -384,4 +384,39 @@ function getStatusLabel($status) {
     // Gọi lần đầu và mỗi giây
     fetchOrderAndPaymentStatus();
     setInterval(fetchOrderAndPaymentStatus, 1000);
+    function fetchOrderAndPaymentStatus() {
+    fetch(`/api/order-full-status/${orderId}?t=${Date.now()}`) // tránh cache
+        .then(res => res.json())
+        .then(data => {
+            // --- Cập nhật trạng thái đơn hàng ---
+            const statusText = statusMap[data.status] || data.status;
+            const statusEl = document.getElementById('order-status');
+            if (statusEl && data.status !== prevStatus) {
+                prevStatus = data.status;
+                statusEl.innerText = statusText;
+            }
+
+            // --- Cập nhật trạng thái thanh toán ---
+            const paymentStatusEl = document.getElementById('payment-status');
+            const paymentStatus = data.payment_status?.toLowerCase().trim();
+            if (data.status === 'completed' || paymentStatus === 'paid') {
+                paymentStatusEl.textContent = 'Đã thanh toán';
+            } else {
+                paymentStatusEl.textContent = 'Chưa thanh toán';
+            }
+
+            // --- Ẩn form hủy nếu trạng thái không còn là pending ---
+            const cancelForm = document.getElementById('cancel-form');
+            if (cancelForm) {
+                if (data.status !== 'pending') {
+                    cancelForm.style.display = 'none';
+                } else {
+                    cancelForm.style.display = 'block';
+                }
+            }
+        })
+        .catch(err => console.error('Lỗi lấy trạng thái đơn hàng & thanh toán:', err));
+}
+
+
 </script>

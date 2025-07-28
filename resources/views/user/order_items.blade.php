@@ -6,16 +6,32 @@
                 <span class="text-gray-400 font-medium">Mã đơn:</span> <span
                     class="text-indigo-600">{{ $order->order_code }}</span>
             </div>
-            <span class="inline-block mt-3 md:mt-0 px-5 py-1.5 rounded-full text-sm font-bold shadow-sm
-                    @if($order->status === 'pending') bg-yellow-100 text-yellow-800
-                    @elseif($order->status === 'processing') bg-blue-100 text-blue-700
-                    @elseif($order->status === 'completed' || $order->status === 'delivered') bg-green-100 text-green-700
-                    @elseif($order->status === 'cancelled') bg-pink-100 text-pink-700
-                        @else bg-gray-200 text-gray-600
-                    @endif
-                ">
-                {{ ucfirst($order->status) }}
-            </span>
+  <span
+    id="order-status-{{ $order->id }}"
+    data-status="{{ $order->status }}"
+    class="inline-block mt-3 md:mt-0 px-5 py-1.5 rounded-full text-sm font-bold shadow-sm
+        @if($order->status === 'pending') bg-yellow-100 text-yellow-800
+        @elseif($order->status === 'processing') bg-blue-100 text-blue-700
+        @elseif($order->status === 'completed' || $order->status === 'delivered') bg-green-100 text-green-700
+        @elseif($order->status === 'cancelled') bg-pink-100 text-pink-700
+        @else bg-gray-200 text-gray-600
+        @endif
+    ">
+    @php
+        $statusVi = match ($order->status) {
+            'pending' => 'Chờ xác nhận',
+            'confirmed' => 'Đã xác nhận',
+            'shipping'=> 'Đang giao hàng',
+            'completed' => 'Đã giao',
+            'delivered' => 'Đã giao hàng',
+            'cancelled' => 'Đã hủy',
+            default => 'Không rõ',
+        };
+    @endphp
+    {{ $statusVi }}
+</span>
+
+
         </div>
 
         <div class="px-8 py-6 bg-gradient-to-br from-white to-pink-50">
@@ -86,11 +102,12 @@
                         </svg>
                         Xem chi tiết
                     </a>
-          <a href="{{ route('product.show', $item->productVariant->product->id) }}#review"
-    class="inline-flex items-center px-4 py-1.5 rounded-lg text-white font-semibold text-sm bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 transition shadow-md">
-    <!-- icon + text -->
-    Đánh giá
-</a>
+       @if (request('status') === 'completed')
+    <a href="{{ route('product.show', $item->productVariant->product->id) }}#review"
+        class="inline-flex items-center px-4 py-1.5 rounded-lg text-white font-semibold text-sm bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 transition shadow-md">
+        Đánh giá
+    </a>
+@endif
 
 
 
@@ -116,3 +133,72 @@
         <div class="text-gray-500 text-lg font-semibold">Không có đơn hàng nào.</div>
     </div>
 @endforelse
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function getStatusClass(status) {
+        switch (status) {
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800';      // Chờ xác nhận
+            case 'confirmed':
+                return 'bg-blue-100 text-blue-700';           // Đã xác nhận
+            case 'shipping':
+                return 'bg-indigo-100 text-indigo-700';       // Đang giao hàng
+            case 'completed':
+            case 'delivered':
+                return 'bg-green-100 text-green-700';         // Đã giao hàng
+            case 'cancelled':
+                return 'bg-pink-100 text-pink-700';           // Đã hủy
+            default:
+                return 'bg-gray-200 text-gray-600';           // Không rõ
+        }
+    }
+
+    function getStatusTextVi(status) {
+        switch (status) {
+            case 'pending':
+                return 'Chờ xác nhận';
+            case 'confirmed':
+                return 'Đã xác nhận';
+            case 'shipping':
+                return 'Đang giao hàng';
+            case 'completed':
+                return 'Đã giao';
+            case 'delivered':
+                return 'Đã giao hàng';
+            case 'cancelled':
+                return 'Đã hủy';
+            default:
+                return 'Không rõ';
+        }
+    }
+
+    function fetchAndUpdateStatuses() {
+        const statusEls = document.querySelectorAll('[id^="order-status-"]');
+
+        statusEls.forEach(el => {
+            const orderId = el.id.replace('order-status-', '');
+
+            fetch(`/api/order-status/${orderId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const currentStatus = el.dataset.status;
+                    const newStatus = data.status;
+
+                    if (currentStatus !== newStatus) {
+                        el.dataset.status = newStatus;
+
+                        // ✅ Hiển thị tiếng Việt đúng
+                        el.textContent = getStatusTextVi(newStatus);
+
+                        // ✅ Cập nhật class màu đúng
+                        el.className = 'inline-block mt-3 md:mt-0 px-5 py-1.5 rounded-full text-sm font-bold shadow-sm ' + getStatusClass(newStatus);
+                    }
+                })
+                .catch(err => console.error('Lỗi cập nhật trạng thái đơn:', err));
+        });
+    }
+
+    // ⏱️ Cập nhật mỗi 5 giây
+    setInterval(fetchAndUpdateStatuses, 1000);
+});
+</script>

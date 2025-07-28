@@ -169,6 +169,20 @@ Route::get('/order/{id}/payment-status', [OrderController::class, 'getPaymentSta
 
 Route::get('/api/order-full-status/{id}', [OrderController::class, 'getFullStatus']);
 
-require __DIR__ . '/auth.php';
-
 Route::post('/ajax/apply-voucher', [App\Http\Controllers\CheckoutController::class, 'ajaxApplyVoucher'])->name('ajax.applyVoucher');
+// routes/web.php
+    Route::get('/diem-danh', [\App\Http\Controllers\CheckinController::class, 'index'])->name('checkin.index');
+Route::get('/popup/mark-shown', function () {
+    session()->put('popup_shown', true);
+    return response()->json(['status' => 'ok']);
+})->middleware('auth')->name('popup.mark-shown');
+
+
+use App\Http\Controllers\BlogUserController;
+
+Route::get('/blogs', [BlogUserController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/{slug}', [BlogUserController::class, 'show'])->name('blogs.show');
+
+
+
+require __DIR__ . '/auth.php';

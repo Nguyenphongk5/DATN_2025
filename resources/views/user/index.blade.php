@@ -1,5 +1,6 @@
 @extends('layouts.user')
 @section('content')
+
     <!-- Hero Slider Section -->
     <section class="relative h-screen overflow-hidden">
         <div class="swiper hero-swiper h-full">

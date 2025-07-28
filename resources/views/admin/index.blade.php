@@ -127,13 +127,15 @@
                 },
                 options: {
                     scales: {
-                        y: {
-                            min: 1,
-                            ticks: {
-                                stepSize: 1,
-                                callback: value => value.toLocaleString('vi-VN') + ' ₫'
-                            }
-                        }
+             y: {
+    beginAtZero: false,
+    suggestedMin: 1000000,
+    ticks: {
+        callback: value => value.toLocaleString('vi-VN') + ' ₫'
+    }
+}
+
+
                     }
                 }
             });

@@ -51,6 +51,7 @@ class AuthenticatedSessionController extends Controller
         // RateLimiter::clear($request->throttleKey());
         $request->session()->regenerate();
         session(['login_at' => now()]);
+        session()->put('popup_shown', false);
 
         // Xử lý thêm sản phẩm vào giỏ hàng sau khi đăng nhập
         if (session('pending_cart_item')) {
