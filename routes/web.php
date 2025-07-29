@@ -24,7 +24,7 @@ use App\Models\Logo;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\OrderReturnController;
-
+use App\Http\Controllers\ProductController as UserProductController;
 // <<<<<<< UI-Improved-Profile
 // Route này đã được thay thế bằng HomeController::index
 // Route::get('', function () {
@@ -41,6 +41,7 @@ Route::get('home/search', [HomeController::class, 'search'])->name('home.search'
 Route::get('home/products', [HomeController::class, 'allProducts'])->name('home.products');
 
 Route::resource('home', HomeController::class);
+Route::get('/phu-kien', [UserProductController::class, 'accessories'])->name('products.accessories');
 Route::middleware('auth')->get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 Route::post('/comments', [HomeController::class, 'storeComment'])->name('comments.store');
@@ -99,7 +100,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
-      Route::get('/returns', [App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('returns.index');
+    Route::get('/returns', [App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('returns.index');
     Route::get('/returns/{id}', [App\Http\Controllers\Admin\ReturnController::class, 'show'])->name('returns.show');
     Route::post('/returns/{id}/approve', [App\Http\Controllers\Admin\ReturnController::class, 'approve'])->name('returns.approve');
     Route::post('/returns/{id}/reject', [App\Http\Controllers\Admin\ReturnController::class, 'reject'])->name('returns.reject');
@@ -171,7 +172,7 @@ Route::get('/api/order-full-status/{id}', [OrderController::class, 'getFullStatu
 
 Route::post('/ajax/apply-voucher', [App\Http\Controllers\CheckoutController::class, 'ajaxApplyVoucher'])->name('ajax.applyVoucher');
 // routes/web.php
-    Route::get('/diem-danh', [\App\Http\Controllers\CheckinController::class, 'index'])->name('checkin.index');
+Route::get('/diem-danh', [\App\Http\Controllers\CheckinController::class, 'index'])->name('checkin.index');
 Route::get('/popup/mark-shown', function () {
     session()->put('popup_shown', true);
     return response()->json(['status' => 'ok']);

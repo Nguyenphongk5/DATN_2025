@@ -12,31 +12,44 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = Category::pluck('id')->toArray();
+        $categories = Category::pluck('id', 'slug')->toArray();
         $brands = Brand::pluck('id')->toArray();
 
-        // Nếu chưa có category hoặc brand thì bỏ qua
-        if (empty($categories) || empty($brands)) {
-            $this->command->warn("Cần seed bảng categories và brands trước.");
+        // Kiểm tra có 'phu-kien' và brands
+        if (empty($categories['phu-kien']) || empty($brands)) {
+            $this->command->warn("Cần seed bảng categories (có 'phu-kien') và brands trước.");
             return;
         }
 
-        // Tạo 10 sản phẩm mẫu
+        $phuKienCategoryId = $categories['phu-kien'];
+
         for ($i = 1; $i <= 10; $i++) {
-            $name = "Sản phẩm mẫu $i";
+            $isAccessory = $i <= 3;
+
+            $name = $isAccessory
+                ? "Phụ kiện mẫu $i"
+                : "Sản phẩm mẫu $i";
+
+            $description = $isAccessory
+                ? "Đây là mô tả chi tiết cho phụ kiện mẫu $i, phù hợp với nhu cầu sử dụng hàng ngày."
+                : "Mô tả chi tiết cho sản phẩm mẫu $i";
+
+            $categoryId = $isAccessory
+                ? $phuKienCategoryId
+                : $categories[array_rand($categories)];
+
             Product::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'img_thumb' => 'product_images/sample.jpg',
-                'description' => 'Mô tả chi tiết cho ' . $name,
+                'description' => $description,
                 'price' => rand(100000, 5000000),
                 'price_sale' => rand(50000, 4000000),
-                'category_id' => $categories[array_rand($categories)],
+                'category_id' => is_numeric($categoryId) ? $categoryId : $categories[$categoryId],
                 'brand_id' => $brands[array_rand($brands)],
                 'view' => rand(0, 100),
-                'is_active' => rand(0, 1),
+                'is_active' => 1,
             ]);
         }
     }
 }
-

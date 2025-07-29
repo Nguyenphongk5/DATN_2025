@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('parent_id')->nullable()->constrained('categories');
+            $table->string('slug')->unique(); // ✅ Thêm dòng này
+            $table->foreignId(column: 'parent_id')->nullable()->constrained('categories');
             $table->tinyInteger('is_active')->default(1);
             $table->softDeletes();
             $table->timestamps();
