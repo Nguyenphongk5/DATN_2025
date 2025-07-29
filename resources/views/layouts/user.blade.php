@@ -526,7 +526,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                     em</a>
                             </li>
                             <li>
-                                <a href="#accessories" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
+                                <a href="{{ route('products.accessories') }}" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
                                     kiện</a>
                             </li>
                             <li>
