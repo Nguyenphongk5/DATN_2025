@@ -550,6 +550,10 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                     class="text-gray-700 hover:text-blue-600 transition-colors">Mã Giảm Giá</a>
                             </li>
 
+                               <li>
+                             <a href="{{ route('contact') }}">Liên hệ</a>
+                           </li>
+
 
                         </ul>
                     </div>

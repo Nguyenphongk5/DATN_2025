@@ -155,6 +155,9 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/about', function () {
     return view('layouts.about'); // đúng với đường dẫn layout/about.blade.php
 })->name('about');
+Route::get('/contact', function () {
+    return view('layouts.contact'); // đúng với đường dẫn layout/about.blade.php
+})->name('contact');
 Route::get('/products/{id}', [HomeController::class, 'show'])->name('product.show');
 
 // Voucher routes
