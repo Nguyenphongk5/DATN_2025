@@ -25,7 +25,8 @@
                     <select name="is_active" id="statusFilter"
                         class="border border-indigo-200 rounded-lg px-3 py-2 bg-white/80 focus:ring-2 focus:ring-sky-400">
                         <option value="1&&0">Tất cả trạng thái</option>
-                        <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Đang hoạt động</option>
+                        <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Đang hoạt động
+                        </option>
                         <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Đã ẩn</option>
                     </select>
                     <button type="submit"
@@ -56,7 +57,7 @@
                                     <td class="px-6 py-4 font-bold text-indigo-500">{{ $key + 1 }}</td>
                                     <td class="px-6 py-4">
                                         @if ($brand->logo)
-                                            <img src="{{ asset(  'storage/'.$brand->logo) }}" alt="{{ $brand->name }}"
+                                            <img src="{{ asset('storage/' . $brand->logo) }}" alt="{{ $brand->name }}"
                                                 class="w-16 h-16 object-cover rounded-full mx-auto ring-4 ring-sky-300 shadow-lg">
                                         @else
                                             <div
@@ -67,17 +68,22 @@
                                     </td>
                                     <td class="px-6 py-4 font-semibold text-gray-900">{{ $brand->name }}</td>
                                     <td class="px-6 py-4 text-gray-600">{{ $brand->description ?? '-' }}</td>
-                                    <td class="px-6 py-4">
-                                        @if ($brand->is_active == 1)
-                                            <span
-                                                class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-green-300 via-emerald-400 to-cyan-300 text-green-900 shadow ring-2 ring-green-200/60 animate-pulse">Đang
-                                                hoạt động</span>
-                                        @else
-                                            <span
-                                                class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-red-300 via-pink-400 to-fuchsia-300 text-red-900 shadow ring-2 ring-pink-200/60">Đã
-                                                ẩn</span>
-                                        @endif
-                                    </td>
+                                  <td class="px-6 py-4">
+    <div class="flex items-center h-full">
+        @if ($brand->is_active == 1)
+            <span
+                class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-green-300 via-emerald-400 to-cyan-300 text-green-900 shadow ring-2 ring-green-200/60">
+                Đang hoạt động
+            </span>
+        @else
+            <span
+                class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-red-300 via-pink-400 to-fuchsia-300 text-red-900 shadow ring-2 ring-pink-200/60">
+                Đã ẩn
+            </span>
+        @endif
+    </div>
+</td>
+
                                     <td class="px-6 py-4">
                                         <div class="flex gap-2 justify-center">
                                             <a href="{{ route('admin.brands.show', $brand->id) }}"

@@ -472,16 +472,22 @@ if (request()->query('error') === 'admin_cannot_chat') {
                             @endif
                         </button>
                         <!-- Gift Icon -->
-<a href="{{ route('checkin.index') }}"
-    class="bg-gradient-to-r from-yellow-300 to-pink-400 hover:from-yellow-400 hover:to-pink-500 p-2 rounded-full transition-colors relative group"
-    title="Điểm danh nhận quà">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-white w-6 h-6" viewBox="0 0 24 24">
-        <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7h16Zm0-2H4V8a2 2 0 0 1 2-2h3.17a3 3 0 1 1 5.66 0H18a2 2 0 0 1 2 2v2Zm-6.5-5a1 1 0 1 0-2 0a1 1 0 0 0 2 0Z"/>
-    </svg>
-    <span class="hidden lg:block absolute -top-2 -right-2 text-xs font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full animate-ping group-hover:animate-none">
-        🎁
-    </span>
-</a>
+                        @auth
+                            <a href="{{ route('checkin.index') }}"
+                                class="bg-gradient-to-r from-yellow-300 to-pink-400 hover:from-yellow-400 hover:to-pink-500 p-2 rounded-full transition-colors relative group"
+                                title="Điểm danh nhận quà">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="text-white w-6 h-6"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7h16Zm0-2H4V8a2 2 0 0 1 2-2h3.17a3 3 0 1 1 5.66 0H18a2 2 0 0 1 2 2v2Zm-6.5-5a1 1 0 1 0-2 0a1 1 0 0 0 2 0Z" />
+                                </svg>
+                                <span
+                                    class="hidden lg:block absolute -top-2 -right-2 text-xs font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full animate-ping group-hover:animate-none">
+                                    🎁
+                                </span>
+                            </a>
+                        @endauth
+
 
                         <!-- Mobile Search Icon -->
                         <button id="mobileSearchToggle"
@@ -512,19 +518,22 @@ if (request()->query('error') === 'admin_cannot_chat') {
                     <!-- Desktop Menu -->
                     <div class="hidden lg:flex justify-center">
                         <ul class="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wide">
-                           <li>
-                             <a href="{{ route('about') }}">Giới thiệu</a>
-                           </li>
-                           <li><a href="{{ route('blogs.index') }}" class="hover:text-indigo-600">Blog</a></li>
+                            <li>
+                                <a href="home" class="text-gray-700 hover:text-blue-600 transition-colors">Trang
+                                    Chủ</a>
+
+                            </li>
+                            <li>
+                                <a href="{{ route('about') }}">Giới thiệu</a>
+                            </li>
+                            <li><a href="{{ route('blogs.index') }}" class="hover:text-indigo-600">Blog</a></li>
+
 
                             <li>
-                                <a href="#men" class="text-gray-700 hover:text-blue-600 transition-colors">Nam
-                                    giới</a>
+                                <a href="{{ route('home.products') }}"
+                                    class="text-gray-700 hover:text-blue-600 transition-colors">Danh mục</a>
                             </li>
-                            <li>
-                                <a href="#kids" class="text-gray-700 hover:text-blue-600 transition-colors">Trẻ
-                                    em</a>
-                            </li>
+
                             <li>
                                 <a href="#accessories" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
                                     kiện</a>

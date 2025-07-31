@@ -35,12 +35,20 @@
         </div>
 
         <!-- Nút điểm danh -->
-        <div class="text-center mb-8">
-            <button onclick="checkInToday()" id="checkin-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-full text-lg">
-                ✅ Điểm danh hôm nay
-            </button>
-            <p id="reward-info" class="mt-6 text-lg font-semibold text-pink-600"></p>
-        </div>
+      <!-- Nút điểm danh -->
+<div class="text-center mb-8">
+    @auth
+        <button onclick="checkInToday()" id="checkin-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-full text-lg">
+            ✅ Điểm danh hôm nay
+        </button>
+    @else
+        <button disabled class="bg-gray-400 text-white font-bold px-8 py-4 rounded-full text-lg cursor-not-allowed">
+            🔒 Vui lòng đăng nhập để điểm danh
+        </button>
+    @endauth
+    <p id="reward-info" class="mt-6 text-lg font-semibold text-pink-600"></p>
+</div>
+
 
         <!-- Thống kê -->
         <div class="bg-purple-100 rounded-xl p-6 mb-8">
@@ -171,6 +179,7 @@
 </style>
 
 <script>
+       const isLoggedIn = @json(auth()->check());
     // Biến toàn cục
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
@@ -278,29 +287,33 @@
     }
 
     // Điểm danh hôm nay
-    function checkInToday() {
-        const now = new Date();
-        const dateKey = `checkin-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-        if (localStorage.getItem(dateKey)) {
-            alert("✅ Bạn đã điểm danh hôm nay rồi!");
-            return;
-        }
-
-        localStorage.setItem(dateKey, "true");
-        alert("🎉 Điểm danh thành công!");
-
-        // Cập nhật giao diện
-        createCalendar();
-        showReward();
-        updateRewardProgress();
-
-        // Cập nhật button
-        const btn = document.getElementById("checkin-btn");
-        btn.textContent = "✅ Đã điểm danh hôm nay";
-        btn.className = "bg-gray-500 text-white font-bold px-8 py-4 rounded-full text-lg cursor-not-allowed";
-        btn.disabled = true;
+function checkInToday() {
+    if (!isLoggedIn) {
+        alert("⚠️ Bạn cần đăng nhập để điểm danh!");
+        return;
     }
+
+    const now = new Date();
+    const dateKey = `checkin-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    if (localStorage.getItem(dateKey)) {
+        alert("✅ Bạn đã điểm danh hôm nay rồi!");
+        return;
+    }
+
+    localStorage.setItem(dateKey, "true");
+    alert("🎉 Điểm danh thành công!");
+
+    createCalendar();
+    showReward();
+    updateRewardProgress();
+
+    const btn = document.getElementById("checkin-btn");
+    btn.textContent = "✅ Đã điểm danh hôm nay";
+    btn.className = "bg-gray-500 text-white font-bold px-8 py-4 rounded-full text-lg cursor-not-allowed";
+    btn.disabled = true;
+}
+
 
     // Đếm số ngày điểm danh trong tháng
     function countCheckInsThisMonth() {
