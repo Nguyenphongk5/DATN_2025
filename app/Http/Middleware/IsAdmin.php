@@ -34,6 +34,12 @@ class IsAdmin
             return $next($request);
         }
 
-        abort(403, 'Bạn không có quyền truy cập vào trang này.');
+        // Nếu chưa đăng nhập, chuyển đến trang login
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        // Nếu không phải admin, chuyển về trang chủ
+        return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang này.');
     }
 }

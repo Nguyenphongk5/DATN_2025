@@ -63,4 +63,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class);
     }
+
+    /**
+     * Quan hệ với AdminOtp
+     */
+    public function adminOtps()
+    {
+        return $this->hasMany(AdminOtp::class);
+    }
+
+    /**
+     * Kiểm tra user có phải admin không
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
 }

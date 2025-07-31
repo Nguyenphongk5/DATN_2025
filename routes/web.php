@@ -83,8 +83,17 @@ Route::middleware('auth')->group(function () {
 
 
 
-// Admin routes
-Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(function () {
+// Admin OTP routes
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/otp', [App\Http\Controllers\Admin\AdminOtpController::class, 'showOtpForm'])->name('otp.form');
+    Route::post('/otp/send', [App\Http\Controllers\Admin\AdminOtpController::class, 'sendOtp'])->name('otp.send');
+    Route::post('/otp/verify', [App\Http\Controllers\Admin\AdminOtpController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/otp/resend', [App\Http\Controllers\Admin\AdminOtpController::class, 'resendOtp'])->name('otp.resend');
+    Route::post('/logout', [App\Http\Controllers\Admin\AdminOtpController::class, 'logout'])->name('logout');
+});
+
+// Admin routes (cần OTP)
+Route::middleware(['auth', 'adminOtp'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])
         ->middleware(['auth', 'verified'])->name('dashboard');
     Route::resource('categories', CategoryController::class);

@@ -61,4 +61,6 @@ class Product extends Model
     {
         return $this->galleries()->pluck('image')->toArray();
     }
+
+
 }
