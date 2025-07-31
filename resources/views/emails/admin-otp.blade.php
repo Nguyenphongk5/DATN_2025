@@ -3,121 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mã xác thực OTP</title>
+    <title>Mã OTP đăng nhập</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
+        .card {
+            max-width: 400px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 28px 20px 24px 20px;
         }
-        .content {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 0 0 10px 10px;
+        .otp-label {
+            color: #222;
+            font-size: 16px;
+            margin: 0 0 10px 0;
         }
         .otp-code {
-            background: #fff;
-            border: 2px dashed #667eea;
-            padding: 20px;
-            text-align: center;
-            font-size: 32px;
+            font-size: 38px;
             font-weight: bold;
+            color: #1a237e;
             letter-spacing: 8px;
-            color: #667eea;
-            margin: 20px 0;
-            border-radius: 10px;
+            margin: 10px 0 18px 0;
         }
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin: 20px 0;
+        .warning {
+            color: #d32f2f;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 8px;
         }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-            color: #666;
-            font-size: 12px;
+        .note {
+            color: #333;
+            font-size: 15px;
         }
-        .btn {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 12px 30px;
-            text-decoration: none;
-            border-radius: 25px;
-            margin: 10px 0;
+        @media (max-width: 600px) {
+            .card { margin: 0; border-radius: 0; }
+            .otp-code { font-size: 28px; letter-spacing: 4px; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🔐 Mã xác thực OTP</h1>
-        <p>Trang quản trị hệ thống</p>
-    </div>
-
-    <div class="content">
-        <h2>Xin chào {{ $user->name }}!</h2>
-        
-        <p>Bạn đã yêu cầu truy cập vào trang quản trị. Vui lòng sử dụng mã OTP dưới đây để xác thực:</p>
-
-        <div class="otp-code">
-            {{ $otp }}
+    <div class="card">
+        <div class="otp-label">Mã OTP của bạn là</div>
+        <div class="otp-code">{{ $otp->otp }}</div>
+        <div class="warning">
+            Tuyệt đối KHÔNG chia sẻ mã xác thực (OTP) cho bất kỳ ai dưới bất kỳ hình thức nào.
         </div>
-
-        <div class="info-box">
-            <h4>📋 Thông tin bảo mật:</h4>
-            <ul>
-                <li><strong>Thời gian hết hạn:</strong> {{ $expiresAt->format('d/m/Y H:i:s') }}</li>
-                <li><strong>IP Address:</strong> {{ $ipAddress ?? 'Không xác định' }}</li>
-                <li><strong>Thiết bị:</strong> {{ $userAgent ?? 'Không xác định' }}</li>
-            </ul>
+        <div class="note">
+            Mã xác thực có hiệu lực đến: <b>{{ \Carbon\Carbon::parse($otp->expires_at)->format('H:i d/m/Y') }}</b>
         </div>
-
-        <div style="margin: 30px 0;">
-            <h4>⚠️ Lưu ý quan trọng:</h4>
-            <ul>
-                <li>Mã OTP chỉ có hiệu lực trong <strong>10 phút</strong></li>
-                <li>Mã OTP chỉ được sử dụng <strong>1 lần</strong></li>
-                <li>Không chia sẻ mã này với bất kỳ ai</li>
-                <li>Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email này</li>
-            </ul>
-        </div>
-
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="{{ route('admin.otp.form') }}" class="btn">
-                🔗 Truy cập trang xác thực
-            </a>
-        </div>
-
-        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px;">
-            <h4>🛡️ Bảo mật tài khoản:</h4>
-            <p>Để bảo vệ tài khoản của bạn, chúng tôi khuyến nghị:</p>
-            <ul>
-                <li>Không chia sẻ thông tin đăng nhập</li>
-                <li>Sử dụng mật khẩu mạnh</li>
-                <li>Đăng xuất khi không sử dụng</li>
-                <li>Báo cáo ngay nếu phát hiện hoạt động bất thường</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p>Email này được gửi tự động từ hệ thống quản trị.</p>
-        <p>Nếu bạn có thắc mắc, vui lòng liên hệ với quản trị viên.</p>
-        <p>© {{ date('Y') }} - Hệ thống quản trị</p>
     </div>
 </body>
 </html> 
