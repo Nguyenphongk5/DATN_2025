@@ -47,85 +47,75 @@
 
                 <div class="overflow-x-auto custom-scrollbar rounded-2xl">
                     <table class="w-full table-auto border-collapse shadow-xl rounded-2xl overflow-hidden">
-                        <thead class="bg-gradient-to-r from-indigo-100 via-sky-100 to-cyan-100 text-indigo-700">
-                            <tr>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">STT</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Hình ảnh</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Tên sản phẩm</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Danh mục</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Thương hiệu</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Giá gốc</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Giá khuyến mãi</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Lượt xem</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Trạng thái</th>
-                                <th class="px-6 py-3 text-center text-base font-bold uppercase">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-indigo-100 text-center text-base">
-                            @foreach ($products as $key => $product)
-                                <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-cyan-50 transition">
-                                    <td class="px-6 py-4 font-bold text-indigo-500">{{ $key + 1 }}</td>
-                                    <td class="px-6 py-4">
-                                        @if ($product->img_thumb)
-                                            <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}" class="w-16 h-16 object-cover rounded-full mx-auto ring-4 ring-sky-300 shadow-lg">
-                                        @else
-                                            <div class="w-16 h-16 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
-                                                <span class="text-gray-400 text-xs">No Image</span>
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="max-w-xs mx-auto">
-                                            <p class="font-semibold text-gray-900 flex items-center gap-2"><i class="fas fa-cube text-sky-400"></i> {{ $product->name }}</p>
-                                            <p class="text-sm text-gray-500">{{ $product->slug }}</p>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-bold shadow"><i class="fas fa-tags"></i> {{ $product->category_name ?? 'N/A' }}</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold shadow"><i class="fas fa-copyright"></i> {{ $product->brand_name ?? 'N/A' }}</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-semibold">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if ($product->price_sale)
-                                            <span class="text-red-600 font-semibold">{{ number_format($product->price_sale, 0, ',', '.') }} VNĐ</span>
-                                        @else
-                                            <span class="text-gray-400 italic">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="text-gray-600">{{ number_format($product->view) }}</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if ($product->brand_is_active == 1 && $product->cate_is_active == 1)
-                                            @if ($product->is_active == 1)
-                                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-green-300 via-emerald-400 to-cyan-300 text-green-900 shadow ring-2 ring-green-200/60 animate-pulse">Đang hoạt động</span>
-                                            @else
-                                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-red-300 via-pink-400 to-fuchsia-300 text-red-900 shadow ring-2 ring-pink-200/60">Đã ẩn</span>
-                                            @endif
-                                        @else
-                                            <span class="px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-red-300 via-pink-400 to-fuchsia-300 text-red-900 shadow ring-2 ring-pink-200/60">Đã ẩn</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex gap-2 justify-center">
-                                            <a href="{{ route('admin.products.show', $product->id) }}" class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
-                                                <i class="fas fa-eye"></i> Chi tiết
-                                            </a>
-                                            <a href="{{ route('admin.products.edit', $product->id) }}" class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
-                                                <i class="fas fa-edit"></i> Sửa
-                                            </a>
-                                            <a href="{{ route('admin.products.galleries.index', $product->id) }}" class="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-pink-500 hover:to-purple-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
-                                                <i class="fas fa-images"></i> Ảnh
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
+                       <thead class="bg-gradient-to-r from-indigo-100 via-sky-100 to-cyan-100 text-indigo-700">
+    <tr>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">STT</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Hình ảnh</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Tên sản phẩm</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Danh mục</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Thương hiệu</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Giá khuyến mãi</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Trạng thái</th>
+        <th class="px-6 py-3 text-center text-base font-bold uppercase">Thao tác</th>
+    </tr>
+</thead>
+<tbody class="divide-y divide-indigo-100 text-center text-base">
+    @foreach ($products as $key => $product)
+        <tr class="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-cyan-50 transition">
+            <td class="px-6 py-4 font-bold text-indigo-500">{{ $key + 1 }}</td>
+            <td class="px-6 py-4">
+                @if ($product->img_thumb)
+                    <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}" class="w-16 h-16 object-cover rounded-full mx-auto ring-4 ring-sky-300 shadow-lg">
+                @else
+                    <div class="w-16 h-16 bg-gray-200 rounded-full mx-auto flex items-center justify-center">
+                        <span class="text-gray-400 text-xs">No Image</span>
+                    </div>
+                @endif
+            </td>
+            <td class="px-6 py-4">
+                <div class="max-w-xs mx-auto">
+                    <p class="font-semibold text-gray-900 flex items-center gap-2"><i class="fas fa-cube text-sky-400"></i> {{ $product->name }}</p>
+                </div>
+            </td>
+            <td class="px-6 py-4">
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-bold shadow"><i class="fas fa-tags"></i> {{ $product->category_name ?? 'N/A' }}</span>
+            </td>
+            <td class="px-6 py-4">
+                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold shadow"><i class="fas fa-copyright"></i> {{ $product->brand_name ?? 'N/A' }}</span>
+            </td>
+            <td class="px-6 py-4">
+                @if ($product->price_sale)
+                    <span class="text-red-600 font-semibold">{{ number_format($product->price_sale, 0, ',', '.') }} VNĐ</span>
+                @else
+                    <span class="text-gray-400 italic">-</span>
+                @endif
+            </td>
+            <td class="px-6 py-4">
+                @if ($product->brand_is_active == 1 && $product->cate_is_active == 1 && $product->is_active == 1)
+                   <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-300">Đang hoạt động</span>
+
+                @else
+                 <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700 border border-red-300">Đã ẩn</span>
+
+                @endif
+            </td>
+            <td class="px-6 py-4">
+                <div class="flex gap-2 justify-center">
+                    <a href="{{ route('admin.products.show', $product->id) }}" class="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-indigo-500 hover:to-sky-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
+                        <i class="fas fa-eye"></i> Chi tiết
+                    </a>
+                    <a href="{{ route('admin.products.edit', $product->id) }}" class="bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
+                        <i class="fas fa-edit"></i> Sửa
+                    </a>
+                    <a href="{{ route('admin.products.galleries.index', $product->id) }}" class="bg-gradient-to-r from-purple-400 to-pink-500 hover:from-pink-500 hover:to-purple-400 text-white px-3 py-2 rounded-lg font-bold shadow-md flex items-center gap-1 transition text-sm">
+                        <i class="fas fa-images"></i> Ảnh
+                    </a>
+                </div>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
+
                     </table>
 
                     <!-- Phân trang -->

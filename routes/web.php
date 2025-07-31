@@ -1,44 +1,45 @@
-<?php
+    <?php
 
-use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\CommentController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\OrderHistoryController;
-use App\Http\Controllers\Admin\Product_VariantController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\ProductGalleryController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\UserController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\ChatController as AdminChatController;
-use App\Http\Controllers\Admin\LogoController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FavoriteController;
-use App\Models\Logo;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\GoogleController;
-use App\Http\Controllers\OrderReturnController;
+    use App\Http\Controllers\Admin\BlogController;
+    use App\Http\Controllers\Admin\BrandController;
+    use App\Http\Controllers\Admin\CommentController;
+    use App\Http\Controllers\HomeController;
+    use App\Http\Controllers\Admin\OrderController;
+    use App\Http\Controllers\CartController;
+    use App\Http\Controllers\CheckoutController;
+    use App\Http\Controllers\OrderHistoryController;
+    use App\Http\Controllers\Admin\Product_VariantController;
+    use App\Http\Controllers\Admin\ProductController;
+    use App\Http\Controllers\Admin\ProductGalleryController;
+    use App\Http\Controllers\ProfileController;
+    use App\Http\Controllers\Admin\UserController;
+    use Illuminate\Support\Facades\Route;
+    use Illuminate\Support\Facades\DB;
+    use App\Http\Controllers\Admin\CategoryController;
+    use App\Http\Controllers\Admin\ChatController as AdminChatController;
+    use App\Http\Controllers\Admin\LogoController;
+    use App\Http\Controllers\DashboardController;
+    use App\Http\Controllers\FavoriteController;
+    use App\Models\Logo;
+    use App\Http\Controllers\ChatController;
+    use App\Http\Controllers\GoogleController;
+    use App\Http\Controllers\OrderReturnController;
 use App\Http\Controllers\ProductController as UserProductController;
-// <<<<<<< UI-Improved-Profile
-// Route này đã được thay thế bằng HomeController::index
-// Route::get('', function () {
-//     return view('user.index', [
-//         'banners' => \App\Models\Banner::all(),
-//         'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
-//         'categories' => \App\Models\Category::all(),
-//         'logos' => Logo::all(),
-//     ]);
-// })->name('home');
+
+    // <<<<<<< UI-Improved-Profile
+    // Route này đã được thay thế bằng HomeController::index
+    // Route::get('', function () {
+    //     return view('user.index', [
+    //         'banners' => \App\Models\Banner::all(),
+    //         'latestProducts' => \App\Models\Product::orderBy('created_at', 'desc')->take(5)->get(),
+    //         'categories' => \App\Models\Category::all(),
+    //         'logos' => Logo::all(),
+    //     ]);
+    // })->name('home');
 
 
-Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
-Route::get('home/products', [HomeController::class, 'allProducts'])->name('home.products');
+    Route::get('home/search', [HomeController::class, 'search'])->name('home.search');
+    Route::get('home/products', [HomeController::class, 'allProducts'])->name('home.products');
 
 Route::resource('home', HomeController::class);
 Route::get('/phu-kien', [UserProductController::class, 'accessories'])->name('products.accessories');
@@ -54,31 +55,31 @@ Route::middleware('auth')->group(function () {
     Route::resource('orders', OrderController::class);
     Route::post('/cart/add', [CartController::class, 'handleAction'])->name('cart.add');
 
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-    // web.php
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+        Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+        Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+        Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+        // web.php
+        Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+        Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
 
-    Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
+        Route::post('/buy-now', [CartController::class, 'buyNow'])->name('cart.buyNow');
 
-    Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
-    Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
+        Route::get('/checkout/buy-now', [CheckoutController::class, 'buyNow'])->name('checkout.buyNow');
+        Route::post('/checkout/place-buy-now', [CheckoutController::class, 'placeBuyNowOrder'])->name('checkout.placeBuyNowOrder');
 
-    Route::put('/order-history/{id}/cancel', [OrderHistoryController::class, 'cancel'])->name('orders.cancel');
+        Route::put('/order-history/{id}/cancel', [OrderHistoryController::class, 'cancel'])->name('orders.cancel');
 
 
-    Route::get('/order/{id}', [OrderHistoryController::class, 'show'])->name('orders.show');
-    Route::get('/order-history', [OrderHistoryController::class, 'history'])->name('orders.history');
-    Route::get('/order-history/filter', [OrderHistoryController::class, 'filter']);
+        Route::get('/order/{id}', [OrderHistoryController::class, 'show'])->name('orders.show');
+        Route::get('/order-history', [OrderHistoryController::class, 'history'])->name('orders.history');
+        Route::get('/order-history/filter', [OrderHistoryController::class, 'filter']);
 
-    Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
+        Route::get('/reorder/{order}', [OrderHistoryController::class, 'reorder'])->name('orders.reorder');
 
-    Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
-    Route::get('/returns/create/{order}', [OrderReturnController::class, 'create'])->name('returns.create');
-    Route::post('/returns/store/{order}', [OrderReturnController::class, 'store'])->name('returns.store');
-});
+        Route::get('/checkout/reorder', [CheckoutController::class, 'reorderCheckout'])->name('checkout.reorder');
+        Route::get('/returns/create/{order}', [OrderReturnController::class, 'create'])->name('returns.create');
+        Route::post('/returns/store/{order}', [OrderReturnController::class, 'store'])->name('returns.store');
+    });
 
 
 
@@ -100,7 +101,7 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
     Route::post('comments/store', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{id}/toggle', [CommentController::class, 'toggle'])->name('comments.toggle');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
-    Route::get('/returns', [App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('returns.index');
+      Route::get('/returns', [App\Http\Controllers\Admin\ReturnController::class, 'index'])->name('returns.index');
     Route::get('/returns/{id}', [App\Http\Controllers\Admin\ReturnController::class, 'show'])->name('returns.show');
     Route::post('/returns/{id}/approve', [App\Http\Controllers\Admin\ReturnController::class, 'approve'])->name('returns.approve');
     Route::post('/returns/{id}/reject', [App\Http\Controllers\Admin\ReturnController::class, 'reject'])->name('returns.reject');
@@ -124,31 +125,31 @@ Route::middleware(['auth', 'isAdmin'])->prefix('admin')->name('admin.')->group(f
 // routes/web.php
 
 
-use App\Models\Blog;
+    use App\Models\Blog;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-use App\Http\Controllers\SubscribeController;
-
-
-Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
-// routes/web.php
-
-// Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-use App\Http\Controllers\VnPayController;
-
-// Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder1'])->name('checkout.placeOrder');
+    use App\Http\Controllers\SubscribeController;
 
 
-Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePayment'])->name('checkout.handlePayment');
-Route::post('/checkout/vnpay/create', [VnPayController::class, 'createPayment'])->name('vnpay.payment');
-Route::get('/checkout/vnpay/return', [VnPayController::class, 'vnpayReturn'])->name('vnpay.return');
-Route::get('/vnpay/return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
-Route::patch('/admin/orders/{order}/payment', [OrderController::class, 'updatePayment'])->name('orders.updatePayment');
+    Route::post('/subscribe', [SubscribeController::class, 'store'])->name('subscribe.store');
+    // routes/web.php
+
+    // Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    use App\Http\Controllers\VnPayController;
+
+    // Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder1'])->name('checkout.placeOrder');
 
 
-Route::get('/chat/messages', [ChatController::class, 'index'])->name('chat.messages');
-Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.messages.store');
+    Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePayment'])->name('checkout.handlePayment');
+    Route::post('/checkout/vnpay/create', [VnPayController::class, 'createPayment'])->name('vnpay.payment');
+    Route::get('/checkout/vnpay/return', [VnPayController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::get('/vnpay/return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
+    Route::patch('/admin/orders/{order}/payment', [OrderController::class, 'updatePayment'])->name('orders.updatePayment');
+
+
+    Route::get('/chat/messages', [ChatController::class, 'index'])->name('chat.messages');
+    Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.messages.store');
 
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
@@ -160,18 +161,18 @@ Route::get('/contact', function () {
 })->name('contact');
 Route::get('/products/{id}', [HomeController::class, 'show'])->name('product.show');
 
-// Voucher routes
-Route::get('/vouchers', [App\Http\Controllers\VoucherController::class, 'index'])->name('vouchers.index');
-Route::post('/validate-voucher', [App\Http\Controllers\VoucherController::class, 'validateVoucher'])->name('voucher.validate');
+    // Voucher routes
+    Route::get('/vouchers', [App\Http\Controllers\VoucherController::class, 'index'])->name('vouchers.index');
+    Route::post('/validate-voucher', [App\Http\Controllers\VoucherController::class, 'validateVoucher'])->name('voucher.validate');
 
-// routes/web.php hoặc routes/api.php
-Route::get('/api/order-status/{id}', function ($id) {
-    $order = \App\Models\Order::find($id);
-    return response()->json(['status' => $order->status]);
-});
-Route::get('/order/{id}/payment-status', [OrderController::class, 'getPaymentStatus']);
+    // routes/web.php hoặc routes/api.php
+    Route::get('/api/order-status/{id}', function ($id) {
+        $order = \App\Models\Order::find($id);
+        return response()->json(['status' => $order->status]);
+    });
+    Route::get('/order/{id}/payment-status', [OrderController::class, 'getPaymentStatus']);
 
-Route::get('/api/order-full-status/{id}', [OrderController::class, 'getFullStatus']);
+    Route::get('/api/order-full-status/{id}', [OrderController::class, 'getFullStatus']);
 
 Route::post('/ajax/apply-voucher', [App\Http\Controllers\CheckoutController::class, 'ajaxApplyVoucher'])->name('ajax.applyVoucher');
 // routes/web.php
@@ -182,11 +183,11 @@ Route::get('/popup/mark-shown', function () {
 })->middleware('auth')->name('popup.mark-shown');
 
 
-use App\Http\Controllers\BlogUserController;
+    use App\Http\Controllers\BlogUserController;
 
-Route::get('/blogs', [BlogUserController::class, 'index'])->name('blogs.index');
-Route::get('/blogs/{slug}', [BlogUserController::class, 'show'])->name('blogs.show');
+    Route::get('/blogs', [BlogUserController::class, 'index'])->name('blogs.index');
+    Route::get('/blogs/{slug}', [BlogUserController::class, 'show'])->name('blogs.show');
 
 
 
-require __DIR__ . '/auth.php';
+    require __DIR__ . '/auth.php';
