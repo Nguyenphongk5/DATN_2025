@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserVoucher;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,32 @@ class VoucherController extends Controller
 
         return view('user.vouchers.index', compact('vouchers'));
     }
+  public function getList()
+    {
+        $vouchers = Voucher::where('is_active', 1)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->whereRaw('used_count < quantity')
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'code', 'discount_type', 'discount_value']);
 
+        return response()->json($vouchers);
+    }
+
+    // Lưu kết quả khi quay
+    public function storeSpin(Request $request)
+    {
+        $voucherId = $request->voucher_id;
+
+        UserVoucher::create([
+            'user_id'    => auth()->id(),
+            'voucher_id' => $voucherId,
+            'status'     => 'unused'
+        ]);
+
+        return response()->json(['success' => true, 'voucher_id' => $voucherId]);
+    }
+//
     public function validateVoucher(Request $request): JsonResponse
     {
         $request->validate([
@@ -78,8 +104,8 @@ class VoucherController extends Controller
         // Đảm bảo giảm giá không vượt quá tổng tiền
         $discountAmount = min($discountAmount, $totalAmount);
 
-        $discountText = $voucher->discount_type === 'percent' 
-            ? $voucher->discount_value . '%' 
+        $discountText = $voucher->discount_type === 'percent'
+            ? $voucher->discount_value . '%'
             : number_format($voucher->discount_value, 0, ',', '.') . ' VNĐ';
 
         return response()->json([
@@ -94,4 +120,4 @@ class VoucherController extends Controller
             ]
         ]);
     }
-} 
+}

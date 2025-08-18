@@ -407,7 +407,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                     </div>
                 </div> --}}
                 <!-- User Actions -->
-                <div class="flex justify-center lg:justify-end items-center space-x-4">
+             <div class="flex justify-center lg:justify-end items-center space-x-4">
                     <div class="flex items-center space-x-2">
                         <!-- User Icon -->
                         <div class="relative">
@@ -471,6 +471,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                 </span>
                             @endif
                         </button>
+
                         <!-- Gift Icon -->
                         @auth
                             <a href="{{ route('checkin.index') }}"
@@ -488,6 +489,16 @@ if (request()->query('error') === 'admin_cannot_chat') {
                             </a>
                         @endauth
 
+                        <!-- Spin Wheel Icon -->
+                        <button id="spinWheelBtn"
+                            class="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 p-2 rounded-full transition-colors relative group"
+                            title="Vòng quay may mắn">
+                            <span class="text-white text-lg">🎡</span>
+                            <span
+                                class="hidden lg:block absolute -top-1 -right-1 text-xs font-bold bg-orange-500 text-white px-1 py-0.5 rounded-full animate-bounce group-hover:animate-none">
+                                ✨
+                            </span>
+                        </button>
 
                         <!-- Mobile Search Icon -->
                         <button id="mobileSearchToggle"
@@ -498,6 +509,499 @@ if (request()->query('error') === 'admin_cannot_chat') {
                         </button>
                     </div>
                 </div>
+
+<!-- 🔹 Modal vòng quay -->
+<div id="spinWheelModal"
+    class="hidden fixed inset-0 bg-gradient-to-br from-purple-900/80 via-pink-900/80 to-red-900/80 backdrop-blur-sm flex justify-center items-center z-50">
+    <div class="bg-white p-8 rounded-3xl shadow-2xl w-[420px] text-center relative transform transition-all duration-300 scale-95 hover:scale-100">
+        <!-- Close Button -->
+        <button id="closeSpinWheel"
+            class="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:rotate-90 transition-all duration-300 text-2xl font-bold z-10">
+            ✕
+        </button>
+
+        <!-- Header -->
+        <div class="mb-4">
+            <h2 class="text-3xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-2">
+                🎡 Vòng Quay May Mắn
+            </h2>
+            <p class="text-gray-600 text-sm">Nhấn "Quay ngay" để nhận phần thưởng bất ngờ!</p>
+        </div>
+
+        <!-- Wheel Container - Moved to center -->
+        <div class="relative mb-4 mx-auto w-fit flex justify-center items-center">
+            <!-- Static Outer Ring -->
+            <div class="relative rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 p-1">
+                <div class="rounded-full bg-white p-2">
+                    <canvas id="wheelCanvas" width="300" height="300" class="rounded-full shadow-lg"></canvas>
+                </div>
+            </div>
+
+            <!-- Pointer - Centered on wheel -->
+            <div class="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
+                <div class="w-0 h-0 border-l-[15px] border-r-[15px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 drop-shadow-lg filter"></div>
+                <div class="w-4 h-4 bg-red-500 rounded-full mx-auto -mt-1 border-2 border-white shadow-md"></div>
+            </div>
+        </div>
+
+        <!-- Spin Button -->
+        <div class="mb-4">
+            <button id="startSpin"
+                class="relative overflow-hidden bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:from-green-500 hover:via-green-600 hover:to-green-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-300 group">
+                <span class="relative z-10 flex items-center justify-center space-x-2">
+                    <span>🎲</span>
+                    <span>Quay Ngay</span>
+                    <span>✨</span>
+                </span>
+                <!-- Shine Effect -->
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            </button>
+        </div>
+
+        <!-- Result -->
+        <div id="spinResult" class="min-h-[60px] flex items-center justify-center">
+            <p class="text-gray-600 text-lg font-medium bg-gray-50 rounded-2xl px-4 py-3 border-2 border-dashed border-gray-300">
+                🎁 Kết quả sẽ hiển thị ở đây
+            </p>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="absolute -top-4 -left-4 text-yellow-400 text-2xl animate-bounce">⭐</div>
+        <div class="absolute -top-2 -right-8 text-pink-400 text-3xl animate-pulse">🎈</div>
+        <div class="absolute -bottom-4 -left-6 text-purple-400 text-2xl animate-bounce delay-300">🎊</div>
+        <div class="absolute -bottom-2 -right-4 text-blue-400 text-2xl animate-pulse delay-500">🎭</div>
+    </div>
+</div>
+
+<style>
+/* Result success animation */
+.result-success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    color: white !important;
+    border: 2px solid #10b981 !important;
+    animation: pulse 2s infinite;
+}
+
+/* Wheel spinning effect */
+.wheel-spinning {
+    filter: blur(2px);
+    transition: filter 0.3s ease;
+}
+
+/* Modal entrance animation */
+#spinWheelModal:not(.hidden) .bg-white {
+    animation: modalEnter 0.5s ease-out;
+}
+
+@keyframes modalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0px);
+    }
+}
+
+/* Button press effect */
+#startSpin:active {
+    transform: scale(0.95);
+}
+
+/* Sparkling effect */
+@keyframes sparkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.sparkle {
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+</style>
+
+<script>
+// JavaScript Code - Thêm vào phần <script> hiện có
+// JavaScript Code - Thêm vào phần <script> hiện có
+document.addEventListener("DOMContentLoaded", () => {
+    const spinBtn = document.getElementById("spinWheelBtn");
+    const modal = document.getElementById("spinWheelModal");
+    const closeBtn = document.getElementById("closeSpinWheel");
+    const startSpinBtn = document.getElementById("startSpin");
+    const resultText = document.getElementById("spinResult");
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let vouchers = [];
+    let arc;
+    let isSpinning = false;
+    let hasSpunToday = false;
+    let isLoggedIn = false;
+
+    // 🔹 Kiểm tra trạng thái đăng nhập
+    async function checkAuthStatus() {
+        try {
+            const res = await fetch("{{ route('auth.check') }}");
+            const data = await res.json();
+            isLoggedIn = data.authenticated;
+            return isLoggedIn;
+        } catch (error) {
+            console.error('Error checking auth status:', error);
+            isLoggedIn = false;
+            return false;
+        }
+    }
+
+    // 🔹 Hiển thị form đăng nhập
+    function showLoginPrompt() {
+        resultText.innerHTML = `
+            <div class="bg-blue-100 border-2 border-blue-300 text-blue-800 text-lg font-medium rounded-2xl px-6 py-4">
+                🔐 Bạn cần đăng nhập để quay!<br>
+                <div class="mt-3 space-x-2">
+                    <a href="{{ route('login') }}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                        Đăng Nhập
+                    </a>
+                    <a href="{{ route('register') }}" class="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                        Đăng Ký
+                    </a>
+                </div>
+            </div>
+        `;
+
+        // Disable spin button
+        updateSpinButton(false, "Cần Đăng Nhập");
+    }
+
+    // 🔹 Cập nhật giao diện nút quay
+    function updateSpinButton(canSpin, customText = null) {
+        if (canSpin) {
+            startSpinBtn.disabled = false;
+            startSpinBtn.className = "relative overflow-hidden bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:from-green-500 hover:via-green-600 hover:to-green-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg transform hover:scale-105 transition-all duration-300 group";
+            startSpinBtn.innerHTML = `
+                <span class="relative z-10 flex items-center justify-center space-x-2">
+                    <span>🎲</span>
+                    <span>Quay Ngay</span>
+                    <span>✨</span>
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            `;
+        } else {
+            startSpinBtn.disabled = true;
+            startSpinBtn.className = "relative overflow-hidden bg-gray-400 text-gray-600 px-8 py-4 rounded-2xl font-bold text-lg shadow-lg cursor-not-allowed";
+
+            let buttonText = customText || "Đã Quay Hôm Nay";
+            let iconText = customText === "Cần Đăng Nhập" ? "🔐" : "⏰";
+            let endIcon = customText === "Cần Đăng Nhập" ? "🔒" : "💤";
+
+            startSpinBtn.innerHTML = `
+                <span class="relative z-10 flex items-center justify-center space-x-2">
+                    <span>${iconText}</span>
+                    <span>${buttonText}</span>
+                    <span>${endIcon}</span>
+                </span>
+            `;
+        }
+    }
+
+    // 🔹 Hiển thị thông báo đã quay
+    function showAlreadySpunMessage() {
+        resultText.innerHTML = `
+            <div class="bg-orange-100 border-2 border-orange-300 text-orange-800 text-lg font-medium rounded-2xl px-6 py-4">
+                ⏰ Bạn đã quay hôm nay rồi!<br>
+                <span class="text-sm">Quay lại vào ngày mai nhé! 🌅</span>
+            </div>
+        `;
+    }
+
+    // 🔹 Kiểm tra đã quay hôm nay chưa (chỉ khi đã đăng nhập)
+    async function checkDailySpinStatus() {
+        if (!isLoggedIn) return;
+
+        try {
+            const res = await fetch("{{ route('spin.check-daily') }}");
+            const data = await res.json();
+            hasSpunToday = data.has_spun_today;
+
+            if (hasSpunToday) {
+                updateSpinButton(false);
+                showAlreadySpunMessage();
+            } else {
+                updateSpinButton(true);
+            }
+        } catch (error) {
+            console.error('Error checking spin status:', error);
+        }
+    }
+
+    // 🔹 Mở modal + kiểm tra authentication
+    spinBtn?.addEventListener("click", async () => {
+        modal.classList.remove("hidden");
+
+        // Kiểm tra đăng nhập trước
+        const authenticated = await checkAuthStatus();
+
+        if (!authenticated) {
+            showLoginPrompt();
+            return;
+        }
+
+        // Nếu đã đăng nhập, kiểm tra trạng thái quay hàng ngày
+        await checkDailySpinStatus();
+
+        if (!hasSpunToday) {
+            const res = await fetch("{{ route('vouchers.list') }}");
+            vouchers = await res.json();
+            arc = Math.PI * 2 / vouchers.length;
+            drawWheel();
+
+            // Reset result nếu chưa quay
+            resultText.innerHTML = `
+                <p class="text-gray-600 text-lg font-medium bg-gray-50 rounded-2xl px-4 py-3 border-2 border-dashed border-gray-300">
+                    🎁 Kết quả sẽ hiển thị ở đây
+                </p>
+            `;
+        }
+    });
+
+    // 🔹 Đóng modal
+    closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        isSpinning = false;
+    });
+
+    // 🔹 Vẽ vòng quay với gradient và hiệu ứng đẹp
+    function drawWheel() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Vẽ shadow
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        vouchers.forEach((voucher, i) => {
+            const angle = i * arc;
+
+            // Tạo gradient cho từng sector
+            const gradient = ctx.createRadialGradient(150, 150, 0, 150, 150, 150);
+            if (i % 2 === 0) {
+                gradient.addColorStop(0, '#fbbf24'); // Yellow center
+                gradient.addColorStop(1, '#f59e0b'); // Darker yellow edge
+            } else {
+                gradient.addColorStop(0, '#60a5fa'); // Blue center
+                gradient.addColorStop(1, '#3b82f6'); // Darker blue edge
+            }
+
+            // Vẽ sector
+            ctx.beginPath();
+            ctx.fillStyle = gradient;
+            ctx.moveTo(150, 150);
+            ctx.arc(150, 150, 140, angle, angle + arc);
+            ctx.fill();
+
+            // Vẽ viền trắng
+            ctx.beginPath();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 3;
+            ctx.moveTo(150, 150);
+            ctx.arc(150, 150, 140, angle, angle + arc);
+            ctx.stroke();
+
+            // Vẽ text với shadow
+            ctx.save();
+            ctx.translate(150, 150);
+            ctx.rotate(angle + arc / 2);
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "rgba(0,0,0,0.5)";
+            ctx.lineWidth = 1;
+            ctx.font = "bold 13px Arial";
+            ctx.textAlign = "center";
+
+            // Vẽ code
+            ctx.strokeText(voucher.code, 80, -5);
+            ctx.fillText(voucher.code, 80, -5);
+
+            // Vẽ discount
+            ctx.font = "11px Arial";
+            let discountText = voucher.discount_type === "percent"
+                ? `-${voucher.discount_value}%`
+                : `-${voucher.discount_value.toLocaleString()}đ`;
+            ctx.strokeText(discountText, 80, 12);
+            ctx.fillText(discountText, 80, 12);
+            ctx.restore();
+        });
+
+        ctx.restore();
+
+        // Vẽ center circle
+        const centerGradient = ctx.createRadialGradient(150, 150, 0, 150, 150, 25);
+        centerGradient.addColorStop(0, '#ffffff');
+        centerGradient.addColorStop(1, '#e5e7eb');
+        ctx.beginPath();
+        ctx.fillStyle = centerGradient;
+        ctx.arc(150, 150, 20, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#d1d5db';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    // 🔹 Quay vòng với hiệu ứng đẹp
+    startSpinBtn.addEventListener("click", () => {
+        // Kiểm tra đăng nhập trước khi quay
+        if (!isLoggedIn) {
+            showLoginPrompt();
+            return;
+        }
+
+        if (isSpinning || hasSpunToday) return;
+
+        // Kiểm tra lại vouchers có tồn tại không
+        if (!vouchers || vouchers.length === 0) {
+            resultText.innerHTML = `
+                <div class="bg-red-100 border-2 border-red-300 text-red-800 text-lg font-medium rounded-2xl px-6 py-4">
+                    ❌ Không có voucher để quay!<br>
+                    <span class="text-sm">Vui lòng thử lại sau.</span>
+                </div>
+            `;
+            return;
+        }
+
+        isSpinning = true;
+        startSpinBtn.disabled = true;
+        startSpinBtn.innerHTML = `
+            <span class="relative z-10 flex items-center justify-center space-x-2">
+                <span class="animate-spin">⚡</span>
+                <span>Đang Quay...</span>
+                <span class="animate-spin">⚡</span>
+            </span>
+        `;
+
+        // Add spinning effect to canvas
+        canvas.classList.add('wheel-spinning');
+
+        let spinAngle = Math.random() * 360 + 1440; // 4 rotations
+        let spinTime = 0;
+        let spinTimeTotal = 2500; // 2.5 giây
+        let easing = (t) => t * t * (3 - 2 * t);
+
+        console.log("Bắt đầu quay với góc:", spinAngle);
+
+        function rotateWheel() {
+            spinTime += 20;
+
+            if (spinTime >= spinTimeTotal) {
+                console.log("Kết thúc quay");
+                stopRotateWheel(spinAngle);
+                return;
+            }
+
+            const progress = easing(spinTime / spinTimeTotal);
+            const angle = spinAngle * progress;
+
+            try {
+                ctx.save();
+                ctx.clearRect(0, 0, 300, 300);
+                ctx.translate(150, 150);
+                ctx.rotate((angle * Math.PI) / 180);
+                ctx.translate(-150, -150);
+                drawWheel();
+                ctx.restore();
+            } catch (error) {
+                console.error("Lỗi khi vẽ:", error);
+                // Dừng quay nếu có lỗi
+                stopRotateWheel(spinAngle);
+                return;
+            }
+
+            requestAnimationFrame(rotateWheel);
+        }
+
+        function stopRotateWheel(finalAngle) {
+            console.log("Dừng quay tại góc:", finalAngle);
+            canvas.classList.remove('wheel-spinning');
+
+            // Vẽ lại wheel ở vị trí cuối
+            ctx.save();
+            ctx.clearRect(0, 0, 300, 300);
+            ctx.translate(150, 150);
+            ctx.rotate((finalAngle * Math.PI) / 180);
+            ctx.translate(-150, -150);
+            drawWheel();
+            ctx.restore();
+
+            // Tính toán kết quả
+            const degrees = finalAngle % 360;
+            const index = Math.floor((360 - degrees) / (360 / vouchers.length)) % vouchers.length;
+            const prize = vouchers[index];
+
+            console.log("Kết quả:", prize);
+
+            let discountText = prize.discount_type === "percent"
+                ? prize.discount_value + "%"
+                : prize.discount_value.toLocaleString() + "đ";
+
+            // Show success result with animation
+            resultText.innerHTML = `
+                <div class="result-success text-white text-lg font-bold rounded-2xl px-6 py-4 shadow-lg">
+                    🎉 Chúc mừng! Bạn nhận được:<br>
+                    <span class="text-xl">${prize.code}</span><br>
+                    <span class="text-yellow-300">(Giảm ${discountText})</span>
+                </div>
+            `;
+
+            // Cập nhật trạng thái đã quay
+            hasSpunToday = true;
+
+            // Reset button sau khi quay xong
+            setTimeout(() => {
+                isSpinning = false;
+                updateSpinButton(false); // Disable button
+            }, 2000);
+
+            // Lưu voucher vào DB
+            fetch("{{ route('spin.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ voucher_id: prize.id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Saved voucher:", data);
+                if (data.success) {
+                    hasSpunToday = true;
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi lưu voucher:", err);
+                // Vẫn cho phép hiển thị kết quả dù lưu thất bại
+            });
+        }
+
+        // Bắt đầu quay
+        try {
+            rotateWheel();
+        } catch (error) {
+            console.error("Lỗi khởi tạo quay:", error);
+            // Reset lại trạng thái nếu có lỗi
+            isSpinning = false;
+            startSpinBtn.disabled = false;
+            startSpinBtn.innerHTML = `
+                <span class="relative z-10 flex items-center justify-center space-x-2">
+                    <span>🎲</span>
+                    <span>Quay Ngay</span>
+                    <span>✨</span>
+                </span>
+            `;
+            alert("Có lỗi xảy ra khi quay. Vui lòng thử lại!");
+        }
+    });
+});
+</script>
             </div>
         </div>
 

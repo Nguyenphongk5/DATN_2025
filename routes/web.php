@@ -13,7 +13,8 @@
     use App\Http\Controllers\Admin\ProductGalleryController;
     use App\Http\Controllers\ProfileController;
     use App\Http\Controllers\Admin\UserController;
-    use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\SpinWheelController;
+use Illuminate\Support\Facades\Route;
     use Illuminate\Support\Facades\DB;
     use App\Http\Controllers\Admin\CategoryController;
     use App\Http\Controllers\Admin\ChatController as AdminChatController;
@@ -197,6 +198,24 @@ Route::get('/popup/mark-shown', function () {
     Route::get('/blogs', [BlogUserController::class, 'index'])->name('blogs.index');
     Route::get('/blogs/{slug}', [BlogUserController::class, 'show'])->name('blogs.show');
 
+use App\Http\Controllers\VoucherController;
 
+Route::get('/vouchers/list', [VoucherController::class, 'getList'])->name('vouchers.list');
+use App\Http\Controllers\SpinController;
 
+Route::post('/spin/store', [SpinWheelController::class, 'store'])->name('spin.store');
+// Thêm vào routes/web.php hoặc routes/api.php
+
+Route::middleware(['auth'])->group(function () {
+    // Route kiểm tra đã quay hôm nay chưa
+    Route::get('/spin/check-daily', [SpinWheelController::class, 'checkDailySpin'])->name('spin.check-daily');
+
+    // Route lưu voucher sau khi quay
+    Route::post('/spin/store', [SpinWheelController::class, 'store'])->name('spin.store');
+
+    // Route lấy lịch sử quay (tùy chọn)
+    Route::get('/spin/history', [SpinWheelController::class, 'getUserSpinHistory'])->name('spin.history');
+});
+Route::get('/auth/check', [SpinWheelController::class, 'checkAuth'])->name('auth.check');
+    
     require __DIR__ . '/auth.php';

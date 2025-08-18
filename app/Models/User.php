@@ -79,4 +79,12 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+    // User.php
+public function vouchers()
+{
+    return $this->belongsToMany(Voucher::class, 'user_voucher')
+                ->withPivot('used_at') // nếu có thông tin ngày dùng
+                ->withTimestamps();
+}
+
 }

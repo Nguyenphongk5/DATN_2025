@@ -478,8 +478,17 @@ class CheckoutController extends Controller
             }
         }
     }
+            public function showCheckout()
+{
+    $user = auth()->user();
 
-    public function ajaxApplyVoucher(Request $request)
+    // Lấy các voucher mà user này được gán
+    $vouchers = $user->vouchers()->where('is_active', 1)->get();
+
+    return view('checkout', compact('vouchers'));
+}
+
+            public function ajaxApplyVoucher(Request $request)
     {
         $code = $request->input('voucher_code');
         $total = $request->input('total_amount');
