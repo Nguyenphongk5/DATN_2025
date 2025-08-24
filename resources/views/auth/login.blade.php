@@ -4,8 +4,8 @@
     <div class="min-h-screen flex items-center justify-center bg-gray-100 py-8">
         <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
             <div class="text-center mb-6">
-                <h1 class="font-bold text-3xl mb-1 text-purple-700">Welcome Back 👋</h1>
-                <p class="text-gray-500 text-base">Login to your account to continue</p>
+                <h1 class="font-bold text-3xl mb-1 text-purple-700">Chào mừng đến với LightSteps 👋</h1>
+                <p class="text-gray-500 text-base">Đăng nhập vào tài khoản của bạn để tiếp tục mua sắm </p>
             </div>
 
             <!-- Session Status -->

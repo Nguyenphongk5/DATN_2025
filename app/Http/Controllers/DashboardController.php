@@ -9,18 +9,13 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Lọc theo ngày cho toàn bộ truy vấn
         $from = $request->from_date;
         $to = $request->to_date;
 
         // Doanh thu theo tháng
-        $revenueQuery = DB::table('orders')
-            ->where('status', 'completed');
-
-        if ($from)
-            $revenueQuery->whereDate('created_at', '>=', $from);
-        if ($to)
-            $revenueQuery->whereDate('created_at', '<=', $to);
+        $revenueQuery = DB::table('orders')->where('status', 'completed');
+        if ($from) $revenueQuery->whereDate('created_at', '>=', $from);
+        if ($to) $revenueQuery->whereDate('created_at', '<=', $to);
 
         $revenueData = $revenueQuery
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_year, SUM(total_amount) as revenue")
@@ -33,39 +28,31 @@ class DashboardController extends Controller
 
         // Trạng thái đơn hàng
         $orderStatusQuery = DB::table('orders');
-        if ($from)
-            $orderStatusQuery->whereDate('created_at', '>=', $from);
-        if ($to)
-            $orderStatusQuery->whereDate('created_at', '<=', $to);
+        if ($from) $orderStatusQuery->whereDate('created_at', '>=', $from);
+        if ($to) $orderStatusQuery->whereDate('created_at', '<=', $to);
 
-       $rawOrderStatusCounts = $orderStatusQuery
-    ->select('status', DB::raw('COUNT(*) as count'))
-    ->groupBy('status')
-    ->pluck('count', 'status')->toArray();
+        $rawOrderStatusCounts = $orderStatusQuery
+            ->select('status', DB::raw('COUNT(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')->toArray();
 
-// Dịch key trạng thái sang tiếng Việt
-$translatedStatus = [
-    'completed' => 'Đã giao',
-    'cancelled' => 'Đã hủy',
-    'returned' => 'Hoàn trả',
-    'confirmed' => 'Đã xác nhận',
-    'pending' => 'Chờ xác nhận',
-];
+        $translatedStatus = [
+            'completed' => 'Đã giao',
+            'cancelled' => 'Đã hủy',
+            'returned' => 'Hoàn trả',
+            'confirmed' => 'Đã xác nhận',
+            'pending' => 'Chờ xác nhận',
+        ];
 
-// Tạo biến orderStatusCounts mới đã được dịch
-$orderStatusCounts = [];
-foreach ($rawOrderStatusCounts as $key => $value) {
-    $orderStatusCounts[$translatedStatus[$key] ?? ucfirst($key)] = $value;
-}
-
-
-
-
+        $orderStatusCounts = [];
+        foreach ($rawOrderStatusCounts as $key => $value) {
+            $orderStatusCounts[$translatedStatus[$key] ?? ucfirst($key)] = $value;
+        }
 
         // Top sản phẩm
         $topProducts = DB::table('order_details')
             ->join('orders', 'orders.id', '=', 'order_details.order_id')
-            ->where('orders.status', 'completed') // Chỉ tính đơn hàng hoàn thành
+            ->where('orders.status', 'completed')
             ->when($from, fn($q) => $q->whereDate('orders.created_at', '>=', $from))
             ->when($to, fn($q) => $q->whereDate('orders.created_at', '<=', $to))
             ->select('order_details.product_name', DB::raw('SUM(order_details.quantity) as total'))
@@ -90,24 +77,21 @@ foreach ($rawOrderStatusCounts as $key => $value) {
         $colors = $colorStats->pluck('color_name')->toArray();
         $colorQuantities = $colorStats->pluck('total')->toArray();
 
-        // Tồn kho (không cần lọc ngày)
+        // Tồn kho (sắp hết hàng lên đầu)
         $stockData = DB::table('product_variants')
             ->join('products', 'product_variants.product_id', '=', 'products.id')
             ->select('products.name as product_name', 'color_name', 'size', 'product_variants.quantity')
-            ->orderByDesc('product_variants.quantity')
+            ->orderBy('product_variants.quantity', 'asc')
             ->limit(10)
             ->get();
 
         // Tỷ lệ đơn hàng
         $statusQuery = DB::table('orders');
-        if ($from)
-            $statusQuery->whereDate('created_at', '>=', $from);
-        if ($to)
-            $statusQuery->whereDate('created_at', '<=', $to);
+        if ($from) $statusQuery->whereDate('created_at', '>=', $from);
+        if ($to) $statusQuery->whereDate('created_at', '<=', $to);
 
         $totalOrders = $statusQuery->count();
         $percentStatus = [];
-
         if ($totalOrders > 0) {
             $statuses = ['completed', 'cancelled', 'returned'];
             foreach ($statuses as $status) {
@@ -128,7 +112,6 @@ foreach ($rawOrderStatusCounts as $key => $value) {
             ')
             ->first();
 
-        // Top voucher được sử dụng nhiều nhất
         $topVouchers = DB::table('vouchers')
             ->select('code', 'discount_type', 'discount_value', 'used_count', 'quantity')
             ->where('used_count', '>', 0)
@@ -139,7 +122,7 @@ foreach ($rawOrderStatusCounts as $key => $value) {
         return view('admin.index', compact(
             'months',
             'revenues',
-          'orderStatusCounts',
+            'orderStatusCounts',
             'topProductNames',
             'topProductQuantities',
             'colors',

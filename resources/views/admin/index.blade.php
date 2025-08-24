@@ -6,18 +6,18 @@
             <h2 class="font-extrabold text-3xl text-white tracking-wide drop-shadow-lg">Bảng điều khiển</h2>
         </div>
 
-        {{-- Form lọc theo ngày --}}
+        {{-- Form lọc --}}
         <form method="GET" action="{{ route('admin.dashboard') }}"
             class="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
             <div>
                 <label for="from_date" class="block mb-1 text-sm font-bold text-indigo-700">Từ ngày:</label>
                 <input type="date" name="from_date" id="from_date" value="{{ request('from_date') }}"
-                    class="border border-indigo-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
+                    class="border border-indigo-200 rounded-xl px-4 py-2 shadow">
             </div>
             <div>
                 <label for="to_date" class="block mb-1 text-sm font-bold text-indigo-700">Đến ngày:</label>
                 <input type="date" name="to_date" id="to_date" value="{{ request('to_date') }}"
-                    class="border border-indigo-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none shadow">
+                    class="border border-indigo-200 rounded-xl px-4 py-2 shadow">
             </div>
             <div class="pt-5">
                 <button type="submit"
@@ -27,64 +27,58 @@
             </div>
         </form>
 
+        {{-- Biểu đồ --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {{-- Biểu đồ doanh thu --}}
             <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
-                <h3
-                    class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-chart-line"></i> Doanh thu theo tháng
-                </h3>
+                <h3 class="font-extrabold text-lg text-indigo-600 mb-4"><i class="fas fa-chart-line"></i> Doanh thu theo
+                    tháng</h3>
                 <canvas id="revenueChart" height="200"></canvas>
             </div>
-            {{-- Trạng thái đơn hàng --}}
             <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
-                <h3
-                    class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-clipboard-list"></i> Trạng thái đơn hàng
-                </h3>
+                <h3 class="font-extrabold text-lg text-indigo-600 mb-4"><i class="fas fa-clipboard-list"></i> Trạng thái
+                    đơn hàng</h3>
                 <canvas id="orderStatusChart" height="200"></canvas>
             </div>
-            {{-- Top sản phẩm bán chạy --}}
             <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
-                <h3
-                    class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-crown"></i> Top sản phẩm bán chạy
-                </h3>
+                <h3 class="font-extrabold text-lg text-indigo-600 mb-4"><i class="fas fa-crown"></i> Top sản phẩm bán
+                    chạy</h3>
                 <canvas id="topProductChart" height="200"></canvas>
             </div>
-            {{-- Màu sản phẩm phổ biến --}}
             <div class="bg-white/90 shadow-2xl rounded-3xl p-8">
-                <h3
-                    class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-palette"></i> Số lượng theo màu
+                <h3 class="font-extrabold text-lg text-indigo-600 mb-4"><i class="fas fa-palette"></i> Số lượng theo màu
                 </h3>
                 <canvas id="colorChart" height="200"></canvas>
             </div>
         </div>
 
-        {{-- Bảng: Tồn kho --}}
+        {{-- Bảng tồn kho --}}
         <div class="bg-white/90 shadow-2xl rounded-3xl p-8 mt-12">
-            <h3
-                class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-6 flex items-center gap-2">
-                <i class="fas fa-boxes"></i> Bảng tồn kho
-            </h3>
-            <div class="overflow-x-auto custom-scrollbar rounded-2xl">
-                <table class="w-full table-auto border-collapse shadow-xl rounded-2xl overflow-hidden">
+            <h3 class="font-extrabold text-lg text-indigo-600 mb-6"><i class="fas fa-boxes"></i> Bảng tồn kho</h3>
+            <div class="overflow-x-auto rounded-2xl">
+                <table class="w-full border-collapse shadow-xl rounded-2xl overflow-hidden">
                     <thead class="bg-gradient-to-r from-indigo-100 via-sky-100 to-cyan-100 text-indigo-700">
                         <tr>
-                            <th class="px-6 py-3 text-center text-base font-bold uppercase">Sản phẩm</th>
-                            <th class="px-6 py-3 text-center text-base font-bold uppercase">Màu</th>
-                            <th class="px-6 py-3 text-center text-base font-bold uppercase">Size</th>
-                            <th class="px-6 py-3 text-center text-base font-bold uppercase">Tồn kho</th>
+                            <th class="px-6 py-3">Sản phẩm</th>
+                            <th class="px-6 py-3">Màu</th>
+                            <th class="px-6 py-3">Size</th>
+                            <th class="px-6 py-3">Tồn kho</th>
+                            <th class="px-6 py-3">Trạng thái</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-indigo-100 text-center text-lg">
+                    <tbody class="divide-y divide-indigo-100 text-center">
                         @foreach ($stockData as $item)
-                            <tr>
+                            <tr class="{{ $item->quantity < 10 ? 'bg-red-100' : '' }}">
                                 <td class="px-6 py-3">{{ $item->product_name }}</td>
                                 <td class="px-6 py-3">{{ $item->color_name }}</td>
                                 <td class="px-6 py-3">{{ $item->size }}</td>
-                                <td class="px-6 py-3">{{ $item->quantity }}</td>
+                                <td class="px-6 py-3">{{ number_format($item->quantity) }}</td>
+                                <td class="px-6 py-3">
+                                    @if ($item->quantity < 10)
+                                        <span class="text-red-600 font-bold">Sắp hết hàng</span>
+                                    @else
+                                        <span class="text-green-600 font-bold">Còn hàng</span>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -92,13 +86,11 @@
             </div>
         </div>
 
-        {{-- Tỷ lệ đã giao / huỷ / hoàn --}}
+        {{-- Tỉ lệ đơn hàng --}}
         <div class="bg-white/90 shadow-2xl rounded-3xl p-8 mt-12">
-            <h3
-                class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 mb-6 flex items-center gap-2">
-                <i class="fas fa-percentage"></i> Các lệnh đã giao / huỷ / hoàn (%)
-            </h3>
-            <ul class="space-y-2 text-base">
+            <h3 class="font-extrabold text-lg text-indigo-600 mb-6"><i class="fas fa-percentage"></i> Tỉ lệ đã giao /
+                hủy / hoàn (%)</h3>
+            <ul class="space-y-2">
                 @foreach ($percentStatus as $status => $percent)
                     <li>{{ ucfirst($status) }}: <strong>{{ $percent }}%</strong></li>
                 @endforeach
@@ -108,9 +100,10 @@
 
     {{-- ChartJS --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Biểu đồ Doanh thu
+            // Doanh thu
             new Chart(document.getElementById('revenueChart'), {
                 type: 'bar',
                 data: {
@@ -118,29 +111,35 @@
                     datasets: [{
                         label: 'Doanh thu (VNĐ)',
                         data: {!! json_encode($revenues ?? []) !!},
-                        backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
+                        borderWidth: 2
                     }]
                 },
                 options: {
+                    plugins: {
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: v => v.toLocaleString('vi-VN') + ' ₫',
+                            color: '#000',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    },
                     scales: {
-             y: {
-    beginAtZero: false,
-    suggestedMin: 1000000,
-    ticks: {
-        callback: value => value.toLocaleString('vi-VN') + ' ₫'
-    }
-}
-
-
+                        y: {
+                            ticks: {
+                                callback: v => v.toLocaleString('vi-VN') + ' ₫'
+                            }
+                        }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
 
-            // Biểu đồ Trạng thái đơn hàng
+            // Trạng thái đơn hàng
             new Chart(document.getElementById('orderStatusChart'), {
                 type: 'pie',
                 data: {
@@ -152,14 +151,22 @@
                 },
                 options: {
                     plugins: {
+                        datalabels: {
+                            formatter: v => v,
+                            color: '#fff',
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
                         legend: {
                             position: 'bottom'
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
 
-            // Biểu đồ Top sản phẩm bán chạy
+            // Top sản phẩm
             new Chart(document.getElementById('topProductChart'), {
                 type: 'bar',
                 data: {
@@ -174,51 +181,63 @@
                 },
                 options: {
                     indexAxis: 'y',
+                    plugins: {
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'right',
+                            formatter: v => v.toLocaleString('vi-VN'),
+                            color: '#000',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    },
                     scales: {
                         x: {
-                            suggestedMin: 1, // Gợi ý bắt đầu từ 1 (không ép cứng như min)
                             ticks: {
-                                stepSize: 1,
-                                callback: function(value) {
-                                    // Ẩn hiển thị tick 0
-                                    return value === 0 ? '' : value;
-                                }
+                                callback: v => v.toLocaleString('vi-VN')
                             }
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
 
-
-            // Biểu đồ Số lượng theo màu
+            // Số lượng theo màu
             new Chart(document.getElementById('colorChart'), {
                 type: 'bar',
                 data: {
                     labels: {!! json_encode($colors ?? []) !!},
                     datasets: [{
-                        label: 'Số lượng theo màu',
+                        label: 'Số lượng',
                         data: {!! json_encode($colorQuantities ?? []) !!},
-                        backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
                         borderColor: 'rgba(255, 159, 64, 1)',
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    plugins: {
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: v => v.toLocaleString('vi-VN'),
+                            color: '#000',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    },
                     scales: {
                         y: {
-                            suggestedMin: 1,
                             ticks: {
-                                stepSize: 1,
-                                callback: function(value) {
-                                    return value === 0 ? '' : value;
-                                }
+                                callback: v => v.toLocaleString('vi-VN')
                             }
                         }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
-
         });
     </script>
-
 </x-app-layout>

@@ -74,7 +74,7 @@
                             </div>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold text-gray-900 mb-2">Pick up in store</h4>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Nhận tại cửa hàng</h4>
                             <p class="text-gray-600">Nhận hàng tại cửa hàng với dịch vụ nhanh chóng và tiện lợi.</p>
                         </div>
                     </div>
@@ -87,7 +87,7 @@
                             </div>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold text-gray-900 mb-2">Special packaging</h4>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Đóng gói đặc biệt</h4>
                             <p class="text-gray-600">Đóng gói đặc biệt với thiết kế độc đáo và bảo vệ tối ưu.</p>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold text-gray-900 mb-2">Free global returns</h4>
+                            <h4 class="text-xl font-bold text-gray-900 mb-2">Đổi trả miễn phí </h4>
                             <p class="text-gray-600">Đổi trả miễn phí toàn cầu với chính sách linh hoạt.</p>
                         </div>
                     </div>
@@ -170,7 +170,7 @@
                 </div>
                 <h2
                     class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4">
-                    Trending Products
+                    Sản phẩm mới nhất
                 </h2>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">
                     Khám phá những sản phẩm hot nhất, được yêu thích nhất với thiết kế độc đáo và chất lượng cao cấp
@@ -274,7 +274,7 @@
                         </svg>
                     </div>
                     <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4">
-                        Best Seller Products
+                        Sản phẩm bán chạy nhất
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
                         Những sản phẩm bán chạy nhất của chúng tôi
