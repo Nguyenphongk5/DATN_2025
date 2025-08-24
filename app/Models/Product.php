@@ -62,5 +62,42 @@ class Product extends Model
         return $this->galleries()->pluck('image')->toArray();
     }
 
+    /**
+     * Quan hệ với Comments
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->where('is_active', 1);
+    }
+
+    /**
+     * Lấy rating trung bình của sản phẩm
+     */
+    public function getAverageRatingAttribute()
+    {
+        $rating = $this->comments()->whereNotNull('rating')->avg('rating');
+        return $rating ? round($rating, 1) : 0;
+    }
+
+    /**
+     * Lấy số lượng đánh giá
+     */
+    public function getRatingCountAttribute()
+    {
+        return $this->comments()->whereNotNull('rating')->count();
+    }
+
+    /**
+     * Lấy phân phối rating (5 sao, 4 sao, 3 sao, 2 sao, 1 sao)
+     */
+    public function getRatingDistributionAttribute()
+    {
+        $distribution = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $distribution[$i] = $this->comments()->where('rating', $i)->count();
+        }
+        return $distribution;
+    }
+
 
 }

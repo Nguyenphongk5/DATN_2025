@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
         ProductVariantSeeder::class,
         ProductGallerySeeder::class,
         UserSeeder::class,
-        AdminOtpSeeder::class
+        AdminOtpSeeder::class,
+        CommentSeeder::class
     ]);
 
     }
