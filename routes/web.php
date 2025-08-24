@@ -217,5 +217,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/spin/history', [SpinWheelController::class, 'getUserSpinHistory'])->name('spin.history');
 });
 Route::get('/auth/check', [SpinWheelController::class, 'checkAuth'])->name('auth.check');
+
+// Policy routes
+Route::prefix('policy')->name('policy.')->group(function () {
+    Route::get('/privacy', [App\Http\Controllers\PolicyController::class, 'privacy'])->name('privacy');
+    Route::get('/terms', [App\Http\Controllers\PolicyController::class, 'terms'])->name('terms');
+    Route::get('/cookies', [App\Http\Controllers\PolicyController::class, 'cookies'])->name('cookies');
+    Route::get('/returns', [App\Http\Controllers\PolicyController::class, 'returns'])->name('returns');
+    Route::get('/warranty', [App\Http\Controllers\PolicyController::class, 'warranty'])->name('warranty');
+    Route::get('/shipping', [App\Http\Controllers\PolicyController::class, 'shipping'])->name('shipping');
+    Route::get('/faq', [App\Http\Controllers\PolicyController::class, 'faq'])->name('faq');
+    Route::get('/shopping-guide', [App\Http\Controllers\PolicyController::class, 'shoppingGuide'])->name('shopping-guide');
+    Route::get('/secure-payment', [App\Http\Controllers\PolicyController::class, 'securePayment'])->name('secure-payment');
+});
     
-    require __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php';
