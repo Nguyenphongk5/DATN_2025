@@ -9,21 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->string('province')->nullable();
-        $table->string('district')->nullable();
-        $table->string('ward')->nullable();
-        $table->string('address')->nullable();
-    });
-}
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'province')) {
+                $table->string('province')->nullable();
+            }
+            if (!Schema::hasColumn('users', 'district')) {
+                $table->string('district')->nullable();
+            }
+            if (!Schema::hasColumn('users', 'ward')) {
+                $table->string('ward')->nullable();
+            }
+            if (!Schema::hasColumn('users', 'address')) {
+                $table->string('address')->nullable();
+            }
+        });
+    }
 
-public function down()
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn(['province', 'district', 'ward', 'address']);
-    });
-}
-
+    public function down()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['province', 'district', 'ward', 'address']);
+        });
+    }
 };

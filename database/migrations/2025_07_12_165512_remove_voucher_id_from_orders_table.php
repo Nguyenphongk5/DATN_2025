@@ -12,6 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
+            // Xóa foreign key constraint trước
+            $table->dropForeign(['voucher_id']);
+            // Sau đó xóa cột
             $table->dropColumn('voucher_id');
         });
     }
