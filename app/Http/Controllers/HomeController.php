@@ -9,6 +9,7 @@ use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\Logo;
 use App\Models\Order;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class HomeController extends Controller
         $userId = Auth::id(); // null nếu chưa đăng nhập
 
         // Lấy các banner đang hoạt động
-        $banners = DB::table('banners')->get();
+        $banners = Banner::where('is_active', 1)->get();
 
         // Lấy sản phẩm mới nhất và thêm thuộc tính is_favorited
         $latestProducts = Product::where('is_active', 1)
@@ -46,7 +47,7 @@ class HomeController extends Controller
             });
 
         // Lấy tất cả danh mục để lọc
-        $categories = DB::table('categories')->get();
+        $categories = Category::all();
 
         // Bài viết mới
         $blogs = Blog::where('is_active', true)->latest()->take(4)->get();
@@ -55,12 +56,14 @@ class HomeController extends Controller
         $bestSalerProducts = Product::select(
             'products.id',
             'products.name',
-            'products.price', // Add other columns you need
+            'products.price',
+            'products.img_thumb',
+            'products.price_sale',
             DB::raw('SUM(order_details.quantity) as total_sold')
         )
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-            ->groupBy('products.id', 'products.name', 'products.price') // Include all selected columns
+            ->groupBy('products.id', 'products.name', 'products.price', 'products.img_thumb', 'products.price_sale')
             ->orderByDesc('total_sold')
             ->take(8)
             ->get()
@@ -74,6 +77,7 @@ class HomeController extends Controller
                 }
                 return $product;
             });
+
         // Trả về view
         return view('user.index', compact('banners', 'latestProducts', 'categories', 'blogs', 'bestSalerProducts'));
     }
@@ -135,48 +139,46 @@ class HomeController extends Controller
     public function allProducts(Request $request)
     {
         // Khởi tạo query builder cho Product
-        $query = DB::table('products')
-            ->join('categories', 'products.category_id', '=', 'categories.id')
-            ->join('brands', 'products.brand_id', '=', 'brands.id')
-            ->select('products.*', 'categories.name as category_name', 'brands.name as brand_name')
-            ->where('products.is_active', 1);
+        $query = Product::with(['category', 'brand'])
+            ->where('is_active', 1);
 
         // Lọc theo danh mục nếu có
         if ($request->has('category') && $request->category != '') {
-            $query->where('products.category_id', $request->category);
+            $query->where('category_id', $request->category);
         }
 
         // Lọc theo thương hiệu nếu có
         if ($request->has('brand') && $request->brand != '') {
-            $query->where('products.brand_id', $request->brand);
+            $query->where('brand_id', $request->brand);
         }
 
         // Lọc theo giá nếu có
         if ($request->has('price_range') && $request->price_range != '') {
             $priceRange = explode('-', $request->price_range);
             if (count($priceRange) == 2) {
-                $query->whereBetween('products.price', [$priceRange[0], $priceRange[1]]);
+                $query->whereBetween('price', [$priceRange[0], $priceRange[1]]);
             } else {
-                $query->where('products.price', '>=', $priceRange[0]);
+                $query->where('price', '>=', $priceRange[0]);
             }
         }
+        
         // Sắp xếp
         $sort = $request->get('sort', 'latest');
         switch ($sort) {
             case 'price_low':
-                $query->orderBy('products.price', 'asc');
+                $query->orderBy('price', 'asc');
                 break;
             case 'price_high':
-                $query->orderBy('products.price', 'desc');
+                $query->orderBy('price', 'desc');
                 break;
             case 'name':
-                $query->orderBy('products.name', 'asc');
+                $query->orderBy('name', 'asc');
                 break;
             case 'popular':
-                $query->orderBy('products.view', 'desc');
+                $query->orderBy('view', 'desc');
                 break;
             default:
-                $query->orderBy('products.created_at', 'desc');
+                $query->orderBy('created_at', 'desc');
                 break;
         }
 
@@ -184,19 +186,19 @@ class HomeController extends Controller
         $products = $query->paginate(12);
 
         // Lấy tất cả các danh mục để lọc
-        $categories = DB::table('categories')->where('is_active', 1)->get();
+        $categories = Category::where('is_active', 1)->get();
 
         // Lấy tất cả các thương hiệu để lọc
-        $brands = DB::table('brands')->where('is_active', 1)->get();
+        $brands = Brand::where('is_active', 1)->get();
 
         // Lấy thống kê
-        $totalProducts = DB::table('products')->where('is_active', 1)->count();
-        $totalCategories = DB::table('categories')->where('is_active', 1)->count();
-        $totalBrands = DB::table('brands')->where('is_active', 1)->count();
+        $totalProducts = Product::where('is_active', 1)->count();
+        $totalCategories = Category::where('is_active', 1)->count();
+        $totalBrands = Brand::where('is_active', 1)->count();
 
         return view('user.all-products', compact('products', 'categories', 'brands', 'totalProducts', 'totalCategories', 'totalBrands'));
     }
-    public function show(string $id)
+    public function show($id)
     {
         $categories = Category::all();
         $productVariants = DB::table('product_variants')
@@ -210,13 +212,17 @@ class HomeController extends Controller
             ->orderBy('sort_order', 'asc')
             ->get();
 
-        $product = DB::table('products')
-            ->join('categories', 'products.category_id', '=', 'categories.id')
-            ->select('products.*', 'categories.name as category_name')
-            ->where('products.id', $id)->first();
+        // Sử dụng model Product để có accessor average_rating
+        $product = Product::with('category')
+            ->where('id', $id)
+            ->first();
 
-        $products = DB::table('products')
-            ->where('category_id', $product->category_id)
+        if (!$product) {
+            abort(404);
+        }
+
+        $products = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $id)
             ->limit(8)
             ->get();
 
