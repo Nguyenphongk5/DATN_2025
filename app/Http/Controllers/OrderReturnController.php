@@ -39,7 +39,9 @@ class OrderReturnController extends Controller
         'image' => $imagePath,
     ]);
 
-    return redirect()->back()->with('success', 'Đã gửi yêu cầu hoàn hàng!');
+    return redirect()->route('orders.show', $order->id)
+                 ->with('success', 'Đã gửi yêu cầu hoàn hàng!');
+
 }
 
 }

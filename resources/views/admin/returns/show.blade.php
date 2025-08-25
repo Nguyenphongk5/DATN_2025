@@ -46,7 +46,7 @@
                     @if ($return->image)
                     <div class="mt-4">
                         <strong class="text-gray-700">Ảnh minh họa:</strong>
-                        <img src="{{ asset('storage/returns/' . $return->image) }}" alt="Ảnh minh họa"
+                        <img src="{{ asset('storage/' . $return->image) }}" alt="Ảnh minh họa"
                             class="mt-2 w-40 h-40 object-cover rounded-lg border shadow-md">
                     </div>
                     @endif
@@ -91,9 +91,7 @@
 
             {{-- Form xử lý hoàn hàng --}}
             @if ($return->status === 'pending')
-            <form method="POST"
-                action="{{ route('admin.returns.update', ['id' => $return->id, 'action' => 'approve']) }}"
-                class="mt-10 space-y-6">
+            <form method="POST" action="{{ route('admin.returns.update', $return->id) }}" class="mt-10 space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -105,26 +103,22 @@
                 </div>
 
                 <div class="flex flex-col md:flex-row justify-center gap-4">
-                    <button type="submit"
+                    <button type="submit" name="action" value="approve"
                         class="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-2 px-6 rounded-xl shadow-lg flex items-center gap-2 transition">
                         <i class="fas fa-check-circle"></i> Duyệt
                     </button>
+
+                    <button type="submit" name="action" value="reject"
+                        class="bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold py-2 px-6 rounded-xl shadow-lg flex items-center gap-2 transition">
+                        <i class="fas fa-times-circle"></i> Từ chối
+                    </button>
+                </div>
             </form>
 
-            <form method="POST"
-                action="{{ route('admin.returns.update', ['id' => $return->id, 'action' => 'reject']) }}">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="shop_response" value="{{ old('shop_response') }}">
-                <button type="submit"
-                    class="bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold py-2 px-6 rounded-xl shadow-lg flex items-center gap-2 transition">
-                    <i class="fas fa-times-circle"></i> Từ chối
-                </button>
-            </form>
             @else
             {{-- Hiển thị phản hồi nếu đã xử lý --}}
             @if ($return->response_note)
-            
+
             @endif
             @endif
 

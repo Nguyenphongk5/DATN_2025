@@ -43,7 +43,8 @@ class ReturnController extends Controller
 public function update(Request $request, $id)
 {
     $return = OrderReturn::findOrFail($id);
-    $action = $request->query('action');
+
+    $action = $request->input('action'); // lấy từ button name="action"
 
     if ($action) {
         if (!in_array($action, ['approve', 'reject'])) {
@@ -53,15 +54,16 @@ public function update(Request $request, $id)
         $return->status = $action === 'approve' ? 'approved' : 'rejected';
     }
 
-    // Phản hồi từ shop
     if ($request->filled('shop_response')) {
         $return->response_note = $request->input('shop_response');
     }
 
     $return->save();
 
-    return redirect()->route('admin.returns.show', $id)->with('success', 'Cập nhật thông tin thành công!');
+    return redirect()->route('admin.returns.show', $id)
+                     ->with('success', 'Cập nhật thông tin thành công!');
 }
+
 
 
 
