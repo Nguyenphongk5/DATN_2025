@@ -199,10 +199,10 @@
                                         class="w-6 h-6 transition-colors duration-200 favorite-icon {{ $product->is_favorited ? 'text-red-500' : 'text-gray-400' }}"
                                         fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.41
-                                 4.42 3 7.5 3c1.74 0 3.41 0.81
-                                 4.5 2.09C13.09 3.81 14.76 3 16.5 3
-                                 19.58 3 22 5.41 22 8.5c0 3.78-3.4
-                                 6.86-8.55 11.54L12 21.35z" />
+                                     4.42 3 7.5 3c1.74 0 3.41 0.81
+                                     4.5 2.09C13.09 3.81 14.76 3 16.5 3
+                                     19.58 3 22 5.41 22 8.5c0 3.78-3.4
+                                     6.86-8.55 11.54L12 21.35z" />
                                     </svg>
                                 </button>
 
@@ -217,10 +217,11 @@
                                 </h3>
                                 <div class="flex items-center gap-2 mb-2">
                                     <span
-                                        class="text-2xl font-bold text-pink-600">{{ number_format($product->price, 0, '', '.') }}
+                                        class="text-2xl font-bold text-pink-600">{{ number_format($product->price_sale, 0, '', '.') }}
                                         VNĐ</span>
-                                    <del class="text-base text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }}
+                                    <del class="text-base text-gray-400">{{ number_format($product->price, 0, '', '.') }}
                                         VNĐ</del>
+
                                 </div>
                                 <div class="flex items-center gap-1 mb-4">
                                     @for ($i = 1; $i <= 5; $i++)
@@ -263,17 +264,19 @@
     </section>
 
     {{-- Best Seller Products Section --}}
-    @if(isset($bestSalerProducts) && count($bestSalerProducts) > 0)
+    @if (isset($bestSalerProducts) && count($bestSalerProducts) > 0)
         <section class="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50">
             <div class="max-w-7xl mx-auto px-4">
                 <div class="text-center mb-16">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-6">
+                    <div
+                        class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-6">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
-                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4">
+                    <h2
+                        class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4">
                         Sản phẩm bán chạy nhất
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -284,7 +287,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
                     @foreach ($bestSalerProducts as $product)
                         <div class="group relative animate-fade-in-up">
-                            <div class="bg-white rounded-3xl shadow-2xl border-2 border-transparent group-hover:border-purple-400 transition-all duration-300 overflow-hidden">
+                            <div
+                                class="bg-white rounded-3xl shadow-2xl border-2 border-transparent group-hover:border-purple-400 transition-all duration-300 overflow-hidden">
                                 <div class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 group"
                                     data-id="{{ $product->id }}"
                                     data-favorited="{{ $product->is_favorited ? 'true' : 'false' }}">
@@ -298,10 +302,10 @@
                                             class="w-6 h-6 transition-colors duration-200 favorite-icon {{ $product->is_favorited ? 'text-red-500' : 'text-gray-400' }}"
                                             fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.41
-                                     4.42 3 7.5 3c1.74 0 3.41 0.81
-                                     4.5 2.09C13.09 3.81 14.76 3 16.5 3
-                                     19.58 3 22 5.41 22 8.5c0 3.78-3.4
-                                     6.86-8.55 11.54L12 21.35z" />
+                                         4.42 3 7.5 3c1.74 0 3.41 0.81
+                                         4.5 2.09C13.09 3.81 14.76 3 16.5 3
+                                         19.58 3 22 5.41 22 8.5c0 3.78-3.4
+                                         6.86-8.55 11.54L12 21.35z" />
                                         </svg>
                                     </button>
 

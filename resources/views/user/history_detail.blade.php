@@ -43,7 +43,6 @@
                                 <th class="py-3 px-2 text-center">Màu</th>
                                 <th class="py-3 px-2 text-center">Số lượng</th>
                                 <th class="py-3 px-2 text-right">Đơn giá</th>
-                                <th class="py-3 px-2 text-right">Giảm giá</th>
                                 <th class="py-3 px-2 text-right">Thành tiền</th>
                             </tr>
                         </thead>
@@ -103,13 +102,12 @@
                                         {{ number_format($item->price, 0, ',', '.') }} <span
                                             class="text-xs text-gray-400">VNĐ</span>
                                     </td>
-                                    <td class="py-3 px-2 text-right text-indigo-600 font-semibold">
-                                        {{ number_format($order->discount_amount, 0, ',', '.') }} <span
-                                            class="text-xs text-gray-400">VNĐ</span>
-                                    </td>
                                     <td
+                                    @php
+
+                                    @endphp
                                         class="py-3 px-2 text-right font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-500">
-                                        {{ number_format($order->total_amount, 0, ',', '.') }} <span
+                                        {{ number_format(($item->price * $item->quantity), 0, ',', '.') }} <span
                                             class="text-xs text-gray-400">VNĐ</span>
                                     </td>
                                 </tr>
