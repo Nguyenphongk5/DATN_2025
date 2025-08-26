@@ -229,18 +229,27 @@ class CartController extends Controller
 
         return back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng');
     }
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
-        ]);
+   public function update(Request $request, $id)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:1',
+    ]);
 
-        $item = \App\Models\CartItem::findOrFail($id);
-        $item->quantity = $request->quantity;
-        $item->save();
+    $item = \App\Models\CartItem::findOrFail($id);
 
-        return back()->with('success', 'Cập nhật số lượng thành công');
+    // Lấy số lượng tồn kho từ product variant
+    $stock = $item->productVariant->quantity ?? 0;
+
+    if ($request->quantity > $stock) {
+        return back()->with('error', "Số lượng đặt vượt quá kho. Tối đa còn $stock sản phẩm.");
     }
+
+    $item->quantity = $request->quantity;
+    $item->save();
+
+    return back()->with('success', 'Cập nhật số lượng thành công');
+}
+
 
     // public function buyNow(Request $request)
     // {

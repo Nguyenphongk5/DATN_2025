@@ -81,10 +81,7 @@ public function update(Request $request, $id)
         }
     }
 
-<<<<<<< Updated upstream
-=======
-    // Ghi chú từ shop
->>>>>>> Stashed changes
+
     if ($request->filled('shop_response')) {
         $return->response_note = $request->input('shop_response');
     }

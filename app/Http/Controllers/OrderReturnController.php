@@ -38,15 +38,9 @@ class OrderReturnController extends Controller
         'note' => $request->note,
         'image' => $imagePath,
     ]);
-
-<<<<<<< Updated upstream
-    return redirect()->route('orders.show', $order->id)
-                 ->with('success', 'Đã gửi yêu cầu hoàn hàng!');
-
-=======
-    return redirect()->route('orders.show', $request->order_id)
+     return redirect()->route('orders.show', $request->order_id)
         ->with('success', 'Đã gửi yêu cầu hoàn hàng!');
->>>>>>> Stashed changes
+
 }
 
 
