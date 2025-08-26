@@ -63,7 +63,7 @@
                                     $variant = $item->productVariant;
                                     $product = $item->product;
                                     $name = $product?->name ?? 'Sản phẩm';
-                                    $price = $variant?->price ?? $product?->price ?? 0;
+                                    $price = $variant?->price_sale ?? $variant?->price ?? $product?->price_sale ?? $product?->price ?? 0;
                                     $image = $variant?->image ?? $product?->img_thumb ?? 'images/no-image.png';
                                     $subtotal = $price * $item->quantity;
                                 @endphp
@@ -256,19 +256,21 @@
 
     <script>
         document.getElementById('checkout-form')?.addEventListener('submit', function (e) {
-            const selected = [];
-            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
-                selected.push(cb.value);
-            });
+    const selected = [];
+    document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+        selected.push(cb.value);
+    });
 
-            if (selected.length === 0) {
-                e.preventDefault();
-                alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
-                return;
-            }
+    if (selected.length === 0) {
+        e.preventDefault();
+        alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.');
+        return;
+    }
 
-            document.getElementById('selected-items').value = selected.join(',');
-        });
+    // Gán tất cả id được chọn
+    document.getElementById('selected-items').value = selected.join(',');
+});
+
     </script>
 
     <style>

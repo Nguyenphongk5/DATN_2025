@@ -155,7 +155,7 @@ if (request()->query('error') === 'admin_cannot_chat') {
                                 $variant = $item->productVariant;
                                 $product = $variant?->product ?? $item->product;
                                 $name = $product?->name ?? 'Sản phẩm không tên';
-                                $price = $variant?->price ?? ($product?->price ?? 0);
+                                $price = $variant?->price_sale ?? $variant?->price ?? $product?->price_sale ?? $product?->price ?? 0;
                                 $subtotal = $price * $item->quantity;
                                 $total += $subtotal;
                             @endphp
@@ -1023,7 +1023,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="hidden lg:flex justify-center">
                         <ul class="flex items-center space-x-8 text-sm font-semibold uppercase tracking-wide">
                             <li>
-                                <a href="home" class="text-gray-700 hover:text-blue-600 transition-colors">Trang
+                                <a href="{{ route('home.index') }}" class="text-gray-700 hover:text-blue-600 transition-colors">Trang
                                     Chủ</a>
 
                             </li>

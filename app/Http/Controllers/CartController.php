@@ -229,7 +229,7 @@ class CartController extends Controller
 
         return back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng');
     }
-   public function update(Request $request, $id)
+    public function update(Request $request, $id)
 {
     $request->validate([
         'quantity' => 'required|integer|min:1',

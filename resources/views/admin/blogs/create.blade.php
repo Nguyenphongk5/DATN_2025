@@ -154,7 +154,7 @@
                         </a>
                         <button type="submit"
                             class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded transition duration-200">
-                            Thêm thương hiệu
+                            Lưu
                         </button>
                     </div>
                 </form>
