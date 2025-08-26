@@ -106,6 +106,7 @@
                                                 'shipping' => ['Đang giao', 'from-sky-400 to-cyan-500'],
                                                 'completed' => ['Đã giao', 'from-green-400 to-green-600'],
                                                 'cancelled' => ['Đã huỷ', 'from-gray-400 to-gray-600'],
+                                                'returned' => ['Đã hoàn', 'from-gray-400 to-gray-600'],
                                             ];
                                             $status = $order->status;
                                         @endphp
@@ -118,7 +119,8 @@
                                                     {{ $status === 'confirmed' ? 'bg-blue-50 border-blue-400 text-blue-700' : '' }}
                                                     {{ $status === 'shipping' ? 'bg-cyan-50 border-cyan-400 text-cyan-700' : '' }}
                                                     {{ $status === 'completed' ? 'bg-green-50 border-green-400 text-green-700' : '' }}
-                                                    {{ $status === 'cancelled' ? 'bg-gray-100 border-gray-400 text-gray-600' : '' }}"
+                                                    {{ $status === 'cancelled' ? 'bg-gray-100 border-gray-400 text-gray-600' : '' }}
+                                                     {{ $status === 'returned' ? 'bg-gray-100 border-gray-400 text-gray-600' : '' }}"
                                                 style="min-width: 120px; text-align: center;">
                                                 {{ $statusMap[$status][0] ?? 'Không xác định' }}
                                             </span>

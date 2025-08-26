@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrderReturn;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class ReturnController extends Controller
@@ -23,14 +24,26 @@ class ReturnController extends Controller
         return view('admin.returns.show', compact('return'));
     }
 
-    public function approve($id)
-    {
-        $return = OrderReturn::findOrFail($id);
-        $return->status = 'approved';
-        $return->save();
+   public function approve($id)
+{
+    $return = OrderReturn::findOrFail($id);
+    $return->status = 'approved';
+    $return->save();
 
-        return redirect()->back()->with('success', 'Đã duyệt yêu cầu hoàn hàng.');
+    // Cập nhật đơn hàng liên quan
+    $order = Order::findOrFail($return->order_id);
+    $order->status = 'returned';
+
+    // Nếu đơn hàng đã thanh toán thì đổi sang Refunded
+    if ($order->payment_status === 'Paid') {
+        $order->payment_status = 'Refunded';
     }
+
+    $order->save();
+
+    return redirect()->back()->with('success', 'Đã duyệt yêu cầu hoàn hàng và cập nhật trạng thái đơn hàng.');
+}
+
 
     public function reject($id)
     {
@@ -40,6 +53,8 @@ class ReturnController extends Controller
 
         return redirect()->back()->with('error', 'Đã từ chối yêu cầu hoàn hàng.');
     }
+
+
 public function update(Request $request, $id)
 {
     $return = OrderReturn::findOrFail($id);
@@ -52,8 +67,24 @@ public function update(Request $request, $id)
         }
 
         $return->status = $action === 'approve' ? 'approved' : 'rejected';
+
+        // Nếu phê duyệt => cập nhật luôn đơn hàng
+        if ($action === 'approve') {
+            $order = Order::findOrFail($return->order_id);
+            $order->status = 'returned';
+
+            if ($order->payment_status === 'Paid') {
+                $order->payment_status = 'Refunded';
+            }
+
+            $order->save();
+        }
     }
 
+<<<<<<< Updated upstream
+=======
+    // Ghi chú từ shop
+>>>>>>> Stashed changes
     if ($request->filled('shop_response')) {
         $return->response_note = $request->input('shop_response');
     }

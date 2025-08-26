@@ -40,14 +40,16 @@ class OrderHistoryController extends Controller
 
 
     public function show($id)
-    {
-        $order = Order::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->with(['orderDetails.productVariant.product']) // load hình ảnh qua variant
-            ->firstOrFail();
+{
+    $order = Order::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->with(['orderDetails.productVariant.product', 'returnRequest'])
 
-        return view('user.history_detail', compact('order'));
-    }
+        ->firstOrFail();
+
+    return view('user.history_detail', compact('order'));
+}
+
     public function cancel($id)
     {
         $order = Order::where('id', $id)->where('user_id', Auth::id())->firstOrFail();

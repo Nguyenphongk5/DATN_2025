@@ -16,7 +16,7 @@ class OrderReturnController extends Controller
         return view('user.return', compact('order'));
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
 {
     $request->validate([
         'order_id' => 'required|exists:orders,id',
@@ -39,9 +39,15 @@ class OrderReturnController extends Controller
         'image' => $imagePath,
     ]);
 
+<<<<<<< Updated upstream
     return redirect()->route('orders.show', $order->id)
                  ->with('success', 'Đã gửi yêu cầu hoàn hàng!');
 
+=======
+    return redirect()->route('orders.show', $request->order_id)
+        ->with('success', 'Đã gửi yêu cầu hoàn hàng!');
+>>>>>>> Stashed changes
 }
+
 
 }

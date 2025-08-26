@@ -26,4 +26,5 @@ public function variant()
     return $this->belongsTo(ProductVariant::class);
 }
 
+
 }

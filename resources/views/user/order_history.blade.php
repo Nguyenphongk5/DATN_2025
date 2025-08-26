@@ -21,6 +21,7 @@
                     'shipping' => 'Đang giao',
                     'completed' => 'Đã giao',
                     'cancelled' => 'Đã hủy',
+                    'returned' => 'Đã hoàn'
                 ];
             @endphp
             @foreach ($tabs as $key => $label)

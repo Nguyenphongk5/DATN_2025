@@ -1042,26 +1042,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <a href="{{ route('products.accessories') }}" class="text-gray-700 hover:text-blue-600 transition-colors">Phụ
                                     kiện</a>
                             </li>
-                            <li>
-                                <a href="#pages"
-                                    class="text-gray-700 hover:text-blue-600 transition-colors">Trang</a>
-                            </li>
-                            <div
-                                class="absolute top-full left-0 mt-2 w-64 bg-black text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            </div>
-                            </li>
-                            <li>
-                                <a href="#brand" class="text-gray-700 hover:text-blue-600 transition-colors">Thương
-                                    Hiệu</a>
-                            </li>
-                            <li>
-                                <a href="#sale" class="text-gray-700 hover:text-blue-600 transition-colors">Khuyến
-                                    Mãi</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('vouchers.index') }}"
-                                    class="text-gray-700 hover:text-blue-600 transition-colors">Mã Giảm Giá</a>
-                            </li>
+                           
 
                                <li>
                              <a href="{{ route('contact') }}">Liên hệ</a>

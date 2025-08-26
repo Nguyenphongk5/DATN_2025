@@ -56,7 +56,9 @@ class OrderController extends Controller
         if ($order->status === 'cancelled') {
             return back()->with('error', 'Không thể cập nhật trạng thái đơn hàng đã huỷ.');
         }
-
+        if ($order->status === 'returned') {
+            return back()->with('error', 'Không thể cập nhật trạng thái đơn hàng đã hoàn.');
+        }
         $request->validate([
             'status' => 'required|in:pending,confirmed,shipping,completed,cancelled',
         ]);
@@ -67,7 +69,8 @@ class OrderController extends Controller
             'confirmed'  => 2,
             'shipping'   => 3,
             'completed'  => 4,
-            'cancelled'  => 5, // có thể đặt cao nhất để ngăn quay lại trạng thái khác
+            'cancelled'  => 5,
+            'returned'  => 6, // có thể đặt cao nhất để ngăn quay lại trạng thái khác
         ];
 
         $currentStatus = $statusOrder[$order->status];
@@ -82,6 +85,9 @@ class OrderController extends Controller
         }
         if ($newStatus == 5) {
             return back()->with('error', 'Không thể cập nhật trạng thái đơn hàng đã huỷ.');
+        }
+        if ($newStatus == 6) {
+            return back()->with('error', 'Không thể cập nhật trạng thái đơn hàng đã hoàn.');
         }
         // Nếu hợp lệ thì cập nhật
         if ($newStatus == 4 && $order->payment_status !== 'Paid') {

@@ -25,6 +25,7 @@
             'completed' => 'Đã giao',
             'delivered' => 'Đã giao hàng',
             'cancelled' => 'Đã hủy',
+            'returned' => 'Đã hoàn',
             default => 'Không rõ',
         };
     @endphp
@@ -148,6 +149,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return 'bg-green-100 text-green-700';         // Đã giao hàng
             case 'cancelled':
                 return 'bg-pink-100 text-pink-700';           // Đã hủy
+            case 'returned':
+                return 'bg-pink-100 text-pink-700';            // Đã Hoàn
             default:
                 return 'bg-gray-200 text-gray-600';           // Không rõ
         }
@@ -167,6 +170,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return 'Đã giao hàng';
             case 'cancelled':
                 return 'Đã hủy';
+            case 'returned':
+                return 'Đã hoàn';
             default:
                 return 'Không rõ';
         }

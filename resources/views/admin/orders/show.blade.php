@@ -93,9 +93,12 @@
                                 $statusMap = [
                                     'pending' => ['Chờ xác nhận', 'from-yellow-400 to-yellow-600'],
                                     'confirmed' => ['Đã xác nhận', 'from-blue-400 to-blue-600'],
-                                    'shipping' => ['Đang giao', 'from-sky-400 to-cyan-500'],
+                                    'shipping' => ['Đang giao', 'from-sky-400 to-cyan-600'],
                                     'completed' => ['Đã giao', 'from-green-400 to-green-600'],
-                                    // 'cancelled' => ['Đã huỷ', 'from-gray-400 to-gray-600'],
+                                     'cancelled' => ['Đã huỷ', 'from-gray-400 to-gray-600'],
+                                     'returned' => ['Đã hoàn', 'from-gray-400 to-gray-600'],
+                                    
+
                                 ];
                                 $status = $order->status;
                             @endphp
