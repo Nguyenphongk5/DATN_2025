@@ -32,6 +32,9 @@ class CheckoutController extends Controller
 
         /* -- Lọc sản phẩm đã chọn (từ query ?selected_items=1,3,5) -- */
         $selected = $request->input('selected_items');   // chuỗi "1,3,5"
+        if($selected) {
+
+        }
         if ($selected) {
             $ids = array_filter(explode(',', $selected)); // thành mảng
             $cart->setRelation(
@@ -318,6 +321,12 @@ class CheckoutController extends Controller
             $items = $cart->items;
             if (!empty($selectedIds)) {
                 $items = $items->whereIn('id', $selectedIds)->values();
+            }
+            foreach($items as $item){
+                $variant = ProductVariant::find($item->product_variant_id);
+                if($item->quantity > $variant->quantity){
+                    return back()->with('error', 'Sản phẩm '.$variant->product->name.' ('.$variant->color_name.' - '.$variant->size.') chỉ còn '.$variant->quantity.' sản phẩm');
+                }
             }
 
             $totalAmount = $items->sum(function ($item) {
