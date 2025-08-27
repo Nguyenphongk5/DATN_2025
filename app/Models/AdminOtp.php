@@ -44,8 +44,13 @@ class AdminOtp extends Model
     // Tạo OTP mới
     public static function generateOtp($userId, $ipAddress = null, $userAgent = null)
     {
-        // Xóa OTP cũ của user này
-        self::where('user_id', $userId)->delete();
+        // Xóa OTP cũ của user này (chỉ xóa những OTP đã hết hạn hoặc đã sử dụng)
+        self::where('user_id', $userId)
+            ->where(function($query) {
+                $query->where('is_used', true)
+                      ->orWhere('expires_at', '<', Carbon::now());
+            })
+            ->delete();
 
         // Tạo OTP mới
         return self::create([
@@ -72,5 +77,14 @@ class AdminOtp extends Model
         }
 
         return false;
+    }
+
+    // Lấy OTP hiện tại của user (để debug)
+    public static function getCurrentOtp($userId)
+    {
+        return self::where('user_id', $userId)
+            ->where('is_used', false)
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
     }
 } 

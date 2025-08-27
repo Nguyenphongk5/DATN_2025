@@ -17,6 +17,8 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
+
+        // Lấy giỏ hàng của user hiện tại
         // Chỉ xóa session voucher khi là GET (không phải AJAX/POST)
         if ($request->isMethod('get') && !$request->ajax()) {
             session()->forget(['applied_coupon', 'discount_amount', 'voucher_success']);

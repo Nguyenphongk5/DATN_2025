@@ -130,11 +130,7 @@
                                                     <i
                                                         class="fas fa-{{ $gallery->is_active ? 'eye' : 'eye-slash' }} text-sm"></i>
                                                 </button>
-                                                <button
-                                                    onclick="deleteGallery({{ $product->id }}, {{ $gallery->id }})"
-                                                    class="bg-red-500/90 backdrop-blur-sm text-white p-2 rounded-full hover:bg-red-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-110">
-                                                    <i class="fas fa-trash text-sm"></i>
-                                                </button>
+
                                             </div>
                                         </div>
 
@@ -222,43 +218,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-95 opacity-0"
-                id="modalContent">
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div
-                            class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-exclamation-triangle text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-900">Xác nhận xóa</h3>
-                            <p class="text-sm text-gray-500">Hành động này không thể hoàn tác</p>
-                        </div>
-                    </div>
 
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        Bạn có chắc chắn muốn xóa ảnh này? Ảnh sẽ bị xóa vĩnh viễn khỏi hệ thống và không thể khôi phục.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button onclick="closeDeleteModal()"
-                            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-xl transition-all duration-200 font-medium">
-                            <i class="fas fa-times mr-2"></i>
-                            Hủy bỏ
-                        </button>
-                        <button id="confirmDelete"
-                            class="flex-1 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-4 py-3 rounded-xl transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
-                            <i class="fas fa-trash mr-2"></i>
-                            Xóa ảnh
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
     @push('styles')
@@ -360,11 +320,18 @@
                             orders: orders
                         })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
-                            // Reload page to update sort order numbers
                             location.reload();
+                        } else {
+                            console.error('Update order failed:', data);
+                            alert('Có lỗi xảy ra khi cập nhật thứ tự');
                         }
                     })
                     .catch(error => {
@@ -381,10 +348,18 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             location.reload();
+                        } else {
+                            console.error('Toggle active failed:', data);
+                            alert('Có lỗi xảy ra khi cập nhật trạng thái');
                         }
                     })
                     .catch(error => {
@@ -393,78 +368,7 @@
                     });
             }
 
-            // Delete gallery
-            let deleteProductId, deleteGalleryId;
 
-            function deleteGallery(productId, galleryId) {
-                deleteProductId = productId;
-                deleteGalleryId = galleryId;
-                const modal = document.getElementById('deleteModal');
-                const modalContent = document.getElementById('modalContent');
-
-                modal.classList.remove('hidden');
-
-                // Animate modal in
-                setTimeout(() => {
-                    modalContent.classList.remove('scale-95', 'opacity-0');
-                    modalContent.classList.add('scale-100', 'opacity-100');
-                }, 10);
-            }
-
-            function closeDeleteModal() {
-                const modal = document.getElementById('deleteModal');
-                const modalContent = document.getElementById('modalContent');
-
-                // Animate modal out
-                modalContent.classList.remove('scale-100', 'opacity-100');
-                modalContent.classList.add('scale-95', 'opacity-0');
-
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300);
-            }
-
-            document.getElementById('confirmDelete').addEventListener('click', function() {
-                // Show loading state
-                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang xóa...';
-                this.disabled = true;
-
-                fetch(`/admin/products/${deleteProductId}/galleries/${deleteGalleryId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                'content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Show success animation before reload
-                            const modalContent = document.getElementById('modalContent');
-                            modalContent.innerHTML = `
-                <div class="p-6 text-center">
-                    <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-check text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Xóa thành công!</h3>
-                    <p class="text-gray-600">Ảnh đã được xóa khỏi hệ thống</p>
-                </div>
-            `;
-
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1500);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Có lỗi xảy ra khi xóa ảnh');
-
-                        // Reset button
-                        this.innerHTML = '<i class="fas fa-trash mr-2"></i>Xóa ảnh';
-                        this.disabled = false;
-                    });
-            });
         </script>
     @endpush
 </x-app-layout>

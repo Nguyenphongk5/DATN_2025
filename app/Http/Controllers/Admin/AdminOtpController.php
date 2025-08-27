@@ -28,32 +28,44 @@ class AdminOtpController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        // Tự động gửi OTP khi truy cập form
-        try {
-            $user = Auth::user();
-            
-            // Log thông tin user
-            Log::info("Generating OTP for user: {$user->email}");
-            
-            $otp = AdminOtp::generateOtp(
-                $user->id,
-                request()->ip(),
-                request()->userAgent()
-            );
+        $user = Auth::user();
+        
+        // Kiểm tra xem đã có OTP hợp lệ chưa
+        $existingOtp = AdminOtp::where('user_id', $user->id)
+            ->where('is_used', false)
+            ->where('expires_at', '>', now())
+            ->first();
 
-            // Log thông tin OTP
-            Log::info("OTP generated: {$otp->otp} for user: {$user->email}");
+        if (!$existingOtp) {
+            // Chỉ tạo OTP mới nếu chưa có OTP hợp lệ
+            try {
+                // Log thông tin user
+                Log::info("Generating OTP for user: {$user->email}");
+                
+                $otp = AdminOtp::generateOtp(
+                    $user->id,
+                    request()->ip(),
+                    request()->userAgent()
+                );
 
-            // Gửi email
-            Mail::to($user->email)->send(new AdminOtpMail($otp));
-            
-            // Log email sent
-            Log::info("OTP email sent to: {$user->email}");
+                // Log thông tin OTP
+                Log::info("OTP generated: {$otp->otp} for user: {$user->email}");
 
-            return view('admin.auth.otp')->with('success', 'Mã OTP đã được gửi đến email của bạn!');
-        } catch (\Exception $e) {
-            Log::error("Error sending OTP: " . $e->getMessage());
-            return view('admin.auth.otp')->with('error', 'Có lỗi xảy ra khi gửi OTP: ' . $e->getMessage());
+                // Gửi email
+                Mail::to($user->email)->send(new AdminOtpMail($otp));
+                
+                // Log email sent
+                Log::info("OTP email sent to: {$user->email}");
+
+                return view('admin.auth.otp')->with('success', 'Mã OTP đã được gửi đến email của bạn!');
+            } catch (\Exception $e) {
+                Log::error("Error sending OTP: " . $e->getMessage());
+                return view('admin.auth.otp')->with('error', 'Có lỗi xảy ra khi gửi OTP: ' . $e->getMessage());
+            }
+        } else {
+            // Nếu đã có OTP hợp lệ, chỉ hiển thị form
+            Log::info("Existing OTP found for user: {$user->email}, OTP: {$existingOtp->otp}");
+            return view('admin.auth.otp')->with('info', 'Vui lòng nhập mã OTP đã được gửi trước đó!');
         }
     }
 

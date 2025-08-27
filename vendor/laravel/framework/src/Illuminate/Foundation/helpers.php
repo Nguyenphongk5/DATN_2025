@@ -6,7 +6,7 @@ use Illuminate\Broadcasting\PendingBroadcast;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
-use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Contracts\Cookie\Factory as CookieFactory;
@@ -169,9 +169,9 @@ if (! function_exists('auth')) {
      * Get the available auth instance.
      *
      * @param  string|null  $guard
-     * @return ($guard is null ? \Illuminate\Contracts\Auth\Factory : \Illuminate\Contracts\Auth\StatefulGuard)
+     * @return ($guard is null ? \Illuminate\Contracts\Auth\Factory : \Illuminate\Contracts\Auth\Guard)
      */
-    function auth($guard = null): AuthFactory|StatefulGuard
+    function auth($guard = null): AuthFactory|Guard
     {
         if (is_null($guard)) {
             return app(AuthFactory::class);
@@ -397,7 +397,7 @@ if (! function_exists('csrf_token')) {
      *
      * @throws \RuntimeException
      */
-    function csrf_token(): string
+    function csrf_token(): ?string
     {
         $session = app('session');
 
@@ -498,8 +498,9 @@ if (! function_exists('event')) {
      * @param  string|object  $event
      * @param  mixed  $payload
      * @param  bool  $halt
+     * @return array|null
      */
-    function event(...$args): ?array
+    function event(...$args)
     {
         return app('events')->dispatch(...$args);
     }
