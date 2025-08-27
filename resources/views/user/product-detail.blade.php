@@ -658,9 +658,9 @@
                                             </h3>
                                             <div class="flex items-center gap-2 mb-2">
                                                 <span
-                                                    class="text-2xl font-bold text-pink-600">{{ number_format($product->price, 0, '', '.') }}
+                                                    class="text-2xl font-bold text-pink-600">{{ number_format($product->price_sale, 0, '', '.') }}
                                                     VNĐ</span>
-                                                <del class="text-base text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }}
+                                                <del class="text-base text-gray-400">{{ number_format($product->price, 0, '', '.') }}
                                                     VNĐ</del>
                                             </div>
                                             <div class="flex items-center gap-1 mb-4">

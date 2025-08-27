@@ -17,36 +17,39 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-    
-        // Lấy giỏ hàng của user hiện tại
+        // Chỉ xóa session voucher khi là GET (không phải AJAX/POST)
+        if ($request->isMethod('get') && !$request->ajax()) {
+            session()->forget(['applied_coupon', 'discount_amount', 'voucher_success']);
+        }
         $cart = Cart::with(['items.productVariant.product'])
             ->where('user_id', Auth::id())
             ->first();
 
-        // Lấy các sản phẩm được chọn (chuỗi "1,3,5" từ input ẩn)
-        $selected = $request->input('selected_items');
-        $ids = $selected ? array_filter(explode(',', $selected)) : [];
+        // if (!$cart || $cart->items->isEmpty()) {
+        //     return redirect()->route('cart.index')
+        //         ->with('error', 'Giỏ hàng của bạn đang trống.');
+        // }
 
-        // Nếu có sản phẩm được chọn, lọc giỏ hàng chỉ lấy những sản phẩm đó
-        if ($ids && $cart) {
+        /* -- Lọc sản phẩm đã chọn (từ query ?selected_items=1,3,5) -- */
+        $selected = $request->input('selected_items');   // chuỗi "1,3,5"
+        if ($selected) {
+            $ids = array_filter(explode(',', $selected)); // thành mảng
             $cart->setRelation(
                 'items',
                 $cart->items->whereIn('id', $ids)->values()
             );
+            /* Lưu lại ids để placeOrder() dùng */
+            session(['selected_items' => $ids]);
         }
-
-        // Lấy logo
         $logo = Logo::where('is_active', 1)->first();
-
-        // Lấy voucher còn hiệu lực
-        $vouchers = Voucher::where('is_active', 1)
+        $vouchers = \App\Models\Voucher::where('is_active', 1)
             ->where('start_date', '<=', now())
             ->where('end_date', '>=', now())
             ->whereColumn('used_count', '<', 'quantity')
             ->get();
-
         return view('user.order', compact('cart', 'logo', 'vouchers'));
     }
+
 
 
     /* ================================================
@@ -399,7 +402,7 @@ class CheckoutController extends Controller
                     if ($variant->quantity < $item->quantity) {
                         return back()->with('error', 'Số lượng sản phẩm không đủ để đặt hàng.');
                     }
-                    Product::where( 'id', $variant->product_id)
+                    Product::where('id', $variant->product_id)
                         ->decrement('quantity', $item->quantity);
                     // Trừ tồn kho
                     ProductVariant::where('id', $variant->id)
@@ -477,17 +480,17 @@ class CheckoutController extends Controller
             }
         }
     }
-            public function showCheckout()
-{
-    $user = auth()->user();
+    public function showCheckout()
+    {
+        $user = auth()->user();
 
-    // Lấy các voucher mà user này được gán
-    $vouchers = $user->vouchers()->where('is_active', 1)->get();
+        // Lấy các voucher mà user này được gán
+        $vouchers = $user->vouchers()->where('is_active', 1)->get();
 
-    return view('checkout', compact('vouchers'));
-}
+        return view('checkout', compact('vouchers'));
+    }
 
-            public function ajaxApplyVoucher(Request $request)
+    public function ajaxApplyVoucher(Request $request)
     {
         $code = $request->input('voucher_code');
         $total = $request->input('total_amount');

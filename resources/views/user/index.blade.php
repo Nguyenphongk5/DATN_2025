@@ -276,7 +276,7 @@
                         </svg>
                     </div>
                     <h2
-                        class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4">
+                        class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-pink-600 bg-clip-text text-transparent mb-4" style="line-height: 1.5">
                         Sản phẩm bán chạy nhất
                     </h2>
                     <p class="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -293,8 +293,7 @@
                                     data-id="{{ $product->id }}"
                                     data-favorited="{{ $product->is_favorited ? 'true' : 'false' }}">
                                     <img src="{{ asset('storage/' . $product->img_thumb) }}" alt="{{ $product->name }}"
-                                        class="w-full h-60 object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-500">
-
+                                    class="w-full h-60 object-cover rounded-t-3xl group-hover:scale-105 transition-transform duration-500">
                                     <!-- Nút yêu thích -->
                                     <button
                                         class="favorite-btn absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full hover:scale-110 transition-transform duration-200">
@@ -320,9 +319,9 @@
                                     </h3>
                                     <div class="flex items-center gap-2 mb-2">
                                         <span
-                                            class="text-2xl font-bold text-pink-600">{{ number_format($product->price, 0, '', '.') }}
+                                            class="text-2xl font-bold text-pink-600">{{ number_format($product->price_sale, 0, '', '.') }}
                                             VNĐ</span>
-                                        <del class="text-base text-gray-400">{{ number_format($product->price_sale, 0, '', '.') }}
+                                        <del class="text-base text-gray-400">{{ number_format($product->price, 0, '', '.') }}
                                             VNĐ</del>
                                     </div>
                                     <div class="flex items-center gap-1 mb-4">

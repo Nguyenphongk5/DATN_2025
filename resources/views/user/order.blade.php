@@ -252,34 +252,6 @@
                                 Áp dụng
                             </button>
                         </div>
-                        @if (isset($vouchers) && $vouchers->count())
-                            <div class="mt-3">
-                                <div class="font-semibold text-sm text-purple-700 mb-2 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
-                                    </svg>
-                                    Mã giảm giá có sẵn:
-                                </div>
-                                <div class="flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-purple-50 py-2 px-1" style="scroll-snap-type: x mandatory;">
-                                    @foreach ($vouchers as $voucher)
-                                        <button type="button"
-                                            class="flex-shrink-0 px-3 py-2 rounded-lg bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 text-white font-bold shadow hover:scale-105 transition-all duration-200"
-                                            style="scroll-snap-align: start;"
-                                            onclick="document.querySelector('input[name=\'voucher_code\']').value='{{ $voucher->code }}'">
-                                            {{ $voucher->code }}
-                                            <span class="ml-1 text-xs font-normal">
-                                                @if ($voucher->discount_type === 'percent')
-                                                    -{{ $voucher->discount_value }}%
-                                                @else
-                                                    -{{ number_format($voucher->discount_value, 0, ',', '.') }}đ
-                                                @endif
-                                            </span>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
                     </div>
                     <!-- END MÃ GIẢM GIÁ -->
                     <ul class="divide-y divide-gray-200 mb-6">

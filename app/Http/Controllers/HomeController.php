@@ -55,7 +55,9 @@ class HomeController extends Controller
         $bestSalerProducts = Product::select(
             'products.id',
             'products.name',
-            'products.price', // Add other columns you need
+            'products.price',
+            'products.price_sale',
+            'products.img_thumb',
             DB::raw('SUM(order_details.quantity) as total_sold')
         )
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')

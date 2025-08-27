@@ -30,25 +30,25 @@
                             <div class="mb-1">
                                 <span class="font-semibold"> Địa chỉ:</span>
                                 @php
-                                $addressParts = [];
-                                if ($order->user_address) {
-                                $addressParts[] = $order->user_address;
-                                }
-                                if ($order->ward) {
-                                $addressParts[] = $order->ward;
-                                }
-                                if ($order->district) {
-                                $addressParts[] = $order->district;
-                                }
-                                if ($order->province) {
-                                $addressParts[] = $order->province;
-                                }
+                                    $addressParts = [];
+                                    if ($order->user_address) {
+                                        $addressParts[] = $order->user_address;
+                                    }
+                                    if ($order->ward) {
+                                        $addressParts[] = $order->ward;
+                                    }
+                                    if ($order->district) {
+                                        $addressParts[] = $order->district;
+                                    }
+                                    if ($order->province) {
+                                        $addressParts[] = $order->province;
+                                    }
                                 @endphp
                                 {{ implode(', ', $addressParts) }}
                             </div>
                             @if ($order->note)
-                            <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}
-                            </div>
+                                <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}
+                                </div>
                             @endif
                         </div>
                         <div>
@@ -59,25 +59,25 @@
                             <div class="mb-1">
                                 <span class="font-semibold"> Địa chỉ:</span>
                                 @php
-                                $addressParts = [];
-                                if ($order->user_address) {
-                                $addressParts[] = $order->user_address;
-                                }
-                                if ($order->ward) {
-                                $addressParts[] = $order->ward;
-                                }
-                                if ($order->district) {
-                                $addressParts[] = $order->district;
-                                }
-                                if ($order->province) {
-                                $addressParts[] = $order->province;
-                                }
+                                    $addressParts = [];
+                                    if ($order->user_address) {
+                                        $addressParts[] = $order->user_address;
+                                    }
+                                    if ($order->ward) {
+                                        $addressParts[] = $order->ward;
+                                    }
+                                    if ($order->district) {
+                                        $addressParts[] = $order->district;
+                                    }
+                                    if ($order->province) {
+                                        $addressParts[] = $order->province;
+                                    }
                                 @endphp
                                 {{ implode(', ', $addressParts) }}
                             </div>
                             @if ($order->note)
-                            <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}
-                            </div>
+                                <div class="mb-1"><span class="font-semibold">Ghi chú:</span> {{ $order->note }}
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -90,17 +90,15 @@
                             {{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y H:i') }}</div>
                         <div class="mb-1"><span class="font-semibold">Trạng thái:</span>
                             @php
-                            $statusMap = [
-                            'pending' => ['Chờ xác nhận', 'from-yellow-400 to-yellow-600'],
-                            'confirmed' => ['Đã xác nhận', 'from-blue-400 to-blue-600'],
-                            'shipping' => ['Đang giao', 'from-sky-400 to-cyan-600'],
-                            'completed' => ['Đã giao', 'from-green-400 to-green-600'],
-                            'cancelled' => ['Đã huỷ', 'from-gray-400 to-gray-600'],
-                            'returned' => ['Đã hoàn', 'from-gray-400 to-gray-600'],
-
-
-                            ];
-                            $status = $order->status;
+                                $statusMap = [
+                                    'pending' => ['Chờ xác nhận', 'from-yellow-400 to-yellow-600'],
+                                    'confirmed' => ['Đã xác nhận', 'from-blue-400 to-blue-600'],
+                                    'shipping' => ['Đang giao', 'from-sky-400 to-cyan-600'],
+                                    'completed' => ['Đã giao', 'from-green-400 to-green-600'],
+                                    'cancelled' => ['Đã huỷ', 'from-gray-400 to-gray-600'],
+                                    'returned' => ['Đã hoàn', 'from-gray-400 to-gray-600'],
+                                ];
+                                $status = $order->status;
                             @endphp
                             <form action="{{ route('admin.orders.update', $order->id) }}" method="POST"
                                 class="inline-block">
@@ -108,39 +106,43 @@
                                 @method('PATCH')
                                 <span
                                     class="inline-block px-3 py-0.5 rounded-xl font-semibold text-sm shadow border transition-all duration-200
-                                        {{ $status === 'pending' ? 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-500 text-white' : '' }}
-                                        {{ $status === 'confirmed' ? 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 border-blue-500 text-white' : '' }}
-                                        {{ $status === 'shipping' ? 'bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 border-cyan-500 text-white' : '' }}
-                                        {{ $status === 'completed' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 border-green-500 text-white' : '' }}
-                                        {{-- {{ $status === 'cancelled' ? 'bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 border-gray-500 text-white' : '' }}"--}} 
-                                    style="min-width: 90px; text-align: center;">
+        {{ $status === 'pending' ? 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 border-yellow-500' : '' }}
+        {{ $status === 'confirmed' ? 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 border-blue-500' : '' }}
+        {{ $status === 'shipping' ? 'bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 border-cyan-500' : '' }}
+        {{ $status === 'completed' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 border-green-500' : '' }}
+        {{ $status === 'cancelled' ? 'bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 border-gray-500' : '' }}
+        {{ $status === 'returned' ? 'bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 border-gray-500' : '' }}"
+                                    style="min-width: 120px; text-align: center;">
                                     <select name="status" onchange="this.form.submit()"
-                                        class="w-28 bg-transparent border-none pl-2 pr-3 py-1.5 appearance-none text-sm font-semibold rounded-xl focus:outline-none cursor-pointer text-center"
-                                        style="background: transparent; color: inherit;">
-
+                                        class="w-full bg-transparent border-none py-0.5 text-sm font-semibold rounded-xl
+               focus:outline-none cursor-pointer text-center focus:ring-2 focus:ring-offset-2
+               focus:ring-white transition-all duration-150 text-white appearance-none"
+                                        style="background: transparent; color: white;">
                                         @foreach ($statusMap as $key => $item)
-                                        <option value="{{ $key }}" {{ $status === $key ? 'selected' : '' }}
-                                            class="text-gray-900 bg-white">
-                                            {{ $item[0] }}
-                                        </option>
+                                            <option value="{{ $key }}"
+                                                {{ $status === $key ? 'selected' : '' }}
+                                                class="text-gray-900 bg-white">
+                                                {{ $item[0] }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </span>
+
                             </form>
                         </div>
                         <div class="mb-1"><span class="font-semibold">Thanh toán:</span>
                             @if ($order->payment_status === 'Paid')
-                            <span
-                                class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-white font-bold shadow text-sm">Đã
-                                thanh toán</span>
+                                <span
+                                    class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-white font-bold shadow text-sm">Đã
+                                    thanh toán</span>
                             @elseif ($order->payment_status === 'Unpaid')
-                            <span
-                                class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-red-400 to-pink-400 text-white font-bold shadow text-sm">Chưa
-                                thanh toán</span>
+                                <span
+                                    class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-red-400 to-pink-400 text-white font-bold shadow text-sm">Chưa
+                                    thanh toán</span>
                             @else
-                            <span
-                                class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold shadow text-sm">Hoàn
-                                tiền</span>
+                                <span
+                                    class="inline-block px-4 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold shadow text-sm">Hoàn
+                                    tiền</span>
                             @endif
                         </div>
                         <div class="mb-1"><span class="font-semibold">Phí vận chuyển:</span> <span
@@ -171,16 +173,16 @@
                             </thead>
                             <tbody class="divide-y divide-indigo-100 text-center">
                                 @foreach ($order->orderDetails as $item)
-                                <tr>
-                                    <td class="px-4 py-2 text-left font-semibold">{{ $item->product_name }}</td>
-                                    <td class="px-4 py-2">{{ $item->color_name ?? '-' }} |
-                                        {{ $item->size_name ?? '-' }}</td>
-                                    <td class="px-4 py-2">{{ $item->quantity }}</td>
-                                    <td class="px-4 py-2 text-right">{{ number_format($item->price, 0, ',', '.') }}
-                                        VNĐ</td>
-                                    <td class="px-4 py-2 text-right font-bold text-cyan-600">
-                                        {{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
-                                </tr>
+                                    <tr>
+                                        <td class="px-4 py-2 text-left font-semibold">{{ $item->product_name }}</td>
+                                        <td class="px-4 py-2">{{ $item->color_name ?? '-' }} |
+                                            {{ $item->size_name ?? '-' }}</td>
+                                        <td class="px-4 py-2">{{ $item->quantity }}</td>
+                                        <td class="px-4 py-2 text-right">{{ number_format($item->price, 0, ',', '.') }}
+                                            VNĐ</td>
+                                        <td class="px-4 py-2 text-right font-bold text-cyan-600">
+                                            {{ number_format(($item->price*$item->quantity), 0, ',', '.') }} VNĐ</td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
