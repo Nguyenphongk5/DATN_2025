@@ -8,6 +8,7 @@ use App\Models\ProductGallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class ProductGalleryController extends Controller
 {
@@ -103,6 +104,9 @@ class ProductGalleryController extends Controller
         ]);
 
         if ($validator->fails()) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
             return back()->withErrors($validator)->withInput();
         }
 
@@ -132,6 +136,13 @@ class ProductGalleryController extends Controller
         $gallery->is_active = $request->has('is_active');
         $gallery->save();
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật ảnh thành công!'
+            ]);
+        }
+
         return redirect()->route('admin.products.galleries.index', $product)
             ->with('success', 'Cập nhật ảnh thành công!');
     }
@@ -141,18 +152,29 @@ class ProductGalleryController extends Controller
      */
     public function destroy(Product $product, $galleryId)
     {
-        $gallery = ProductGallery::where('product_id', $product->id)
-            ->findOrFail($galleryId);
+        try {
+            $gallery = ProductGallery::where('product_id', $product->id)
+                ->findOrFail($galleryId);
 
-        // Xóa file ảnh
-        if ($gallery->image && Storage::disk('public')->exists('product_galleries/' . $gallery->image)) {
-            Storage::disk('public')->delete('product_galleries/' . $gallery->image);
+            // Xóa file ảnh
+            if ($gallery->image && Storage::disk('public')->exists('product_galleries/' . $gallery->image)) {
+                Storage::disk('public')->delete('product_galleries/' . $gallery->image);
+            }
+
+            $gallery->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa ảnh thành công!'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting gallery: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi xóa ảnh: ' . $e->getMessage()
+            ], 500);
         }
-
-        $gallery->delete();
-
-        return redirect()->route('admin.products.galleries.index', $product)
-            ->with('success', 'Đã xóa ảnh thành công!');
     }
 
     /**
