@@ -17,7 +17,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-    
+
         // Lấy giỏ hàng của user hiện tại
         $cart = Cart::with(['items.productVariant.product'])
             ->where('user_id', Auth::id())
@@ -315,6 +315,12 @@ class CheckoutController extends Controller
             $items = $cart->items;
             if (!empty($selectedIds)) {
                 $items = $items->whereIn('id', $selectedIds)->values();
+            }
+            foreach($items as $item){
+                $variant = ProductVariant::find($item->product_variant_id);
+                if($item->quantity > $variant->quantity){
+                    return back()->with('error', 'Sản phẩm '.$variant->product->name.' ('.$variant->color_name.' - '.$variant->size.') chỉ còn '.$variant->quantity.' sản phẩm');
+                }
             }
 
             $totalAmount = $items->sum(function ($item) {

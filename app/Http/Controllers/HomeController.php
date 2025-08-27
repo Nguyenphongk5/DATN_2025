@@ -60,7 +60,7 @@ class HomeController extends Controller
         )
             ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
             ->join('order_details', 'product_variants.id', '=', 'order_details.product_variant_id')
-            ->groupBy('products.id', 'products.name', 'products.price') // Include all selected columns
+            ->groupBy('products.id', 'products.name', 'products.price','products.price_sale','products.img_thumb',) // Include all selected columns
             ->orderByDesc('total_sold')
             ->take(8)
             ->get()
